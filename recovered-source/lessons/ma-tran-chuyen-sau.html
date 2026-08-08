@@ -1,0 +1,2267 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<meta name="description" content="Bài học CS115 về ma trận và các phép tính ma trận: cộng, nhân, chuyển vị, nghịch đảo, R1 R2, khử Gauss, 30 bài tập có chấm tự động.">
+<title>CS115 · Ma trận và phép tính ma trận</title>
+<style>
+  :root{
+    --bg:#eef3f8;
+    --paper:#ffffff;
+    --paper-2:#f8fafc;
+    --ink:#122033;
+    --muted:#5d6b7d;
+    --line:#d7e1ec;
+    --blue:#1d4ed8;
+    --blue-2:#2563eb;
+    --cyan:#0e7490;
+    --cyan-soft:#ecfeff;
+    --green:#15803d;
+    --green-soft:#f0fdf4;
+    --amber:#a16207;
+    --amber-soft:#fffbeb;
+    --red:#b91c1c;
+    --red-soft:#fef2f2;
+    --violet:#6d28d9;
+    --violet-soft:#f5f3ff;
+    --shadow:0 18px 48px rgba(23,42,77,.10);
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    min-width:1180px;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 12% -12%,rgba(37,99,235,.13),transparent 31%),
+      radial-gradient(circle at 100% 7%,rgba(14,116,144,.09),transparent 24%),
+      var(--bg);
+    font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    font-size:17px;
+    line-height:1.72;
+  }
+  button,input,select,textarea{font:inherit}
+  button{cursor:pointer}
+  code,.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+  a{color:inherit}
+  sup,sub{line-height:0}
+  #reading-progress{
+    position:fixed;z-index:999;left:0;top:0;height:4px;width:0;
+    background:linear-gradient(90deg,var(--blue-2),#06b6d4);
+    box-shadow:0 0 10px rgba(37,99,235,.35)
+  }
+  .page-shell{width:1280px;margin:0 auto;padding:28px 0 72px}
+  .hero{
+    position:relative;overflow:hidden;min-height:390px;padding:48px 54px;
+    border:1px solid rgba(255,255,255,.45);border-radius:28px;color:#fff;
+    background:linear-gradient(125deg,rgba(6,37,86,.99),rgba(30,64,175,.96) 58%,rgba(8,145,178,.92)),#0f3d8a;
+    box-shadow:var(--shadow)
+  }
+  .hero::before,.hero::after{content:"";position:absolute;border-radius:999px;pointer-events:none}
+  .hero::before{width:440px;height:440px;right:-120px;top:-175px;background:rgba(255,255,255,.10)}
+  .hero::after{width:260px;height:260px;right:170px;bottom:-170px;border:42px solid rgba(255,255,255,.08)}
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.16fr .84fr;gap:38px;align-items:center}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:10px;padding:7px 12px;border-radius:999px;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+    font-size:13px;font-weight:850;letter-spacing:.12em;text-transform:uppercase
+  }
+  .hero h1{margin:18px 0 12px;max-width:790px;font-size:48px;line-height:1.1;letter-spacing:-.035em}
+  .hero h1 span{color:#a5f3fc}
+  .hero p{max-width:740px;margin:0;color:rgba(255,255,255,.88);font-size:19px}
+  .hero-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .hero-tag{padding:7px 11px;border-radius:10px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);font-size:14px;font-weight:750}
+  .hero-card{padding:22px;border:1px solid rgba(255,255,255,.22);border-radius:20px;background:rgba(255,255,255,.10);backdrop-filter:blur(6px)}
+  .hero-card h2{margin:0 0 12px;font-size:18px;color:#e0f2fe}
+  .knowledge-flow{display:grid;gap:10px}
+  .flow-item{display:grid;grid-template-columns:34px 1fr;gap:11px;align-items:center;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.09)}
+  .flow-index{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#1e40af;font-weight:900;font-size:14px}
+  .flow-item strong{display:block;font-size:15px}
+  .flow-item small{display:block;color:rgba(255,255,255,.72)}
+  .layout{display:grid;grid-template-columns:278px minmax(0,1fr);gap:26px;margin-top:26px;align-items:start}
+  .sidebar{
+    position:sticky;top:20px;max-height:calc(100vh - 40px);overflow:auto;padding:18px;border-radius:var(--radius);
+    background:rgba(255,255,255,.97);border:1px solid var(--line);box-shadow:0 12px 30px rgba(31,55,89,.08)
+  }
+  .sidebar::-webkit-scrollbar{width:8px}.sidebar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:20px}
+  .sidebar-title{margin:0 0 10px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;font-weight:900}
+  .toc{display:grid;gap:4px}
+  .toc a{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center;padding:9px 10px;border-radius:10px;text-decoration:none;color:#334155;font-size:14px;font-weight:700}
+  .toc a:hover,.toc a.active{background:#eff6ff;color:#1d4ed8}
+  .toc-num{width:24px;height:24px;display:grid;place-items:center;border-radius:8px;background:#eef2ff;color:#4338ca;font-size:12px;font-weight:900}
+  .sidebar-tip{margin-top:14px;padding:13px;border-radius:12px;background:var(--amber-soft);border:1px solid #fde68a;color:#713f12;font-size:13px}
+  .toolbar{display:grid;gap:8px;margin-top:14px}
+  .btn{border:0;border-radius:10px;padding:10px 13px;font-weight:800}
+  .btn-primary{background:var(--blue-2);color:#fff}
+  .btn-secondary{background:#e2e8f0;color:#24324a}
+  .btn-outline{background:#fff;color:#1d4ed8;border:1px solid #93c5fd}
+  .content{display:grid;gap:24px}
+  .section{
+    scroll-margin-top:20px;padding:30px;border-radius:var(--radius);background:var(--paper);
+    border:1px solid var(--line);box-shadow:0 10px 26px rgba(31,55,89,.06)
+  }
+  .section-head{display:grid;grid-template-columns:54px 1fr;gap:15px;align-items:start;margin-bottom:22px}
+  .section-badge{width:50px;height:50px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(145deg,#dbeafe,#cffafe);color:#1e40af;font-weight:950;font-size:20px;border:1px solid #bfdbfe}
+  .section h2{margin:0;font-size:30px;line-height:1.2;letter-spacing:-.02em}
+  .section-subtitle{margin:6px 0 0;color:var(--muted)}
+  .section h3{margin:28px 0 10px;font-size:22px;line-height:1.25}
+  .section h4{margin:0 0 8px;font-size:18px;line-height:1.35}
+  .section p{margin:10px 0}
+  .term-en{color:var(--cyan);font-weight:700;font-size:.92em}
+  .muted{color:var(--muted)}
+  .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .card{padding:18px;border-radius:15px;background:var(--paper-2);border:1px solid var(--line)}
+  .card.blue{background:#eff6ff;border-color:#bfdbfe}
+  .card.green{background:var(--green-soft);border-color:#bbf7d0}
+  .card.amber{background:var(--amber-soft);border-color:#fde68a}
+  .card.red{background:var(--red-soft);border-color:#fecaca}
+  .card.violet{background:var(--violet-soft);border-color:#ddd6fe}
+  .note,.deep-dive,.warning,.success{
+    margin:16px 0;padding:16px 18px;border-radius:14px;border-left:5px solid
+  }
+  .note{background:#eff6ff;border-color:var(--blue-2)}
+  .deep-dive{background:var(--violet-soft);border-color:var(--violet)}
+  .warning{background:var(--amber-soft);border-color:#d97706}
+  .success{background:var(--green-soft);border-color:var(--green)}
+  .box-title{display:block;margin-bottom:5px;font-weight:900}
+  .formula{
+    margin:14px 0;padding:16px;border-radius:14px;background:#102a56;color:#f8fafc;
+    text-align:center;font-size:20px;font-weight:760;letter-spacing:.01em;overflow:auto
+  }
+  .formula.light{background:#f1f5f9;color:#172033;border:1px solid var(--line)}
+  .shape{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+  .shape-chip{display:inline-block;padding:4px 9px;border-radius:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+  .formula.light .shape-chip{background:#fff;border-color:#cbd5e1}
+  .matrix-line{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;margin:14px 0;font-size:19px}
+  .matrix-wrap{display:inline-block;position:relative;padding:5px 12px;vertical-align:middle}
+  .matrix-wrap::before,.matrix-wrap::after{content:"";position:absolute;top:0;bottom:0;width:8px;border-top:2px solid currentColor;border-bottom:2px solid currentColor}
+  .matrix-wrap::before{left:0;border-left:2px solid currentColor}.matrix-wrap::after{right:0;border-right:2px solid currentColor}
+  table.matrix{border-collapse:separate;border-spacing:12px 4px;margin:0}
+  table.matrix td{min-width:24px;text-align:center;white-space:nowrap}
+  .aug-divider{border-right:2px solid #64748b;padding-right:14px!important}
+  .labeled-matrix{display:grid;grid-template-columns:auto auto;gap:8px 10px;align-items:center;justify-content:center;margin:18px 0}
+  .col-labels{grid-column:2;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(44px,auto);gap:10px;justify-content:center;color:#1d4ed8;font-weight:900;font-size:14px}
+  .row-labels{display:grid;gap:8px;color:#b45309;font-weight:900;font-size:14px}
+  .matrix-wrap.large table.matrix{border-spacing:16px 8px;font-size:20px}
+  .matrix-caption{text-align:center;color:var(--muted);font-size:14px;margin-top:6px}
+  .worked-example{margin:18px 0;border-radius:16px;overflow:hidden;border:1px solid #bfdbfe;background:#fff}
+  .worked-title{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 16px;background:linear-gradient(90deg,#dbeafe,#ecfeff);font-weight:900;color:#163b73}
+  .worked-body{padding:18px}
+  .steps{display:grid;gap:11px;margin:14px 0}
+  .step{position:relative;padding:13px 14px 13px 48px;border-radius:12px;background:#f8fafc;border:1px solid var(--line)}
+  .step::before{content:attr(data-step);position:absolute;left:13px;top:12px;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#dbeafe;color:#1d4ed8;font-weight:900;font-size:13px}
+  .operator-read{display:grid;grid-template-columns:190px 1fr;gap:14px;align-items:start;margin:12px 0;padding:14px;border-radius:13px;background:#f8fafc;border:1px solid var(--line)}
+  .operator-code{padding:10px 12px;border-radius:10px;background:#0f274f;color:#fff;text-align:center;font-weight:900;white-space:nowrap}
+  .symbol-map{display:grid;grid-template-columns:130px 1fr;gap:8px 16px;padding:16px;border-radius:14px;background:#f8fafc;border:1px solid var(--line)}
+  .symbol-map dt{font-weight:900;color:#1d4ed8}.symbol-map dd{margin:0}
+  .compare-table,.data-table{width:100%;border-collapse:collapse;margin:14px 0}
+  .compare-table th,.compare-table td,.data-table th,.data-table td{padding:12px 13px;text-align:left;border:1px solid var(--line);vertical-align:top}
+  .compare-table th,.data-table th{background:#eff6ff;color:#1e3a8a}
+  .data-table td.num{text-align:center;font-family:"SFMono-Regular",Consolas,monospace}
+  .chip{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:850;background:#e0f2fe;color:#155e75}
+  .row-op-visual{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin:17px 0}
+  .row-op-arrow{font-size:28px;color:#2563eb;font-weight:900}
+  .calc-panel{padding:20px;border-radius:16px;background:#f8fafc;border:1px solid var(--line)}
+  .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .field label{display:block;margin-bottom:6px;font-size:14px;font-weight:850;color:#334155}
+  textarea.matrix-input{width:100%;min-height:118px;resize:vertical;padding:12px;border-radius:10px;border:1px solid #cbd5e1;background:#fff;font-family:"SFMono-Regular",Consolas,monospace;line-height:1.55}
+  .input-row{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-top:12px}
+  .input-row .field{min-width:140px;flex:1}
+  input[type="number"],select{width:100%;padding:9px 10px;border-radius:9px;border:1px solid #cbd5e1;background:#fff}
+  .calc-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+  .calc-buttons .btn{padding:9px 12px}
+  .result-box{min-height:92px;padding:15px;border-radius:12px;background:#fff;border:1px solid #cbd5e1}
+  .result-title{font-weight:900;color:#1e40af;margin-bottom:8px}
+  .history{display:grid;gap:7px;margin-top:12px;max-height:220px;overflow:auto}
+  .history-item{padding:9px 10px;border-radius:9px;background:#fff;border:1px solid var(--line);font-family:"SFMono-Regular",Consolas,monospace;font-size:14px}
+  .mistake-list{display:grid;gap:10px}
+  .mistake{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:12px;border-radius:12px;background:var(--red-soft);border:1px solid #fecaca}
+  .mistake-mark{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:#fee2e2;color:#b91c1c;font-weight:900}
+  .exercise-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe;margin-bottom:14px}
+  .exercise-lock-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border-radius:999px;background:#dbeafe;color:#1e40af;font-size:12px;font-weight:900}
+  .exercise-list{display:grid;gap:13px}
+  .exercise-group-title{margin-top:12px;padding:12px 14px;border-radius:12px;background:#102a56;color:#fff;font-weight:900}
+  .exercise-group-title small{display:block;margin-top:3px;color:#cbd5e1;font-weight:500}
+  details.exercise{border:1px solid var(--line);border-radius:13px;background:#fff;overflow:hidden}
+  details.exercise summary{position:relative;padding:14px 52px 14px 16px;list-style:none;font-weight:850;cursor:pointer;background:#f8fafc}
+  details.exercise summary::-webkit-details-marker{display:none}
+  details.exercise summary::after{content:"+";position:absolute;right:16px;top:10px;width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:#dbeafe;color:#1d4ed8;font-size:20px}
+  details.exercise[open] summary::after{content:"−"}
+  details.exercise[open]{border-color:#93c5fd;box-shadow:0 8px 20px rgba(37,99,235,.08)}
+  details.exercise[data-view="solution"][open]{border-color:#86efac}
+  details.exercise[data-view="solution"] summary{background:#f0fdf4}
+  details.exercise[data-view="solution"] summary::after{background:#dcfce7;color:#15803d}
+  .exercise-content{padding:16px 18px 18px}
+  .exercise-prompt> :first-child,.solution> :first-child{margin-top:0}
+  .exercise-prompt> :last-child,.solution> :last-child{margin-bottom:0}
+  .solution{padding:15px;border-radius:12px;background:var(--green-soft);border:1px solid #bbf7d0}
+  details.exercise[data-view="question"] .exercise-prompt{display:block}
+  details.exercise[data-view="question"] .solution{display:none}
+  details.exercise[data-view="solution"] .exercise-prompt{display:none}
+  details.exercise[data-view="solution"] .solution{display:block}
+  .exercise-view-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}
+  .exercise-state-label{font-size:13px;color:var(--muted);font-weight:800}
+  .exercise-switch{border:0;border-radius:9px;padding:8px 11px;background:#2563eb;color:#fff;font-weight:850}
+  details.exercise[data-view="solution"] .exercise-switch{background:#15803d}
+
+  .exercise-progress-card{margin:0 0 18px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#f8fbff,#eff6ff);border:1px solid #bfdbfe;box-shadow:0 8px 22px rgba(37,99,235,.07)}
+  .exercise-progress-main{display:flex;justify-content:space-between;gap:24px;align-items:center}
+  .exercise-progress-kicker{display:block;color:#1d4ed8;font-size:12px;font-weight:950;letter-spacing:.12em}
+  .exercise-progress-card h3{margin:3px 0 2px;font-size:22px}
+  .exercise-progress-card p{margin:0;color:var(--muted);font-size:14px}
+  .exercise-progress-stats{display:grid;grid-template-columns:repeat(3,92px);gap:8px}
+  .exercise-progress-stats div{padding:10px;border-radius:12px;background:#fff;border:1px solid #dbeafe;text-align:center}
+  .exercise-progress-stats strong{display:block;color:#1e40af;font-size:22px;line-height:1.15}
+  .exercise-progress-stats span{display:block;color:var(--muted);font-size:12px;font-weight:800}
+  .exercise-progress-track{height:10px;margin:14px 0;border-radius:999px;background:#dbeafe;overflow:hidden}
+  .exercise-progress-track span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#2563eb,#06b6d4);transition:width .25s ease}
+  .exercise-progress-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .exercise-format-tip{margin-left:auto;color:#475569;font-size:12px}
+  .auto-grade-panel{margin-top:16px;padding:16px;border-radius:14px;background:#f8fafc;border:1px solid #cbd5e1}
+  .auto-grade-head{display:flex;justify-content:space-between;gap:14px;align-items:start;margin-bottom:12px}
+  .auto-grade-head strong{display:block;color:#173b72;font-size:16px}
+  .auto-grade-head small{display:block;color:var(--muted);margin-top:2px}
+  .grade-point-chip{flex:0 0 auto;padding:4px 9px;border-radius:999px;background:#dbeafe;color:#1e40af;font-size:12px;font-weight:900}
+  .grade-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .grade-field{padding:11px;border-radius:11px;background:#fff;border:1px solid #d7e1ec;transition:border-color .18s,box-shadow .18s,background .18s}
+  .grade-field.wide{grid-column:1/-1}
+  .grade-field>label,.grade-field>.grade-label{display:block;margin-bottom:6px;color:#334155;font-size:13px;font-weight:900}
+  .grade-field.correct{border-color:#86efac;background:#f0fdf4;box-shadow:0 0 0 2px rgba(34,197,94,.08)}
+  .grade-field.incorrect{border-color:#fca5a5;background:#fef2f2;box-shadow:0 0 0 2px rgba(239,68,68,.06)}
+  .grade-input,.grade-select{width:100%;padding:9px 10px;border-radius:9px;border:1px solid #cbd5e1;background:#fff;color:var(--ink)}
+  textarea.grade-input{min-height:72px;resize:vertical;font-family:"SFMono-Regular",Consolas,monospace;line-height:1.45}
+  .grade-check-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  .grade-check{display:flex;gap:7px;align-items:center;padding:7px 8px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;font-size:13px}
+  .grade-check input{margin:0}
+  .grade-field-note{display:block;margin-top:5px;color:var(--muted);font-size:11px}
+  .grade-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .grade-actions .btn{padding:8px 11px}
+  .grade-attempts{margin-left:auto;color:var(--muted);font-size:12px;font-weight:800}
+  .grade-feedback{display:none;margin-top:11px;padding:11px 12px;border-radius:10px;font-size:14px;font-weight:750}
+  .grade-feedback.show{display:block}
+  .grade-feedback.good{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+  .grade-feedback.bad{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+  .grade-feedback.warn{background:#fffbeb;color:#854d0e;border:1px solid #fde68a}
+  .exercise-grade-badge{position:absolute;right:58px;top:12px;display:inline-flex;align-items:center;justify-content:center;min-width:72px;padding:4px 8px;border-radius:999px;background:#e2e8f0;color:#475569;font-size:11px;font-weight:950}
+  details.exercise summary{padding-right:142px}
+  details.exercise[data-grade-status="correct"]{border-color:#86efac}
+  details.exercise[data-grade-status="correct"] summary{background:#f0fdf4}
+  details.exercise[data-grade-status="correct"] .exercise-grade-badge{background:#dcfce7;color:#166534}
+  details.exercise[data-grade-status="incorrect"]{border-color:#fca5a5}
+  details.exercise[data-grade-status="incorrect"] summary{background:#fff7f7}
+  details.exercise[data-grade-status="incorrect"] .exercise-grade-badge{background:#fee2e2;color:#991b1b}
+  details.exercise[data-grade-status="dirty"] .exercise-grade-badge{background:#fef3c7;color:#92400e}
+
+  .quiz{padding:20px;border-radius:16px;background:#f8fafc;border:1px solid var(--line)}
+  .quiz-question{padding:14px;margin-bottom:12px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+  .quiz-question p{margin:0 0 8px;font-weight:850}
+  .quiz-question label{display:block;margin:6px 0}
+  .quiz-result{display:none;margin-top:14px;padding:14px;border-radius:12px;font-weight:850}
+  .quiz-result.show{display:block}.quiz-result.good{background:var(--green-soft);color:#166534;border:1px solid #bbf7d0}.quiz-result.mid{background:var(--amber-soft);color:#854d0e;border:1px solid #fde68a}.quiz-result.bad{background:var(--red-soft);color:#991b1b;border:1px solid #fecaca}
+  .glossary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .glossary-item{padding:12px;border-radius:11px;background:#f8fafc;border:1px solid var(--line)}
+  .checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .check-item{padding:12px;border-radius:11px;background:#f0fdf4;border:1px solid #bbf7d0}
+  .footer{margin-top:24px;padding:18px 20px;border-radius:16px;background:#0f274f;color:#cbd5e1;text-align:center;font-size:14px}
+  .footer strong{color:#fff}
+  @media print{
+    body{min-width:0;background:#fff;font-size:12pt}
+    .page-shell{width:auto;padding:0}
+    .hero{box-shadow:none;border-radius:0;min-height:auto}
+    .layout{display:block}
+    .sidebar,#reading-progress,.toolbar,.calc-panel,.quiz .btn,.exercise-toolbar,.exercise-progress-card,.auto-grade-panel,.exercise-grade-badge{display:none!important}
+    .section{box-shadow:none;break-inside:avoid}
+    details.exercise{break-inside:avoid}
+    details.exercise>summary{display:block}
+    details.exercise>.exercise-content{display:block!important}
+    details.exercise .exercise-prompt{display:block!important}
+    details.exercise .solution,.exercise-view-controls{display:none!important}
+  }
+</style>
+</head>
+<body data-lesson="ma-tran-chuyen-sau"><a href="../index.html" style="position:fixed;z-index:1200;top:14px;left:14px;padding:9px 13px;border-radius:10px;background:#fff;color:#1d4ed8;border:1px solid #93c5fd;box-shadow:0 8px 24px rgba(30,64,175,.18);font:800 14px Inter,system-ui;text-decoration:none">← Thư viện CS115</a>
+<div id="reading-progress"></div>
+<div class="page-shell">
+  <header class="hero">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">CS115 · Mathematics for Computer Science</span>
+        <h1>Ma trận và <span>phép tính ma trận</span></h1>
+        <p>
+          Bài học đi từ cách đọc một ma trận đến phép cộng, nhân, chuyển vị, nghịch đảo,
+          phép biến đổi sơ cấp trên hàng và khử Gauss. Mọi ký hiệu như
+          <strong>R<sub>1</sub>, R<sub>2</sub>, pivot, REF, RREF</strong> đều được giải thích từ đầu.
+        </p>
+        <div class="hero-tags">
+          <span class="hero-tag">Theme sáng · desktop</span>
+          <span class="hero-tag">Ví dụ từng bước</span>
+          <span class="hero-tag">Giải thích R₁, R₂</span>
+          <span class="hero-tag">Máy tính tương tác</span>
+          <span class="hero-tag">30 bài tự luyện</span>
+          <span class="hero-tag">Chấm bài tự động</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h2>Luồng kiến thức</h2>
+        <div class="knowledge-flow">
+          <div class="flow-item"><span class="flow-index">1</span><div><strong>Đọc ma trận</strong><small>Hàng, cột, kích thước, phần tử aᵢⱼ</small></div></div>
+          <div class="flow-item"><span class="flow-index">2</span><div><strong>Tính toán</strong><small>Cộng, trừ, nhân vô hướng, nhân ma trận</small></div></div>
+          <div class="flow-item"><span class="flow-index">3</span><div><strong>Biến đổi</strong><small>Chuyển vị, định thức, nghịch đảo</small></div></div>
+          <div class="flow-item"><span class="flow-index">4</span><div><strong>Khử Gauss</strong><small>R₁, R₂, pivot, REF và RREF</small></div></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <p class="sidebar-title">Mục lục</p>
+      <nav class="toc" id="toc">
+        <a href="#reading"><span class="toc-num">0</span><span>Cách đọc ma trận</span></a>
+        <a href="#definition"><span class="toc-num">1</span><span>Ma trận là gì?</span></a>
+        <a href="#types"><span class="toc-num">2</span><span>Các loại ma trận</span></a>
+        <a href="#basic-ops"><span class="toc-num">3</span><span>Cộng, trừ, nhân số</span></a>
+        <a href="#multiplication"><span class="toc-num">4</span><span>Nhân ma trận</span></a>
+        <a href="#transpose"><span class="toc-num">5</span><span>Chuyển vị</span></a>
+        <a href="#inverse"><span class="toc-num">6</span><span>Định thức và nghịch đảo</span></a>
+        <a href="#row-ops"><span class="toc-num">7</span><span>R₁, R₂ và phép biến đổi hàng</span></a>
+        <a href="#gauss"><span class="toc-num">8</span><span>Khử Gauss</span></a>
+        <a href="#calculator"><span class="toc-num">9</span><span>Máy tính tương tác</span></a>
+        <a href="#mistakes"><span class="toc-num">10</span><span>Lỗi thường gặp</span></a>
+        <a href="#exercises"><span class="toc-num">11</span><span>30 bài tự luyện</span></a>
+        <a href="#quiz"><span class="toc-num">12</span><span>Kiểm tra nhanh</span></a>
+        <a href="#glossary"><span class="toc-num">13</span><span>Thuật ngữ Việt–Anh</span></a>
+        <a href="#summary"><span class="toc-num">14</span><span>Tóm tắt</span></a>
+      </nav>
+      <div class="sidebar-tip">
+        <strong>Mẹo học:</strong> trước mỗi phép tính, hãy ghi kích thước của ma trận. Phần lớn lỗi
+        nhân ma trận xuất phát từ việc bỏ qua kích thước.
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-primary" id="jumpExercises">Đến bài tập</button>
+        <button class="btn btn-secondary" id="resetExercises">Đóng mọi bài tập</button>
+        <button class="btn btn-outline" onclick="window.print()">In / lưu PDF</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="section" id="reading">
+        <div class="section-head">
+          <div class="section-badge">0</div>
+          <div>
+            <h2>Nhìn một ma trận như thế nào?</h2>
+            <p class="section-subtitle">Trước khi tính, cần biết chính xác hàng, cột và vị trí của từng phần tử.</p>
+          </div>
+        </div>
+
+        <p>Xét ma trận A có 3 hàng và 4 cột:</p>
+        <div class="labeled-matrix">
+          <div></div>
+          <div class="col-labels"><span>C<sub>1</sub></span><span>C<sub>2</sub></span><span>C<sub>3</sub></span><span>C<sub>4</sub></span></div>
+          <div class="row-labels"><span>R<sub>1</sub></span><span>R<sub>2</sub></span><span>R<sub>3</sub></span></div>
+          <span class="matrix-wrap large">
+            <table class="matrix">
+              <tr><td>2</td><td>−1</td><td>0</td><td>5</td></tr>
+              <tr><td>3</td><td>4</td><td>−2</td><td>1</td></tr>
+              <tr><td>0</td><td>7</td><td>6</td><td>−3</td></tr>
+            </table>
+          </span>
+        </div>
+        <div class="matrix-caption">A ∈ ℝ<sup>3×4</sup>: ba hàng, bốn cột.</div>
+
+        <dl class="symbol-map">
+          <dt>R<sub>1</sub></dt><dd><strong>Row 1</strong> — toàn bộ hàng thứ nhất: (2, −1, 0, 5).</dd>
+          <dt>R<sub>2</sub></dt><dd><strong>Row 2</strong> — toàn bộ hàng thứ hai: (3, 4, −2, 1).</dd>
+          <dt>C<sub>3</sub></dt><dd><strong>Column 3</strong> — toàn bộ cột thứ ba: (0, −2, 6)<sup>T</sup>.</dd>
+          <dt>a<sub>23</sub></dt><dd>Phần tử ở <strong>hàng 2, cột 3</strong>, nên a<sub>23</sub> = −2.</dd>
+          <dt>3 × 4</dt><dd>Số trước là <strong>số hàng</strong>; số sau là <strong>số cột</strong>.</dd>
+        </dl>
+
+        <div class="note">
+          <span class="box-title">R<sub>1</sub>, R<sub>2</sub> không phải là hai số</span>
+          Chúng là tên viết tắt của <strong>toàn bộ hàng 1</strong> và <strong>toàn bộ hàng 2</strong>.
+          Khi viết R<sub>2</sub> ← R<sub>2</sub> − 2R<sub>1</sub>, ta thực hiện phép tính trên
+          từng phần tử của cả hàng, không chỉ trên một ô.
+        </div>
+
+        <div class="warning">
+          <span class="box-title">Chỉ số trong toán và trong Python khác nhau</span>
+          Trong toán, phần tử đầu tiên là a<sub>11</sub>. Trong Python/NumPy, phần tử đầu tiên
+          thường là <code>A[0][0]</code> hoặc <code>A[0, 0]</code> vì chỉ số bắt đầu từ 0.
+        </div>
+      </section>
+
+      <section class="section" id="definition">
+        <div class="section-head">
+          <div class="section-badge">1</div>
+          <div>
+            <h2>Ma trận là gì?</h2>
+            <p class="section-subtitle">Một bảng số có thứ tự, được tổ chức theo hàng và cột.</p>
+          </div>
+        </div>
+
+        <p>
+          Ma trận <span class="term-en">(matrix)</span> cấp m × n là một bảng gồm m hàng và n cột.
+          Phần tử tại hàng i, cột j được ký hiệu a<sub>ij</sub>. Ta thường viết:
+        </p>
+        <div class="formula">
+          A = (a<sub>ij</sub>)<sub>m×n</sub>, &nbsp; i = 1,…,m; &nbsp; j = 1,…,n
+        </div>
+
+        <div class="grid-3">
+          <div class="card blue">
+            <h4>Hàng <span class="term-en">(row)</span></h4>
+            <p>Một dãy nằm ngang. Ma trận m × n có m hàng.</p>
+          </div>
+          <div class="card green">
+            <h4>Cột <span class="term-en">(column)</span></h4>
+            <p>Một dãy thẳng đứng. Ma trận m × n có n cột.</p>
+          </div>
+          <div class="card violet">
+            <h4>Phần tử <span class="term-en">(entry)</span></h4>
+            <p>Một số tại vị trí xác định bởi cặp chỉ số (i, j).</p>
+          </div>
+        </div>
+
+        <h3>Tại sao thứ tự hàng–cột quan trọng?</h3>
+        <p>
+          Hai bảng chứa cùng các số nhưng sắp xếp khác nhau là hai ma trận khác nhau. Trong mô hình học máy,
+          mỗi hàng có thể là một mẫu dữ liệu và mỗi cột là một đặc trưng; đổi vị trí làm thay đổi ý nghĩa dữ liệu.
+        </p>
+
+        <div class="worked-example">
+          <div class="worked-title"><span>Ví dụ đọc ma trận</span><span>A có kích thước 2 × 3</span></div>
+          <div class="worked-body">
+            <div class="matrix-line">
+              <span>A =</span>
+              <span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>−2</td><td>4</td></tr><tr><td>0</td><td>5</td><td>3</td></tr></table></span>
+            </div>
+            <ul>
+              <li>a<sub>12</sub> = −2 vì nằm ở hàng 1, cột 2.</li>
+              <li>a<sub>23</sub> = 3 vì nằm ở hàng 2, cột 3.</li>
+              <li>R<sub>2</sub> = (0, 5, 3).</li>
+              <li>C<sub>1</sub> = (1, 0)<sup>T</sup>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="types">
+        <div class="section-head">
+          <div class="section-badge">2</div>
+          <div>
+            <h2>Các loại ma trận thường gặp</h2>
+            <p class="section-subtitle">Nhận dạng cấu trúc giúp chọn phép tính và thuật toán phù hợp.</p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <h4>Ma trận không <span class="term-en">(zero matrix)</span></h4>
+            <div class="matrix-line"><span class="matrix-wrap"><table class="matrix"><tr><td>0</td><td>0</td></tr><tr><td>0</td><td>0</td></tr></table></span></div>
+            <p>Mọi phần tử đều bằng 0. Ký hiệu thường là O hoặc 0.</p>
+          </div>
+          <div class="card">
+            <h4>Ma trận vuông <span class="term-en">(square matrix)</span></h4>
+            <div class="matrix-line"><span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table></span></div>
+            <p>Số hàng bằng số cột: n × n.</p>
+          </div>
+          <div class="card">
+            <h4>Ma trận chéo <span class="term-en">(diagonal matrix)</span></h4>
+            <div class="matrix-line"><span class="matrix-wrap"><table class="matrix"><tr><td>4</td><td>0</td><td>0</td></tr><tr><td>0</td><td>−2</td><td>0</td></tr><tr><td>0</td><td>0</td><td>7</td></tr></table></span></div>
+            <p>Mọi phần tử ngoài đường chéo chính bằng 0.</p>
+          </div>
+          <div class="card">
+            <h4>Ma trận đơn vị <span class="term-en">(identity matrix)</span></h4>
+            <div class="matrix-line"><span>I<sub>3</sub> =</span><span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>0</td><td>1</td></tr></table></span></div>
+            <p>Đóng vai trò như số 1: AI = IA = A.</p>
+          </div>
+          <div class="card">
+            <h4>Ma trận tam giác trên</h4>
+            <div class="matrix-line"><span class="matrix-wrap"><table class="matrix"><tr><td>2</td><td>1</td><td>4</td></tr><tr><td>0</td><td>3</td><td>−1</td></tr><tr><td>0</td><td>0</td><td>5</td></tr></table></span></div>
+            <p>Các phần tử phía dưới đường chéo chính bằng 0.</p>
+          </div>
+          <div class="card">
+            <h4>Ma trận đối xứng <span class="term-en">(symmetric matrix)</span></h4>
+            <div class="matrix-line"><span class="matrix-wrap"><table class="matrix"><tr><td>2</td><td>−1</td></tr><tr><td>−1</td><td>3</td></tr></table></span></div>
+            <p>A = A<sup>T</sup>, tương đương a<sub>ij</sub> = a<sub>ji</sub>.</p>
+          </div>
+        </div>
+
+        <div class="deep-dive">
+          <span class="box-title">Quan hệ bao hàm cần nhớ</span>
+          Ma trận đơn vị là một ma trận chéo đặc biệt; mọi ma trận chéo đều là ma trận vuông và đối xứng.
+          Chiều ngược lại không nhất thiết đúng.
+        </div>
+
+        <table class="compare-table">
+          <thead><tr><th>Loại</th><th>Cần vuông?</th><th>Điều kiện chính</th></tr></thead>
+          <tbody>
+            <tr><td>Ma trận vuông</td><td>Có</td><td>m = n</td></tr>
+            <tr><td>Ma trận chéo</td><td>Có</td><td>a<sub>ij</sub> = 0 khi i ≠ j</td></tr>
+            <tr><td>Ma trận đơn vị</td><td>Có</td><td>Đường chéo bằng 1, ngoài đường chéo bằng 0</td></tr>
+            <tr><td>Ma trận đối xứng</td><td>Có</td><td>A = A<sup>T</sup></td></tr>
+            <tr><td>Ma trận không</td><td>Không</td><td>Mọi phần tử bằng 0</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section" id="basic-ops">
+        <div class="section-head">
+          <div class="section-badge">3</div>
+          <div>
+            <h2>Cộng, trừ và nhân một số với ma trận</h2>
+            <p class="section-subtitle">Các phép toán theo từng vị trí tương ứng.</p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card blue">
+            <h4>Phép cộng <span class="term-en">(addition)</span></h4>
+            <div class="formula light">(A + B)<sub>ij</sub> = a<sub>ij</sub> + b<sub>ij</sub></div>
+            <p>Chỉ thực hiện được khi A và B có cùng kích thước.</p>
+          </div>
+          <div class="card green">
+            <h4>Phép trừ <span class="term-en">(subtraction)</span></h4>
+            <div class="formula light">(A − B)<sub>ij</sub> = a<sub>ij</sub> − b<sub>ij</sub></div>
+            <p>Cũng yêu cầu cùng kích thước.</p>
+          </div>
+          <div class="card violet">
+            <h4>Nhân vô hướng <span class="term-en">(scalar multiplication)</span></h4>
+            <div class="formula light">(cA)<sub>ij</sub> = c·a<sub>ij</sub></div>
+            <p>Nhân cùng một số c vào mọi phần tử.</p>
+          </div>
+        </div>
+
+        <h3>Tại sao phép cộng cần cùng kích thước?</h3>
+        <p>
+          Phép cộng ghép các phần tử cùng vị trí. Nếu A có ô hàng 3 cột 2 nhưng B không có vị trí đó,
+          ta không biết phải cộng a<sub>32</sub> với phần tử nào.
+        </p>
+
+        <div class="worked-example">
+          <div class="worked-title"><span>Ví dụ: tính 2A − 3B</span><span>Cùng kích thước 2 × 3</span></div>
+          <div class="worked-body">
+            <div class="matrix-line">
+              <span>A =</span><span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>−2</td><td>3</td></tr><tr><td>0</td><td>4</td><td>1</td></tr></table></span>
+              <span>B =</span><span class="matrix-wrap"><table class="matrix"><tr><td>2</td><td>1</td><td>−1</td></tr><tr><td>3</td><td>0</td><td>5</td></tr></table></span>
+            </div>
+            <div class="steps">
+              <div class="step" data-step="1">2A = [[2, −4, 6], [0, 8, 2]].</div>
+              <div class="step" data-step="2">3B = [[6, 3, −3], [9, 0, 15]].</div>
+              <div class="step" data-step="3">Trừ theo từng vị trí: 2A − 3B.</div>
+            </div>
+            <div class="matrix-line">
+              <span>2A − 3B =</span>
+              <span class="matrix-wrap"><table class="matrix"><tr><td>−4</td><td>−7</td><td>9</td></tr><tr><td>−9</td><td>8</td><td>−13</td></tr></table></span>
+            </div>
+            <p>Ví dụ ô hàng 1 cột 3: 2·3 − 3·(−1) = 6 + 3 = 9.</p>
+          </div>
+        </div>
+
+        <table class="compare-table">
+          <thead><tr><th>Tính chất</th><th>Công thức</th><th>Ghi chú</th></tr></thead>
+          <tbody>
+            <tr><td>Giao hoán của phép cộng</td><td>A + B = B + A</td><td>Đúng khi cùng kích thước.</td></tr>
+            <tr><td>Kết hợp của phép cộng</td><td>(A + B) + C = A + (B + C)</td><td>Có thể đổi cách nhóm.</td></tr>
+            <tr><td>Phân phối với số</td><td>c(A + B) = cA + cB</td><td>Nhân c vào từng phần tử.</td></tr>
+            <tr><td>Ma trận không</td><td>A + O = A</td><td>O cùng kích thước với A.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section" id="multiplication">
+        <div class="section-head">
+          <div class="section-badge">4</div>
+          <div>
+            <h2>Phép nhân ma trận</h2>
+            <p class="section-subtitle">Phép nhân hàng–cột, không phải nhân từng ô cùng vị trí.</p>
+          </div>
+        </div>
+
+        <div class="formula">
+          <span class="shape">
+            <span class="shape-chip">A: m × n</span>
+            <span>·</span>
+            <span class="shape-chip">B: n × p</span>
+            <span>→</span>
+            <span class="shape-chip">AB: m × p</span>
+          </span>
+        </div>
+        <div class="note">
+          <span class="box-title">Mẹo nhớ kích thước</span>
+          Hai số “ở giữa” phải bằng nhau và biến mất:
+          <strong>(m × <u>n</u>)(<u>n</u> × p) = m × p</strong>.
+        </div>
+
+        <h3>Tại sao “số cột của A = số hàng của B”?</h3>
+        <p>
+          Để tính c<sub>ij</sub>, ta lấy hàng i của A nhân từng phần tử tương ứng với cột j của B rồi cộng.
+          Hai dãy này phải có cùng số phần tử. Hàng của A dài n nên cột của B cũng phải dài n.
+        </p>
+        <div class="formula light">
+          c<sub>ij</sub> = a<sub>i1</sub>b<sub>1j</sub> + a<sub>i2</sub>b<sub>2j</sub> + … + a<sub>in</sub>b<sub>nj</sub>
+        </div>
+
+        <div class="worked-example">
+          <div class="worked-title"><span>Ví dụ chi tiết: A<sub>2×3</sub>B<sub>3×2</sub></span><span>Kết quả 2 × 2</span></div>
+          <div class="worked-body">
+            <div class="matrix-line">
+              <span>A =</span>
+              <span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>2</td><td>−1</td></tr><tr><td>3</td><td>0</td><td>4</td></tr></table></span>
+              <span>B =</span>
+              <span class="matrix-wrap"><table class="matrix"><tr><td>2</td><td>1</td></tr><tr><td>−1</td><td>3</td></tr><tr><td>5</td><td>2</td></tr></table></span>
+            </div>
+            <div class="steps">
+              <div class="step" data-step="1"><strong>c<sub>11</sub>:</strong> hàng 1 của A · cột 1 của B = 1·2 + 2·(−1) + (−1)·5 = −5.</div>
+              <div class="step" data-step="2"><strong>c<sub>12</sub>:</strong> hàng 1 của A · cột 2 của B = 1·1 + 2·3 + (−1)·2 = 5.</div>
+              <div class="step" data-step="3"><strong>c<sub>21</sub>:</strong> hàng 2 của A · cột 1 của B = 3·2 + 0·(−1) + 4·5 = 26.</div>
+              <div class="step" data-step="4"><strong>c<sub>22</sub>:</strong> hàng 2 của A · cột 2 của B = 3·1 + 0·3 + 4·2 = 11.</div>
+            </div>
+            <div class="matrix-line">
+              <span>AB =</span>
+              <span class="matrix-wrap"><table class="matrix"><tr><td>−5</td><td>5</td></tr><tr><td>26</td><td>11</td></tr></table></span>
+            </div>
+          </div>
+        </div>
+
+        <h3>Nhân ma trận và nhân từng phần tử khác nhau</h3>
+        <table class="compare-table">
+          <thead><tr><th>Phép toán</th><th>Cách làm</th><th>Ký hiệu thường gặp</th></tr></thead>
+          <tbody>
+            <tr><td>Nhân ma trận</td><td>Hàng của A nhân cột của B rồi cộng.</td><td>AB hoặc A @ B trong NumPy</td></tr>
+            <tr><td>Nhân từng phần tử</td><td>Nhân các ô cùng vị trí; yêu cầu cùng kích thước.</td><td>A ⊙ B, Hadamard product, A * B trong NumPy</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Tại sao AB thường không bằng BA?</h3>
+        <p>
+          Khi đổi thứ tự, ta đổi vai trò hàng và cột. Thậm chí có trường hợp AB tồn tại nhưng BA không tồn tại;
+          hoặc cả hai tồn tại nhưng có kích thước hay giá trị khác nhau.
+        </p>
+        <div class="worked-example">
+          <div class="worked-title"><span>Ví dụ phản chứng tính giao hoán</span><span>AB ≠ BA</span></div>
+          <div class="worked-body">
+            <div class="matrix-line">
+              <span>A =</span><span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>1</td></tr><tr><td>0</td><td>1</td></tr></table></span>
+              <span>B =</span><span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>0</td></tr><tr><td>1</td><td>1</td></tr></table></span>
+            </div>
+            <div class="matrix-line">
+              <span>AB =</span><span class="matrix-wrap"><table class="matrix"><tr><td>2</td><td>1</td></tr><tr><td>1</td><td>1</td></tr></table></span>
+              <span>BA =</span><span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>1</td></tr><tr><td>1</td><td>2</td></tr></table></span>
+            </div>
+          </div>
+        </div>
+
+        <table class="compare-table">
+          <thead><tr><th>Tính chất</th><th>Đúng?</th><th>Công thức</th></tr></thead>
+          <tbody>
+            <tr><td>Kết hợp</td><td>Có</td><td>(AB)C = A(BC)</td></tr>
+            <tr><td>Phân phối</td><td>Có</td><td>A(B + C) = AB + AC</td></tr>
+            <tr><td>Nhân ma trận đơn vị</td><td>Có</td><td>AI = IA = A</td></tr>
+            <tr><td>Giao hoán</td><td><strong>Không nói chung</strong></td><td>AB thường khác BA</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section" id="transpose">
+        <div class="section-head">
+          <div class="section-badge">5</div>
+          <div>
+            <h2>Ma trận chuyển vị</h2>
+            <p class="section-subtitle">Đổi hàng thành cột và cột thành hàng.</p>
+          </div>
+        </div>
+
+        <p>
+          Chuyển vị <span class="term-en">(transpose)</span> của A ký hiệu A<sup>T</sup>.
+          Nếu A có kích thước m × n thì A<sup>T</sup> có kích thước n × m:
+        </p>
+        <div class="formula light">(A<sup>T</sup>)<sub>ij</sub> = A<sub>ji</sub></div>
+        <div class="matrix-line">
+          <span>A =</span>
+          <span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>2</td><td>3</td></tr><tr><td>4</td><td>5</td><td>6</td></tr></table></span>
+          <span>⇒ A<sup>T</sup> =</span>
+          <span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>4</td></tr><tr><td>2</td><td>5</td></tr><tr><td>3</td><td>6</td></tr></table></span>
+        </div>
+
+        <h3>Các tính chất quan trọng</h3>
+        <div class="grid-2">
+          <div class="card blue"><h4>Chuyển vị hai lần</h4><div class="formula light">(A<sup>T</sup>)<sup>T</sup> = A</div></div>
+          <div class="card green"><h4>Chuyển vị của tổng</h4><div class="formula light">(A + B)<sup>T</sup> = A<sup>T</sup> + B<sup>T</sup></div></div>
+          <div class="card violet"><h4>Chuyển vị của tích</h4><div class="formula light">(AB)<sup>T</sup> = B<sup>T</sup>A<sup>T</sup></div></div>
+          <div class="card amber"><h4>Ma trận đối xứng</h4><div class="formula light">A<sup>T</sup> = A</div></div>
+        </div>
+
+        <div class="deep-dive">
+          <span class="box-title">Tại sao chuyển vị của tích phải đảo thứ tự?</span>
+          Trong AB, A tác động trước theo phía trái và B nằm phía phải. Khi đổi hàng thành cột,
+          cấu trúc hàng–cột bị lật nên thứ tự trở thành B<sup>T</sup>A<sup>T</sup>.
+          Nếu chỉ viết A<sup>T</sup>B<sup>T</sup>, kích thước nhiều trường hợp còn không khớp.
+        </div>
+      </section>
+
+      <section class="section" id="inverse">
+        <div class="section-head">
+          <div class="section-badge">6</div>
+          <div>
+            <h2>Định thức và ma trận nghịch đảo</h2>
+            <p class="section-subtitle">Nghịch đảo “hoàn tác” tác động của một ma trận khả nghịch.</p>
+          </div>
+        </div>
+
+        <h3>6.1 Định thức của ma trận 2 × 2</h3>
+        <p>Với A = [[a,b],[c,d]], định thức <span class="term-en">(determinant)</span> là:</p>
+        <div class="formula">det(A) = ad − bc</div>
+
+        <div class="grid-2">
+          <div class="card green">
+            <h4>det(A) ≠ 0</h4>
+            <p>A khả nghịch <span class="term-en">(invertible / nonsingular)</span>.</p>
+          </div>
+          <div class="card red">
+            <h4>det(A) = 0</h4>
+            <p>A suy biến <span class="term-en">(singular)</span>, không có nghịch đảo.</p>
+          </div>
+        </div>
+
+        <div class="deep-dive">
+          <span class="box-title">Trực giác bổ sung</span>
+          Trong hai chiều, |det(A)| có thể hiểu là hệ số thay đổi diện tích khi A biến đổi hình.
+          det(A) = 0 nghĩa là mặt phẳng bị ép xuống một đường hoặc một điểm, nên không thể hoàn tác duy nhất.
+        </div>
+
+        <h3>6.2 Công thức nghịch đảo 2 × 2</h3>
+        <div class="formula">
+          A<sup>−1</sup> = 1/(ad − bc)
+          · [[d, −b], [−c, a]], &nbsp; nếu ad − bc ≠ 0
+        </div>
+        <p>Định nghĩa nghịch đảo:</p>
+        <div class="formula light">AA<sup>−1</sup> = A<sup>−1</sup>A = I</div>
+
+        <div class="worked-example">
+          <div class="worked-title"><span>Ví dụ: tìm nghịch đảo và kiểm tra</span><span>det(A) = 1</span></div>
+          <div class="worked-body">
+            <div class="matrix-line">
+              <span>A =</span><span class="matrix-wrap"><table class="matrix"><tr><td>2</td><td>1</td></tr><tr><td>1</td><td>1</td></tr></table></span>
+            </div>
+            <div class="steps">
+              <div class="step" data-step="1">det(A) = 2·1 − 1·1 = 1 ≠ 0, nên A có nghịch đảo.</div>
+              <div class="step" data-step="2">Đổi chỗ 2 và 1 trên đường chéo chính; đổi dấu hai phần tử còn lại.</div>
+              <div class="step" data-step="3">Chia cho det(A) = 1.</div>
+            </div>
+            <div class="matrix-line">
+              <span>A<sup>−1</sup> =</span>
+              <span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>−1</td></tr><tr><td>−1</td><td>2</td></tr></table></span>
+            </div>
+            <div class="matrix-line">
+              <span>AA<sup>−1</sup> =</span>
+              <span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>0</td></tr><tr><td>0</td><td>1</td></tr></table></span>
+              <span>= I<sub>2</sub></span>
+            </div>
+          </div>
+        </div>
+
+        <table class="compare-table">
+          <thead><tr><th>Chuyển vị A<sup>T</sup></th><th>Nghịch đảo A<sup>−1</sup></th></tr></thead>
+          <tbody>
+            <tr><td>Luôn tồn tại với mọi ma trận.</td><td>Chỉ tồn tại với ma trận vuông khả nghịch.</td></tr>
+            <tr><td>Đổi hàng thành cột.</td><td>Hoàn tác phép biến đổi của A.</td></tr>
+            <tr><td>Kích thước m × n thành n × m.</td><td>Cùng kích thước n × n với A.</td></tr>
+            <tr><td>Không cần định thức khác 0.</td><td>Với ma trận vuông, cần det(A) ≠ 0.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section" id="row-ops">
+        <div class="section-head">
+          <div class="section-badge">7</div>
+          <div>
+            <h2>R<sub>1</sub>, R<sub>2</sub> và phép biến đổi sơ cấp trên hàng</h2>
+            <p class="section-subtitle">Phần ký hiệu thường gây nhầm nhất khi mới học khử Gauss.</p>
+          </div>
+        </div>
+
+        <div class="success">
+          <span class="box-title">Cách đọc ký hiệu</span>
+          <strong>R</strong> là viết tắt của <em>row</em> — hàng.
+          R<sub>1</sub> là toàn bộ hàng 1, R<sub>2</sub> là toàn bộ hàng 2.
+          Chỉ số nhỏ cho biết số thứ tự hàng, không phải số mũ.
+        </div>
+
+        <div class="operator-read">
+          <div class="operator-code">R₂ ← R₂ − 2R₁</div>
+          <div>
+            Đọc là: <strong>“Thay hàng 2 bằng hàng 2 cũ trừ 2 lần hàng 1.”</strong>
+            Hàng 1 giữ nguyên; chỉ hàng 2 bị thay thế.
+          </div>
+        </div>
+
+        <div class="warning">
+          <span class="box-title">Dấu ← không phải dấu =</span>
+          Dấu mũi tên là thao tác gán/thay thế. Nếu viết R<sub>2</sub> = R<sub>2</sub> − 2R<sub>1</sub>
+          như một đẳng thức thông thường thì sẽ suy ra 2R<sub>1</sub> = 0, không đúng ý.
+        </div>
+
+        <h3>Ví dụ tính R<sub>2</sub> ← R<sub>2</sub> − 2R<sub>1</sub> từng ô</h3>
+        <p>Xét ma trận bổ sung của một hệ phương trình:</p>
+        <div class="row-op-visual">
+          <div>
+            <div class="matrix-line">
+              <span class="matrix-wrap large"><table class="matrix">
+                <tr><td>1</td><td>2</td><td class="aug-divider">−1</td><td>3</td></tr>
+                <tr><td>2</td><td>5</td><td class="aug-divider">1</td><td>8</td></tr>
+              </table></span>
+            </div>
+            <p class="matrix-caption">R₁ = [1, 2, −1 | 3], R₂ = [2, 5, 1 | 8]</p>
+          </div>
+          <div class="row-op-arrow">→</div>
+          <div>
+            <div class="matrix-line">
+              <span class="matrix-wrap large"><table class="matrix">
+                <tr><td>1</td><td>2</td><td class="aug-divider">−1</td><td>3</td></tr>
+                <tr><td>0</td><td>1</td><td class="aug-divider">3</td><td>2</td></tr>
+              </table></span>
+            </div>
+            <p class="matrix-caption">R₂ mới = [0, 1, 3 | 2]</p>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead><tr><th>Vị trí</th><th>Phép tính</th><th>Kết quả</th></tr></thead>
+          <tbody>
+            <tr><td>Cột 1</td><td>2 − 2·1</td><td class="num">0</td></tr>
+            <tr><td>Cột 2</td><td>5 − 2·2</td><td class="num">1</td></tr>
+            <tr><td>Cột 3</td><td>1 − 2·(−1)</td><td class="num">3</td></tr>
+            <tr><td>Cột hằng số</td><td>8 − 2·3</td><td class="num">2</td></tr>
+          </tbody>
+        </table>
+
+        <div class="note">
+          <span class="box-title">Dấu “|” trong ma trận bổ sung</span>
+          Cột bên phải dấu | là vector hằng số b. Khi biến đổi hàng, phải biến đổi
+          <strong>cả hàng, bao gồm cột hằng số</strong>. Quên cột này sẽ làm thay đổi hệ phương trình sai cách.
+        </div>
+
+        <h3>Ba phép biến đổi sơ cấp hợp lệ</h3>
+        <div class="grid-3">
+          <div class="card blue">
+            <h4>1. Đổi chỗ hai hàng</h4>
+            <div class="formula light">R<sub>i</sub> ↔ R<sub>j</sub></div>
+            <p>Chỉ đổi thứ tự các phương trình.</p>
+          </div>
+          <div class="card green">
+            <h4>2. Nhân hàng với số khác 0</h4>
+            <div class="formula light">R<sub>i</sub> ← cR<sub>i</sub>, c ≠ 0</div>
+            <p>Nhân cả hai vế của phương trình với c.</p>
+          </div>
+          <div class="card violet">
+            <h4>3. Cộng bội của hàng khác</h4>
+            <div class="formula light">R<sub>i</sub> ← R<sub>i</sub> + cR<sub>j</sub></div>
+            <p>Dùng để tạo số 0 tại vị trí cần khử.</p>
+          </div>
+        </div>
+
+        <h3>Tại sao các phép này không làm đổi tập nghiệm?</h3>
+        <ul>
+          <li>Đổi hàng chỉ đổi thứ tự phương trình.</li>
+          <li>Nhân với số khác 0 có thể hoàn tác bằng cách chia cho số đó.</li>
+          <li>Cộng bội hàng khác có thể hoàn tác bằng cách trừ đúng bội đó.</li>
+        </ul>
+
+        <div class="deep-dive">
+          <span class="box-title">R<sub>1</sub>, R<sub>2</sub> khác x<sub>1</sub>, x<sub>2</sub></span>
+          R<sub>i</sub> là hàng của ma trận; x<sub>i</sub> là biến hoặc phần tử của vector ẩn.
+          Ví dụ R<sub>2</sub> ← R<sub>2</sub> − 2R<sub>1</sub> là thao tác trên hai phương trình,
+          không có nghĩa x<sub>2</sub> ← x<sub>2</sub> − 2x<sub>1</sub>.
+        </div>
+      </section>
+
+      <section class="section" id="gauss">
+        <div class="section-head">
+          <div class="section-badge">8</div>
+          <div>
+            <h2>Khử Gauss và Gauss–Jordan</h2>
+            <p class="section-subtitle">Tạo các số 0 có chủ đích để đưa hệ về dạng dễ giải.</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card blue">
+            <h4>Khử Gauss <span class="term-en">(Gaussian elimination)</span></h4>
+            <p>Đưa ma trận về dạng bậc thang hàng (REF), rồi thế ngược.</p>
+          </div>
+          <div class="card green">
+            <h4>Gauss–Jordan</h4>
+            <p>Tiếp tục khử phía trên pivot để thu dạng bậc thang rút gọn (RREF).</p>
+          </div>
+        </div>
+
+        <h3>Pivot là gì?</h3>
+        <p>
+          Pivot <span class="term-en">(phần tử trụ)</span> là phần tử khác 0 đầu tiên của một hàng
+          trong dạng bậc thang. Ta dùng pivot để khử các phần tử cùng cột.
+        </p>
+
+        <div class="worked-example">
+          <div class="worked-title"><span>Ví dụ đầy đủ: giải hệ ba ẩn</span><span>Kết quả (x,y,z) = (6,−1,1)</span></div>
+          <div class="worked-body">
+            <div class="formula light">
+              x + 2y − z = 3<br>
+              2x + 5y + z = 8<br>
+              3x + 8y + 2z = 12
+            </div>
+            <p>Ma trận bổ sung:</p>
+            <div class="matrix-line">
+              <span class="matrix-wrap large"><table class="matrix">
+                <tr><td>1</td><td>2</td><td class="aug-divider">−1</td><td>3</td></tr>
+                <tr><td>2</td><td>5</td><td class="aug-divider">1</td><td>8</td></tr>
+                <tr><td>3</td><td>8</td><td class="aug-divider">2</td><td>12</td></tr>
+              </table></span>
+            </div>
+
+            <div class="steps">
+              <div class="step" data-step="1">
+                Khử x ở R₂: R<sub>2</sub> ← R<sub>2</sub> − 2R<sub>1</sub>
+                ⇒ R₂ = [0, 1, 3 | 2].
+              </div>
+              <div class="step" data-step="2">
+                Khử x ở R₃: R<sub>3</sub> ← R<sub>3</sub> − 3R<sub>1</sub>
+                ⇒ R₃ = [0, 2, 5 | 3].
+              </div>
+              <div class="step" data-step="3">
+                Khử y ở R₃: R<sub>3</sub> ← R<sub>3</sub> − 2R<sub>2</sub>
+                ⇒ R₃ = [0, 0, −1 | −1].
+              </div>
+              <div class="step" data-step="4">
+                Chuẩn hóa pivot: R<sub>3</sub> ← −R<sub>3</sub>
+                ⇒ R₃ = [0, 0, 1 | 1].
+              </div>
+            </div>
+
+            <p>Dạng bậc thang:</p>
+            <div class="matrix-line">
+              <span class="matrix-wrap large"><table class="matrix">
+                <tr><td>1</td><td>2</td><td class="aug-divider">−1</td><td>3</td></tr>
+                <tr><td>0</td><td>1</td><td class="aug-divider">3</td><td>2</td></tr>
+                <tr><td>0</td><td>0</td><td class="aug-divider">1</td><td>1</td></tr>
+              </table></span>
+            </div>
+
+            <h4>Thế ngược</h4>
+            <ol>
+              <li>R₃: z = 1.</li>
+              <li>R₂: y + 3z = 2 ⇒ y + 3 = 2 ⇒ y = −1.</li>
+              <li>R₁: x + 2y − z = 3 ⇒ x − 2 − 1 = 3 ⇒ x = 6.</li>
+            </ol>
+
+            <h4>Tiếp tục Gauss–Jordan để về RREF</h4>
+            <div class="steps">
+              <div class="step" data-step="5">R₂ ← R₂ − 3R₃ ⇒ [0, 1, 0 | −1].</div>
+              <div class="step" data-step="6">R₁ ← R₁ + R₃ ⇒ [1, 2, 0 | 4].</div>
+              <div class="step" data-step="7">R₁ ← R₁ − 2R₂ ⇒ [1, 0, 0 | 6].</div>
+            </div>
+            <div class="matrix-line">
+              <span class="matrix-wrap large"><table class="matrix">
+                <tr><td>1</td><td>0</td><td class="aug-divider">0</td><td>6</td></tr>
+                <tr><td>0</td><td>1</td><td class="aug-divider">0</td><td>−1</td></tr>
+                <tr><td>0</td><td>0</td><td class="aug-divider">1</td><td>1</td></tr>
+              </table></span>
+            </div>
+          </div>
+        </div>
+
+        <h3>Nhận biết số nghiệm từ ma trận bậc thang</h3>
+        <table class="compare-table">
+          <thead><tr><th>Hình dạng</th><th>Kết luận</th><th>Lý do</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="mono">[0 0 … 0 | c]</span>, c ≠ 0</td>
+              <td>Vô nghiệm</td>
+              <td>Tương đương phương trình 0 = c, mâu thuẫn.</td>
+            </tr>
+            <tr>
+              <td>Không có hàng mâu thuẫn, mỗi biến có pivot</td>
+              <td>Nghiệm duy nhất</td>
+              <td>Không còn biến tự do.</td>
+            </tr>
+            <tr>
+              <td>Không có hàng mâu thuẫn, thiếu pivot ở một số cột biến</td>
+              <td>Vô số nghiệm</td>
+              <td>Có ít nhất một biến tự do.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="warning">
+          <span class="box-title">“Số biến lớn hơn số phương trình” chưa đủ để kết luận vô số nghiệm</span>
+          Hệ còn phải <strong>nhất quán</strong> — không xuất hiện hàng mâu thuẫn. Nếu có hàng
+          [0 … 0 | c] với c ≠ 0 thì vẫn vô nghiệm.
+        </div>
+      </section>
+
+      <section class="section" id="calculator">
+        <div class="section-head">
+          <div class="section-badge">9</div>
+          <div>
+            <h2>Máy tính ma trận và mô phỏng phép biến đổi hàng</h2>
+            <p class="section-subtitle">Dùng để kiểm tra kết quả sau khi đã tự tính trên giấy.</p>
+          </div>
+        </div>
+
+        <div class="calc-panel">
+          <h3 style="margin-top:0">9.1 Máy tính A và B</h3>
+          <p class="muted">Mỗi hàng nhập trên một dòng; các số cách nhau bằng dấu cách hoặc dấu phẩy.</p>
+          <div class="calc-grid">
+            <div class="field">
+              <label for="matrixA">Ma trận A</label>
+              <textarea class="matrix-input" id="matrixA">1 2
+3 4</textarea>
+            </div>
+            <div class="field">
+              <label for="matrixB">Ma trận B</label>
+              <textarea class="matrix-input" id="matrixB">2 0
+-1 5</textarea>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="field" style="max-width:220px">
+              <label for="scalarValue">Số vô hướng c</label>
+              <input id="scalarValue" type="number" value="2" step="any">
+            </div>
+          </div>
+          <div class="calc-buttons">
+            <button class="btn btn-primary" data-matrix-op="add">A + B</button>
+            <button class="btn btn-primary" data-matrix-op="subtract">A − B</button>
+            <button class="btn btn-primary" data-matrix-op="multiply">A × B</button>
+            <button class="btn btn-outline" data-matrix-op="transposeA">Aᵀ</button>
+            <button class="btn btn-outline" data-matrix-op="transposeB">Bᵀ</button>
+            <button class="btn btn-outline" data-matrix-op="scalarA">cA</button>
+            <button class="btn btn-outline" data-matrix-op="detA">det(A)</button>
+          </div>
+          <div class="result-box" id="matrixResult" aria-live="polite">
+            <div class="result-title">Kết quả</div>
+            <span class="muted">Chọn một phép toán.</span>
+          </div>
+        </div>
+
+        <div class="calc-panel" style="margin-top:18px">
+          <h3 style="margin-top:0">9.2 Mô phỏng phép biến đổi hàng</h3>
+          <p class="muted">
+            Có thể dùng dấu | để phân cách cột hằng số. Trình mô phỏng vẫn tính trên toàn bộ hàng.
+          </p>
+          <div class="field">
+            <label for="rowMatrix">Ma trận / ma trận bổ sung</label>
+            <textarea class="matrix-input" id="rowMatrix">1 2 -1 | 3
+2 5 1 | 8
+3 8 2 | 12</textarea>
+          </div>
+          <div class="input-row">
+            <div class="field">
+              <label for="rowOperation">Phép toán</label>
+              <select id="rowOperation">
+                <option value="add">Rᵢ ← Rᵢ + cRⱼ</option>
+                <option value="scale">Rᵢ ← cRᵢ</option>
+                <option value="swap">Rᵢ ↔ Rⱼ</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="targetRow">Hàng đích i</label>
+              <select id="targetRow"></select>
+            </div>
+            <div class="field">
+              <label for="sourceRow">Hàng nguồn j</label>
+              <select id="sourceRow"></select>
+            </div>
+            <div class="field">
+              <label for="rowFactor">Hệ số c</label>
+              <input id="rowFactor" type="number" value="-2" step="any">
+            </div>
+          </div>
+          <div class="calc-buttons">
+            <button class="btn btn-primary" id="applyRowOperation">Thực hiện phép biến đổi</button>
+            <button class="btn btn-secondary" id="resetRowMatrix">Khôi phục ví dụ</button>
+          </div>
+          <div class="result-box" id="rowResult" aria-live="polite">
+            <div class="result-title">Giải thích thao tác</div>
+            <span class="muted">Ví dụ ban đầu phù hợp với R₂ ← R₂ − 2R₁.</span>
+          </div>
+          <div class="history" id="rowHistory"></div>
+        </div>
+      </section>
+
+      <section class="section" id="mistakes">
+        <div class="section-head">
+          <div class="section-badge">10</div>
+          <div>
+            <h2>Lỗi thường gặp và cách tự kiểm tra</h2>
+            <p class="section-subtitle">Những lỗi nhỏ về ký hiệu thường dẫn đến sai cả bài.</p>
+          </div>
+        </div>
+        <div class="mistake-list">
+          <div class="mistake"><span class="mistake-mark">1</span><div><strong>Cộng hai ma trận khác kích thước.</strong><br>Kiểm tra cùng số hàng và cùng số cột trước khi cộng.</div></div>
+          <div class="mistake"><span class="mistake-mark">2</span><div><strong>Nhân ma trận bằng cách nhân từng ô.</strong><br>Nhân ma trận chuẩn là hàng–cột; nhân từng ô là phép Hadamard khác.</div></div>
+          <div class="mistake"><span class="mistake-mark">3</span><div><strong>Chỉ nhìn kích thước ngoài khi nhân.</strong><br>Phải kiểm tra hai kích thước ở giữa: (m×n)(n×p).</div></div>
+          <div class="mistake"><span class="mistake-mark">4</span><div><strong>Giả sử AB = BA.</strong><br>Phép nhân ma trận không giao hoán nói chung.</div></div>
+          <div class="mistake"><span class="mistake-mark">5</span><div><strong>Viết (AB)ᵀ = AᵀBᵀ.</strong><br>Công thức đúng là (AB)ᵀ = BᵀAᵀ.</div></div>
+          <div class="mistake"><span class="mistake-mark">6</span><div><strong>Lấy nghịch đảo bằng cách đảo từng phần tử.</strong><br>A⁻¹ không phải ma trận gồm 1/aᵢⱼ.</div></div>
+          <div class="mistake"><span class="mistake-mark">7</span><div><strong>Hiểu R₂ là phần tử thứ hai.</strong><br>R₂ là toàn bộ hàng thứ hai.</div></div>
+          <div class="mistake"><span class="mistake-mark">8</span><div><strong>Quên biến đổi cột hằng số sau dấu |.</strong><br>Phép biến đổi hàng phải áp dụng cho mọi phần tử trong hàng.</div></div>
+          <div class="mistake"><span class="mistake-mark">9</span><div><strong>Vừa thay R₁ vừa dùng R₁ mới trong cùng bước không nói rõ.</strong><br>Mỗi thao tác nên thay một hàng; các hàng nguồn được hiểu theo trạng thái trước thao tác.</div></div>
+          <div class="mistake"><span class="mistake-mark">10</span><div><strong>Nhân một hàng với 0.</strong><br>Đây không phải phép biến đổi sơ cấp khả nghịch vì làm mất thông tin.</div></div>
+        </div>
+
+        <div class="success">
+          <span class="box-title">Quy trình kiểm tra nhanh</span>
+          1) Ghi kích thước. 2) Viết rõ hàng–cột được dùng. 3) Tính từng ô.
+          4) Kiểm tra lại bằng tính chất hoặc nhân ngược. 5) Chỉ làm tròn ở bước cuối.
+        </div>
+      </section>
+
+      <section class="section" id="exercises">
+        <div class="section-head">
+          <div class="section-badge">11</div>
+          <div>
+            <h2>30 bài tập tự luyện có chấm tự động</h2>
+            <p class="section-subtitle">Nhập đáp án để chấm ngay; mỗi bài vẫn chỉ hiển thị đề hoặc lời giải, không hiển thị đồng thời.</p>
+          </div>
+        </div>
+
+        <div class="exercise-toolbar">
+          <span class="exercise-lock-badge">🔒 Chế độ một màn hình</span>
+          <span><strong>30 bài</strong> · chấm từng bài hoặc chấm toàn bộ các bài đã nhập.</span>
+        </div>
+
+        <div class="exercise-progress-card" id="exerciseProgressCard">
+          <div class="exercise-progress-main">
+            <div>
+              <span class="exercise-progress-kicker">TIẾN ĐỘ TỰ LUYỆN</span>
+              <h3>Điểm bài tập: <span id="exerciseScoreText">0/30</span></h3>
+              <p id="exerciseProgressText">Chưa chấm bài nào. Đáp án được lưu ngay trên trình duyệt này.</p>
+            </div>
+            <div class="exercise-progress-stats" aria-label="Thống kê bài tập">
+              <div><strong id="exerciseCorrectCount">0</strong><span>Đúng</span></div>
+              <div><strong id="exerciseAttemptedCount">0</strong><span>Đã chấm</span></div>
+              <div><strong id="exerciseRemainingCount">30</strong><span>Chưa chấm</span></div>
+            </div>
+          </div>
+          <div class="exercise-progress-track" aria-hidden="true"><span id="exerciseProgressBar"></span></div>
+          <div class="exercise-progress-actions">
+            <button type="button" class="btn btn-primary" id="gradeAllExercises">Chấm các bài đã nhập</button>
+            <button type="button" class="btn btn-secondary" id="clearExerciseProgress">Xóa đáp án và tiến độ</button>
+            <span class="exercise-format-tip">Ma trận có thể nhập dạng <code>1 2; 3 4</code>, <code>[[1,2],[3,4]]</code> hoặc mỗi hàng một dòng.</span>
+          </div>
+        </div>
+
+        <div class="exercise-list">
+          <div class="exercise-group-title">Nhóm 1 · Đọc ma trận và phép toán cơ bản
+            <small>Bài 1–7: hàng, cột, phần tử, loại ma trận, cộng và nhân vô hướng.</small>
+          </div>
+
+          <details class="exercise">
+            <summary>Bài 1 · Kích thước, hàng, cột và phần tử</summary>
+            <div class="exercise-content">
+              <p>Cho A = [[2,−1,0],[5,3,4]]. Hãy xác định kích thước A, R₁, R₂, C₂ và a₂₃.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>A có 2 hàng, 3 cột nên kích thước 2×3.</p>
+                <p>R₁=(2,−1,0), R₂=(5,3,4), C₂=(−1,3)ᵀ và a₂₃=4.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 2 · Chỉ số toán học và chỉ số Python</summary>
+            <div class="exercise-content">
+              <p>Với A ở Bài 1, a₂₁ tương ứng với vị trí nào trong NumPy: A[2,1], A[1,0] hay A[0,1]?</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>a₂₁ là hàng 2, cột 1 theo chỉ số toán bắt đầu từ 1. NumPy bắt đầu từ 0 nên vị trí tương ứng là <code>A[1,0]</code>.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 3 · Nhận dạng ma trận đặc biệt</summary>
+            <div class="exercise-content">
+              <p>Xét I=[[1,0],[0,1]], D=[[4,0],[0,−2]], S=[[2,3],[3,5]], M=[[1,2,3],[4,5,6]]. Hãy xác định ma trận nào vuông, chéo, đơn vị và đối xứng.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <ul>
+                  <li>I: vuông, chéo, đơn vị, đối xứng.</li>
+                  <li>D: vuông, chéo, đối xứng; không phải đơn vị.</li>
+                  <li>S: vuông và đối xứng; không chéo.</li>
+                  <li>M: 2×3 nên không vuông; do đó không thuộc ba loại còn lại theo định nghĩa chuẩn.</li>
+                </ul>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 4 · Hai ma trận bằng nhau</summary>
+            <div class="exercise-content">
+              <p>Tìm x,y biết [[x,2],[3,y]] = [[1,2],[3,−4]].</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Hai ma trận bằng nhau khi mọi phần tử cùng vị trí bằng nhau. Do đó x=1 và y=−4.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 5 · Phép cộng ma trận</summary>
+            <div class="exercise-content">
+              <p>Cho A=[[1,−3],[6,5],[2,−4]] và B=[[1,2],[3,2],[−1,7]]. Tính A+B.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Hai ma trận cùng kích thước 3×2 nên cộng theo từng vị trí:</p>
+                <div class="matrix-line"><span>A+B=</span><span class="matrix-wrap"><table class="matrix"><tr><td>2</td><td>−1</td></tr><tr><td>9</td><td>7</td></tr><tr><td>1</td><td>3</td></tr></table></span></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 6 · Kết hợp nhân số và phép trừ</summary>
+            <div class="exercise-content">
+              <p>Cho A=[[1,−2],[3,0]], B=[[2,1],[−1,4]]. Tính 3A−2B.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>3A=[[3,−6],[9,0]], 2B=[[4,2],[−2,8]].</p>
+                <div class="matrix-line"><span>3A−2B=</span><span class="matrix-wrap"><table class="matrix"><tr><td>−1</td><td>−8</td></tr><tr><td>11</td><td>−8</td></tr></table></span></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 7 · Khi nào không cộng được?</summary>
+            <div class="exercise-content">
+              <p>A có kích thước 2×3, B có kích thước 3×2. Có thể tính A+B không? Giải thích.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Không. Phép cộng yêu cầu hai ma trận có cùng số hàng và cùng số cột; 2×3 khác 3×2.</p>
+              </div>
+            </div>
+          </details>
+
+          <div class="exercise-group-title">Nhóm 2 · Nhân ma trận và chuyển vị
+            <small>Bài 8–15: điều kiện kích thước, hàng–cột, AB ≠ BA, Hadamard và chuyển vị.</small>
+          </div>
+
+          <details class="exercise">
+            <summary>Bài 8 · Kiểm tra phép nhân có hợp lệ</summary>
+            <div class="exercise-content">
+              <p>A:2×3, B:3×4, C:2×2. Xác định AB, BA, CA, AC có tồn tại không và kích thước kết quả nếu tồn tại.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <ul>
+                  <li>AB: tồn tại, kết quả 2×4.</li>
+                  <li>BA: không tồn tại vì 4≠2.</li>
+                  <li>CA: tồn tại, kết quả 2×3.</li>
+                  <li>AC: không tồn tại vì 3≠2.</li>
+                </ul>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 9 · Nhân hai ma trận 2×2</summary>
+            <div class="exercise-content">
+              <p>Cho A=[[1,2],[3,4]], B=[[2,0],[−1,5]]. Tính AB.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>c₁₁=1·2+2·(−1)=0; c₁₂=1·0+2·5=10.</p>
+                <p>c₂₁=3·2+4·(−1)=2; c₂₂=3·0+4·5=20.</p>
+                <div class="matrix-line"><span>AB=</span><span class="matrix-wrap"><table class="matrix"><tr><td>0</td><td>10</td></tr><tr><td>2</td><td>20</td></tr></table></span></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 10 · Nhân ma trận với vector</summary>
+            <div class="exercise-content">
+              <p>Cho A=[[1,−1,2],[0,3,4]] và x=(2,1,−1)ᵀ. Tính Ax.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Phần tử 1: 1·2+(−1)·1+2·(−1)=−1.</p>
+                <p>Phần tử 2: 0·2+3·1+4·(−1)=−1.</p>
+                <p>Vậy Ax=(−1,−1)ᵀ.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 11 · Chứng minh AB không giao hoán</summary>
+            <div class="exercise-content">
+              <p>Cho A=[[1,1],[0,1]], B=[[1,0],[1,1]]. Tính AB và BA.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <div class="matrix-line"><span>AB=</span><span class="matrix-wrap"><table class="matrix"><tr><td>2</td><td>1</td></tr><tr><td>1</td><td>1</td></tr></table></span><span>BA=</span><span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>1</td></tr><tr><td>1</td><td>2</td></tr></table></span></div>
+                <p>AB≠BA, nên phép nhân ma trận không giao hoán nói chung.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 12 · Nhân Hadamard và nhân ma trận</summary>
+            <div class="exercise-content">
+              <p>Cho A=[[1,2],[3,4]], B=[[5,6],[7,8]]. Tính A⊙B và AB.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>A⊙B nhân từng vị trí: [[5,12],[21,32]].</p>
+                <p>AB dùng hàng–cột: [[19,22],[43,50]]. Hai phép toán khác nhau.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 13 · Chuyển vị ma trận chữ nhật</summary>
+            <div class="exercise-content">
+              <p>Cho A=[[1,2,3],[4,5,6]]. Tính Aᵀ và nêu kích thước.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <div class="matrix-line"><span>Aᵀ=</span><span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>4</td></tr><tr><td>2</td><td>5</td></tr><tr><td>3</td><td>6</td></tr></table></span></div>
+                <p>A là 2×3 nên Aᵀ là 3×2.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 14 · Kiểm tra ma trận đối xứng</summary>
+            <div class="exercise-content">
+              <p>Ma trận S=[[2,−1,3],[−1,4,0],[3,0,5]] có đối xứng không?</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Có. Các cặp đối xứng qua đường chéo bằng nhau: s₁₂=s₂₁=−1, s₁₃=s₃₁=3, s₂₃=s₃₂=0. Do đó Sᵀ=S.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 15 · Chuyển vị của tích</summary>
+            <div class="exercise-content">
+              <p>Không cần tính số cụ thể: hãy viết chuyển vị của ABC theo đúng thứ tự.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>(ABC)ᵀ = CᵀBᵀAᵀ. Khi chuyển vị một tích, thứ tự của mọi thừa số phải đảo ngược.</p>
+              </div>
+            </div>
+          </details>
+
+          <div class="exercise-group-title">Nhóm 3 · Định thức và nghịch đảo
+            <small>Bài 16–21: khả nghịch, công thức 2×2, kiểm tra và giải hệ.</small>
+          </div>
+
+          <details class="exercise">
+            <summary>Bài 16 · Tính định thức 2×2</summary>
+            <div class="exercise-content">
+              <p>Cho A=[[3,2],[5,4]]. Tính det(A) và kết luận A có khả nghịch không.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>det(A)=3·4−2·5=12−10=2≠0. Vì vậy A khả nghịch.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 17 · Ma trận suy biến</summary>
+            <div class="exercise-content">
+              <p>Cho A=[[1,2],[2,4]]. Vì sao A không có nghịch đảo?</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>det(A)=1·4−2·2=0. Đồng thời hàng 2 bằng 2 lần hàng 1, nên thông tin bị dư thừa. A suy biến và không có nghịch đảo.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 18 · Tìm nghịch đảo 2×2</summary>
+            <div class="exercise-content">
+              <p>Tìm A⁻¹ với A=[[2,1],[1,1]].</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>det(A)=1. Theo công thức:</p>
+                <div class="matrix-line"><span>A⁻¹=</span><span class="matrix-wrap"><table class="matrix"><tr><td>1</td><td>−1</td></tr><tr><td>−1</td><td>2</td></tr></table></span></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 19 · Kiểm tra kết quả nghịch đảo</summary>
+            <div class="exercise-content">
+              <p>Với A và A⁻¹ ở Bài 18, hãy tính AA⁻¹.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Nhân hàng–cột thu được [[1,0],[0,1]]=I₂. Đây là cách kiểm tra trực tiếp A⁻¹.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 20 · Giải hệ bằng nghịch đảo</summary>
+            <div class="exercise-content">
+              <p>Giải hệ 2x+y=5, x+y=3 bằng x=A⁻¹b.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>A=[[2,1],[1,1]], b=(5,3)ᵀ, A⁻¹=[[1,−1],[−1,2]].</p>
+                <p>x-vector=A⁻¹b=(1·5−1·3, −1·5+2·3)ᵀ=(2,1)ᵀ.</p>
+                <p>Vậy x=2, y=1.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 21 · Tìm nghịch đảo bằng phép biến đổi hàng</summary>
+            <div class="exercise-content">
+              <p>Dùng [A|I] để tìm nghịch đảo của A=[[1,1],[0,1]].</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Bắt đầu [[1,1|1,0],[0,1|0,1]]. Thực hiện R₁←R₁−R₂:</p>
+                <p>[[1,0|1,−1],[0,1|0,1]]. Phía trái là I nên phía phải là A⁻¹=[[1,−1],[0,1]].</p>
+              </div>
+            </div>
+          </details>
+
+          <div class="exercise-group-title">Nhóm 4 · R₁, R₂ và khử Gauss
+            <small>Bài 22–30: đọc phép biến đổi, tính theo hàng, phân loại số nghiệm và RREF.</small>
+          </div>
+
+          <details class="exercise">
+            <summary>Bài 22 · Đọc đúng ký hiệu R₂ ← R₂ − 3R₁</summary>
+            <div class="exercise-content">
+              <p>Cho R₁=[1,2|3], R₂=[3,7|11]. Tính hàng 2 mới sau R₂←R₂−3R₁.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>3R₁=[3,6|9]. Do đó R₂ mới=[3−3,7−6|11−9]=[0,1|2]. R₁ giữ nguyên.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 23 · Đổi chỗ hai hàng</summary>
+            <div class="exercise-content">
+              <p>Ma trận [[0,2|4],[1,−1|3]] nên dùng thao tác nào để có pivot ở cột 1?</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Dùng R₁↔R₂. Ma trận mới [[1,−1|3],[0,2|4]].</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 24 · Chuẩn hóa một pivot</summary>
+            <div class="exercise-content">
+              <p>R₁=[−2,4|6]. Thực hiện R₁←(−1/2)R₁.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Nhân mọi phần tử của hàng với −1/2: R₁=[1,−2|−3].</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 25 · Phát hiện thao tác sai</summary>
+            <div class="exercise-content">
+              <p>Từ [[1,2|3],[2,5|8]], một bạn làm R₂←R₂−2R₁ và viết R₂=[0,1|8]. Sai ở đâu?</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Bạn chỉ biến đổi phần hệ số mà quên cột hằng số. Giá trị đúng là 8−2·3=2, nên R₂=[0,1|2].</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 26 · Khử Gauss hệ 2×2</summary>
+            <div class="exercise-content">
+              <p>Giải x+y=5, 2x−y=1 bằng khử Gauss.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Ma trận [[1,1|5],[2,−1|1]].</p>
+                <p>R₂←R₂−2R₁ ⇒ [0,−3|−9], nên y=3. Thế vào x+y=5 được x=2.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 27 · Khử Gauss hệ ba ẩn</summary>
+            <div class="exercise-content">
+              <p>Giải hệ x+2y−z=3; 2x+5y+z=8; 3x+8y+2z=12.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>R₂←R₂−2R₁ ⇒ [0,1,3|2].</p>
+                <p>R₃←R₃−3R₁ ⇒ [0,2,5|3].</p>
+                <p>R₃←R₃−2R₂ ⇒ [0,0,−1|−1], nên z=1.</p>
+                <p>R₂ cho y+3=2 ⇒ y=−1. R₁ cho x−2−1=3 ⇒ x=6.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 28 · Hệ vô nghiệm</summary>
+            <div class="exercise-content">
+              <p>Phân loại hệ x+y=2; 2x+2y=5.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>R₂←R₂−2R₁ tạo hàng [0,0|1], tương đương 0=1. Hệ vô nghiệm.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 29 · Hệ vô số nghiệm</summary>
+            <div class="exercise-content">
+              <p>Phân loại hệ x+2y−z=3; 2x+4y−2z=6.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>R₂←R₂−2R₁ tạo hàng 0. Hệ nhất quán nhưng chỉ có một pivot cho ba biến, nên có hai biến tự do và vô số nghiệm.</p>
+                <p>Đặt y=s, z=t thì x=3−2s+t.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="exercise">
+            <summary>Bài 30 · Pivot, rank và biến tự do</summary>
+            <div class="exercise-content">
+              <p>Cho ma trận bậc thang [[1,2,0],[0,1,3],[0,0,0]]. Xác định cột pivot, rank và biến tự do của hệ thuần nhất Ax=0.</p>
+              <div class="solution">
+                <strong>Lời giải:</strong>
+                <p>Pivot nằm ở cột 1 và cột 2, nên rank(A)=2. Cột 3 không có pivot nên x₃ là biến tự do.</p>
+                <p>Từ hàng 2: x₂+3x₃=0 ⇒ x₂=−3x₃. Hàng 1: x₁+2x₂=0 ⇒ x₁=6x₃.</p>
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="section" id="quiz">
+        <div class="section-head">
+          <div class="section-badge">12</div>
+          <div>
+            <h2>Kiểm tra nhanh 10 câu</h2>
+            <p class="section-subtitle">Chọn đáp án rồi bấm chấm điểm.</p>
+          </div>
+        </div>
+        <div class="quiz">
+          <div class="quiz-question" data-answer="b">
+            <p>1. Ma trận 3×5 có bao nhiêu hàng và cột?</p>
+            <label><input type="radio" name="q1" value="a"> 5 hàng, 3 cột</label>
+            <label><input type="radio" name="q1" value="b"> 3 hàng, 5 cột</label>
+            <label><input type="radio" name="q1" value="c"> 15 hàng</label>
+          </div>
+          <div class="quiz-question" data-answer="c">
+            <p>2. Điều kiện để cộng A và B là gì?</p>
+            <label><input type="radio" name="q2" value="a"> Cùng số hàng</label>
+            <label><input type="radio" name="q2" value="b"> Cùng số cột</label>
+            <label><input type="radio" name="q2" value="c"> Cùng kích thước</label>
+          </div>
+          <div class="quiz-question" data-answer="a">
+            <p>3. A là 2×3, B là 3×4. AB có kích thước?</p>
+            <label><input type="radio" name="q3" value="a"> 2×4</label>
+            <label><input type="radio" name="q3" value="b"> 3×3</label>
+            <label><input type="radio" name="q3" value="c"> 4×2</label>
+          </div>
+          <div class="quiz-question" data-answer="b">
+            <p>4. Phần tử cᵢⱼ của AB được tạo từ đâu?</p>
+            <label><input type="radio" name="q4" value="a"> Hàng i của B và cột j của A</label>
+            <label><input type="radio" name="q4" value="b"> Hàng i của A và cột j của B</label>
+            <label><input type="radio" name="q4" value="c"> Hai ô cùng vị trí</label>
+          </div>
+          <div class="quiz-question" data-answer="c">
+            <p>5. Mệnh đề nào đúng?</p>
+            <label><input type="radio" name="q5" value="a"> AB luôn bằng BA</label>
+            <label><input type="radio" name="q5" value="b"> AB không bao giờ tồn tại</label>
+            <label><input type="radio" name="q5" value="c"> AB thường khác BA</label>
+          </div>
+          <div class="quiz-question" data-answer="a">
+            <p>6. Công thức chuyển vị của tích là?</p>
+            <label><input type="radio" name="q6" value="a"> (AB)ᵀ=BᵀAᵀ</label>
+            <label><input type="radio" name="q6" value="b"> (AB)ᵀ=AᵀBᵀ</label>
+            <label><input type="radio" name="q6" value="c"> (AB)ᵀ=AB</label>
+          </div>
+          <div class="quiz-question" data-answer="b">
+            <p>7. Ma trận vuông 2×2 khả nghịch khi nào?</p>
+            <label><input type="radio" name="q7" value="a"> det(A)=0</label>
+            <label><input type="radio" name="q7" value="b"> det(A)≠0</label>
+            <label><input type="radio" name="q7" value="c"> Mọi phần tử khác 0</label>
+          </div>
+          <div class="quiz-question" data-answer="c">
+            <p>8. R₂←R₂−2R₁ có nghĩa là gì?</p>
+            <label><input type="radio" name="q8" value="a"> Thay hàng 1</label>
+            <label><input type="radio" name="q8" value="b"> Thay biến x₂</label>
+            <label><input type="radio" name="q8" value="c"> Thay hàng 2 bằng hàng 2 cũ trừ 2 lần hàng 1</label>
+          </div>
+          <div class="quiz-question" data-answer="a">
+            <p>9. Phép nào là biến đổi sơ cấp hợp lệ?</p>
+            <label><input type="radio" name="q9" value="a"> R₃←R₃+5R₁</label>
+            <label><input type="radio" name="q9" value="b"> R₂←0R₂</label>
+            <label><input type="radio" name="q9" value="c"> Chỉ đổi một ô trong hàng</label>
+          </div>
+          <div class="quiz-question" data-answer="b">
+            <p>10. Hàng [0 0 0 | 4] cho biết điều gì?</p>
+            <label><input type="radio" name="q10" value="a"> Có vô số nghiệm</label>
+            <label><input type="radio" name="q10" value="b"> Hệ vô nghiệm</label>
+            <label><input type="radio" name="q10" value="c"> x=4</label>
+          </div>
+          <button class="btn btn-primary" id="gradeQuiz">Chấm điểm</button>
+          <div class="quiz-result" id="quizResult"></div>
+        </div>
+      </section>
+
+      <section class="section" id="glossary">
+        <div class="section-head">
+          <div class="section-badge">13</div>
+          <div>
+            <h2>Từ điển thuật ngữ Việt–Anh</h2>
+            <p class="section-subtitle">Các từ xuất hiện thường xuyên trong slide và tài liệu Machine Learning.</p>
+          </div>
+        </div>
+        <div class="glossary">
+          <div class="glossary-item"><strong>Matrix</strong> — ma trận.</div>
+          <div class="glossary-item"><strong>Row</strong> — hàng; Rᵢ là hàng i.</div>
+          <div class="glossary-item"><strong>Column</strong> — cột; Cⱼ là cột j.</div>
+          <div class="glossary-item"><strong>Entry / element</strong> — phần tử.</div>
+          <div class="glossary-item"><strong>Shape / dimension</strong> — kích thước m×n.</div>
+          <div class="glossary-item"><strong>Scalar</strong> — số vô hướng.</div>
+          <div class="glossary-item"><strong>Square matrix</strong> — ma trận vuông.</div>
+          <div class="glossary-item"><strong>Diagonal matrix</strong> — ma trận chéo.</div>
+          <div class="glossary-item"><strong>Identity matrix</strong> — ma trận đơn vị.</div>
+          <div class="glossary-item"><strong>Zero matrix</strong> — ma trận không.</div>
+          <div class="glossary-item"><strong>Symmetric matrix</strong> — ma trận đối xứng.</div>
+          <div class="glossary-item"><strong>Transpose</strong> — chuyển vị.</div>
+          <div class="glossary-item"><strong>Matrix multiplication</strong> — phép nhân ma trận.</div>
+          <div class="glossary-item"><strong>Hadamard product</strong> — nhân từng phần tử.</div>
+          <div class="glossary-item"><strong>Determinant</strong> — định thức.</div>
+          <div class="glossary-item"><strong>Inverse</strong> — nghịch đảo.</div>
+          <div class="glossary-item"><strong>Invertible / nonsingular</strong> — khả nghịch.</div>
+          <div class="glossary-item"><strong>Singular</strong> — suy biến.</div>
+          <div class="glossary-item"><strong>Augmented matrix</strong> — ma trận bổ sung.</div>
+          <div class="glossary-item"><strong>Elementary row operation</strong> — phép biến đổi sơ cấp trên hàng.</div>
+          <div class="glossary-item"><strong>Pivot</strong> — phần tử trụ.</div>
+          <div class="glossary-item"><strong>Row echelon form (REF)</strong> — dạng bậc thang hàng.</div>
+          <div class="glossary-item"><strong>Reduced row echelon form (RREF)</strong> — dạng bậc thang rút gọn.</div>
+          <div class="glossary-item"><strong>Gaussian elimination</strong> — phương pháp khử Gauss.</div>
+        </div>
+      </section>
+
+      <section class="section" id="summary">
+        <div class="section-head">
+          <div class="section-badge">14</div>
+          <div>
+            <h2>Tóm tắt cuối bài</h2>
+            <p class="section-subtitle">Danh sách kiểm tra trước khi chuyển sang hệ tuyến tính và Machine Learning.</p>
+          </div>
+        </div>
+        <div class="checklist">
+          <div class="check-item">✓ Đọc được kích thước m×n, hàng Rᵢ, cột Cⱼ và phần tử aᵢⱼ.</div>
+          <div class="check-item">✓ Phân biệt được ma trận vuông, chéo, đơn vị, đối xứng.</div>
+          <div class="check-item">✓ Biết khi nào cộng, trừ và nhân ma trận hợp lệ.</div>
+          <div class="check-item">✓ Tính được từng phần tử cᵢⱼ bằng hàng–cột.</div>
+          <div class="check-item">✓ Nhớ AB thường khác BA.</div>
+          <div class="check-item">✓ Dùng đúng (AB)ᵀ=BᵀAᵀ.</div>
+          <div class="check-item">✓ Tính được det và nghịch đảo ma trận 2×2.</div>
+          <div class="check-item">✓ Hiểu R₂←R₂−2R₁ là thay toàn bộ hàng 2.</div>
+          <div class="check-item">✓ Thực hiện được ba phép biến đổi sơ cấp.</div>
+          <div class="check-item">✓ Nhận biết nghiệm duy nhất, vô nghiệm và vô số nghiệm từ ma trận bậc thang.</div>
+        </div>
+        <div class="note">
+          <span class="box-title">Một câu ghi nhớ</span>
+          <strong>Cộng theo vị trí; nhân theo hàng–cột; khử Gauss theo toàn bộ hàng.</strong>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <strong>CS115 · Toán cho Khoa học máy tính</strong><br>
+    Nội dung được biên soạn theo các phần ma trận, phép toán ma trận và hệ phương trình tuyến tính
+    trong bộ học liệu UIT đã cung cấp; phần trực giác và công cụ tương tác là nội dung bổ sung để hỗ trợ tự học.
+  </footer>
+</div>
+
+<script>
+(function(){
+  const sections=[...document.querySelectorAll('main section[id]')];
+  const tocLinks=[...document.querySelectorAll('.toc a')];
+  const progress=document.getElementById('reading-progress');
+
+  function updateScroll(){
+    const max=document.documentElement.scrollHeight-window.innerHeight;
+    progress.style.width=(max>0?(window.scrollY/max)*100:0)+'%';
+    let active=sections[0]?.id;
+    for(const section of sections){
+      if(section.getBoundingClientRect().top<=130) active=section.id;
+    }
+    tocLinks.forEach(link=>link.classList.toggle('active',link.getAttribute('href')==='#'+active));
+  }
+  document.addEventListener('scroll',updateScroll,{passive:true});
+  updateScroll();
+
+  const exercises=[...document.querySelectorAll('details.exercise')];
+  const exerciseConfigs=[{"hint":"Đếm hàng trước, đếm cột sau. Rᵢ là toàn bộ hàng i; Cⱼ là toàn bộ cột j.","fields":[{"id":"shape","label":"Kích thước A","kind":"dimension","expected":[2,3],"placeholder":"2×3"},{"id":"r1","label":"R₁","kind":"array","expected":[2,-1,0],"placeholder":"2, -1, 0"},{"id":"r2","label":"R₂","kind":"array","expected":[5,3,4],"placeholder":"5, 3, 4"},{"id":"c2","label":"C₂","kind":"array","expected":[-1,3],"placeholder":"-1, 3"},{"id":"a23","label":"a₂₃","kind":"number","expected":4,"placeholder":"4"}]},{"hint":"Chỉ số toán bắt đầu từ 1, còn chỉ số NumPy bắt đầu từ 0.","fields":[{"id":"position","label":"Vị trí trong NumPy","kind":"choice","expected":"a10","options":[{"value":"a21","label":"A[2,1]"},{"value":"a10","label":"A[1,0]"},{"value":"a01","label":"A[0,1]"}]}]},{"hint":"Ma trận đơn vị cũng là ma trận chéo, vuông và đối xứng.","fields":[{"id":"I","label":"Ma trận I","kind":"checks","expected":["square","diagonal","identity","symmetric"],"options":[{"value":"square","label":"Vuông"},{"value":"diagonal","label":"Chéo"},{"value":"identity","label":"Đơn vị"},{"value":"symmetric","label":"Đối xứng"},{"value":"none","label":"Không thuộc loại nào ở trên"}],"wide":true},{"id":"D","label":"Ma trận D","kind":"checks","expected":["square","diagonal","symmetric"],"options":[{"value":"square","label":"Vuông"},{"value":"diagonal","label":"Chéo"},{"value":"identity","label":"Đơn vị"},{"value":"symmetric","label":"Đối xứng"},{"value":"none","label":"Không thuộc loại nào ở trên"}],"wide":true},{"id":"S","label":"Ma trận S","kind":"checks","expected":["square","symmetric"],"options":[{"value":"square","label":"Vuông"},{"value":"diagonal","label":"Chéo"},{"value":"identity","label":"Đơn vị"},{"value":"symmetric","label":"Đối xứng"},{"value":"none","label":"Không thuộc loại nào ở trên"}],"wide":true},{"id":"M","label":"Ma trận M","kind":"checks","expected":["none"],"options":[{"value":"square","label":"Vuông"},{"value":"diagonal","label":"Chéo"},{"value":"identity","label":"Đơn vị"},{"value":"symmetric","label":"Đối xứng"},{"value":"none","label":"Không thuộc loại nào ở trên"}],"wide":true}]},{"hint":"Hai ma trận bằng nhau khi các phần tử cùng vị trí bằng nhau.","fields":[{"id":"x","label":"x","kind":"number","expected":1,"placeholder":"1"},{"id":"y","label":"y","kind":"number","expected":-4,"placeholder":"-4"}]},{"hint":"Cộng từng phần tử ở cùng vị trí.","fields":[{"id":"result","label":"A + B","kind":"matrix","expected":[[2,-1],[9,7],[1,3]],"placeholder":"2 -1; 9 7; 1 3","wide":true}]},{"hint":"Tính 3A và 2B trước, sau đó trừ theo từng vị trí.","fields":[{"id":"result","label":"3A − 2B","kind":"matrix","expected":[[-1,-8],[11,-8]],"placeholder":"-1 -8; 11 -8","wide":true}]},{"hint":"Phép cộng yêu cầu cùng số hàng và cùng số cột.","fields":[{"id":"possible","label":"Có tính được A+B không?","kind":"choice","expected":"no","options":[{"value":"yes","label":"Có"},{"value":"no","label":"Không"}]},{"id":"reason","label":"Lý do","kind":"choice","expected":"different_shape","options":[{"value":"different_shape","label":"Hai ma trận khác kích thước"},{"value":"not_square","label":"Hai ma trận không cùng là ma trận vuông"},{"value":"different_det","label":"Hai ma trận có định thức khác nhau"}]}]},{"hint":"Với (m×n)(n×p), kết quả có kích thước m×p. Nếu hai kích thước ở giữa không khớp thì tích không tồn tại.","fields":[{"id":"AB","label":"AB","kind":"dimOrNone","expected":[2,4],"placeholder":"2×4"},{"id":"BA","label":"BA","kind":"dimOrNone","expected":null,"placeholder":"không tồn tại"},{"id":"CA","label":"CA","kind":"dimOrNone","expected":[2,3],"placeholder":"2×3"},{"id":"AC","label":"AC","kind":"dimOrNone","expected":null,"placeholder":"không tồn tại"}]},{"hint":"Mỗi ô của AB là tích vô hướng giữa một hàng của A và một cột của B.","fields":[{"id":"AB","label":"AB","kind":"matrix","expected":[[0,10],[2,20]],"placeholder":"0 10; 2 20","wide":true}]},{"hint":"Nhân từng hàng của A với vector cột x.","fields":[{"id":"Ax","label":"Ax","kind":"array","expected":[-1,-1],"placeholder":"-1, -1"}]},{"hint":"Hãy tính hai tích riêng biệt; thứ tự nhân ảnh hưởng đến kết quả.","fields":[{"id":"AB","label":"AB","kind":"matrix","expected":[[2,1],[1,1]],"placeholder":"2 1; 1 1","wide":true},{"id":"BA","label":"BA","kind":"matrix","expected":[[1,1],[1,2]],"placeholder":"1 1; 1 2","wide":true}]},{"hint":"A⊙B nhân từng ô; AB nhân theo hàng–cột.","fields":[{"id":"hadamard","label":"A ⊙ B","kind":"matrix","expected":[[5,12],[21,32]],"placeholder":"5 12; 21 32","wide":true},{"id":"AB","label":"AB","kind":"matrix","expected":[[19,22],[43,50]],"placeholder":"19 22; 43 50","wide":true}]},{"hint":"Chuyển vị biến hàng thành cột và đổi kích thước m×n thành n×m.","fields":[{"id":"transpose","label":"Aᵀ","kind":"matrix","expected":[[1,4],[2,5],[3,6]],"placeholder":"1 4; 2 5; 3 6","wide":true},{"id":"shape","label":"Kích thước Aᵀ","kind":"dimension","expected":[3,2],"placeholder":"3×2"}]},{"hint":"Kiểm tra xem các phần tử đối xứng qua đường chéo chính có bằng nhau không.","fields":[{"id":"symmetric","label":"S có đối xứng không?","kind":"choice","expected":"yes","options":[{"value":"yes","label":"Có"},{"value":"no","label":"Không"}]}]},{"hint":"Khi chuyển vị một tích, phải đảo ngược thứ tự toàn bộ các thừa số.","fields":[{"id":"formula","label":"(ABC)ᵀ","kind":"choice","expected":"ctbta","options":[{"value":"atbtct","label":"AᵀBᵀCᵀ"},{"value":"ctbta","label":"CᵀBᵀAᵀ"},{"value":"btctat","label":"BᵀCᵀAᵀ"}]}]},{"hint":"Với [[a,b],[c,d]], det = ad − bc. Ma trận khả nghịch khi det khác 0.","fields":[{"id":"det","label":"det(A)","kind":"number","expected":2,"placeholder":"2"},{"id":"invertible","label":"A có khả nghịch không?","kind":"choice","expected":"yes","options":[{"value":"yes","label":"Có"},{"value":"no","label":"Không"}]}]},{"hint":"Hàng 2 là bội của hàng 1 nên định thức bằng 0.","fields":[{"id":"det","label":"det(A)","kind":"number","expected":0,"placeholder":"0"},{"id":"invertible","label":"A có nghịch đảo không?","kind":"choice","expected":"no","options":[{"value":"yes","label":"Có"},{"value":"no","label":"Không"}]}]},{"hint":"Đổi chỗ hai phần tử trên đường chéo chính, đổi dấu hai phần tử ngoài đường chéo, rồi chia cho định thức.","fields":[{"id":"inverse","label":"A⁻¹","kind":"matrix","expected":[[1,-1],[-1,2]],"placeholder":"1 -1; -1 2","wide":true}]},{"hint":"Nhân A với A⁻¹ phải thu được ma trận đơn vị.","fields":[{"id":"product","label":"AA⁻¹","kind":"matrix","expected":[[1,0],[0,1]],"placeholder":"1 0; 0 1","wide":true}]},{"hint":"Tính A⁻¹b hoặc khử hệ để tìm hai ẩn.","fields":[{"id":"x","label":"x","kind":"number","expected":2,"placeholder":"2"},{"id":"y","label":"y","kind":"number","expected":1,"placeholder":"1"}]},{"hint":"Biến đổi [A|I] đến khi phía trái thành I; phía phải lúc đó là A⁻¹.","fields":[{"id":"inverse","label":"A⁻¹","kind":"matrix","expected":[[1,-1],[0,1]],"placeholder":"1 -1; 0 1","wide":true}]},{"hint":"Lấy từng phần tử của R₂ trừ 3 lần phần tử tương ứng của R₁, kể cả cột sau dấu |.","fields":[{"id":"row","label":"R₂ mới","kind":"array","expected":[0,1,2],"placeholder":"0, 1 | 2","note":"Có thể bỏ dấu | khi nhập."}]},{"hint":"Pivot đầu tiên cần nằm ở cột 1; hãy đưa hàng có phần tử đầu khác 0 lên trên.","fields":[{"id":"operation","label":"Phép biến đổi","kind":"choice","expected":"swap","options":[{"value":"swap","label":"R₁ ↔ R₂"},{"value":"add","label":"R₂ ← R₂ − R₁"},{"value":"scale","label":"R₁ ← 2R₁"}]},{"id":"matrix","label":"Ma trận sau biến đổi","kind":"matrix","expected":[[1,-1,3],[0,2,4]],"placeholder":"1 -1 | 3; 0 2 | 4","wide":true,"note":"Dấu | không ảnh hưởng đến chấm số."}]},{"hint":"Nhân tất cả phần tử trong hàng với −1/2.","fields":[{"id":"row","label":"R₁ mới","kind":"array","expected":[1,-2,-3],"placeholder":"1, -2 | -3"}]},{"hint":"Phép biến đổi hàng phải áp dụng cả phần hệ số và cột hằng số.","fields":[{"id":"row","label":"R₂ đúng","kind":"array","expected":[0,1,2],"placeholder":"0, 1 | 2"},{"id":"error","label":"Lỗi của bạn học","kind":"choice","expected":"constant","options":[{"value":"constant","label":"Quên biến đổi cột hằng số"},{"value":"wrong_factor","label":"Dùng sai hệ số 2"},{"value":"wrong_row","label":"Phải thay R₁ thay vì R₂"}]}]},{"hint":"Khử x ở hàng 2, tìm y rồi thế ngược.","fields":[{"id":"x","label":"x","kind":"number","expected":2,"placeholder":"2"},{"id":"y","label":"y","kind":"number","expected":3,"placeholder":"3"}]},{"hint":"Khử lần lượt cột x rồi cột y để tạo ma trận tam giác trên.","fields":[{"id":"x","label":"x","kind":"number","expected":6,"placeholder":"6"},{"id":"y","label":"y","kind":"number","expected":-1,"placeholder":"-1"},{"id":"z","label":"z","kind":"number","expected":1,"placeholder":"1"}]},{"hint":"Nếu khử xuất hiện hàng 0 = một số khác 0 thì hệ mâu thuẫn.","fields":[{"id":"classification","label":"Phân loại hệ","kind":"choice","expected":"none","options":[{"value":"unique","label":"Nghiệm duy nhất"},{"value":"none","label":"Vô nghiệm"},{"value":"infinite","label":"Vô số nghiệm"}]}]},{"hint":"Một phương trình là bội của phương trình còn lại nên số pivot nhỏ hơn số biến.","fields":[{"id":"classification","label":"Phân loại hệ","kind":"choice","expected":"infinite","options":[{"value":"unique","label":"Nghiệm duy nhất"},{"value":"none","label":"Vô nghiệm"},{"value":"infinite","label":"Vô số nghiệm"}]},{"id":"freeCount","label":"Số biến tự do","kind":"number","expected":2,"placeholder":"2"}]},{"hint":"Cột có phần tử dẫn đầu là cột pivot; cột không có pivot tương ứng với biến tự do.","fields":[{"id":"pivots","label":"Các cột pivot","kind":"numberSet","expected":[1,2],"placeholder":"1, 2"},{"id":"rank","label":"rank(A)","kind":"number","expected":2,"placeholder":"2"},{"id":"free","label":"Biến tự do","kind":"text","aliases":["x3","x_3","x₃","3"],"placeholder":"x₃"}]}];
+  const EXERCISE_STORAGE_KEY='cs115-matrix-autograde-v1';
+  const exerciseStates=exerciseConfigs.map(()=>({status:'unanswered',attempts:0}));
+  let isRestoringExerciseProgress=false;
+
+  function setExerciseView(exercise,view){
+    exercise.dataset.view=view==='solution'?'solution':'question';
+    const stateText=exercise.dataset.view==='solution'?'Đang xem lời giải':'Đang xem đề bài';
+    exercise.querySelectorAll('[data-exercise-state]').forEach(label=>label.textContent=stateText);
+  }
+  function closeOtherExercises(active){
+    exercises.forEach(ex=>{
+      if(ex!==active){ex.open=false;setExerciseView(ex,'question');}
+    });
+  }
+  function createControls(stateText,buttonText,targetView){
+    const controls=document.createElement('div');
+    controls.className='exercise-view-controls';
+    const state=document.createElement('span');
+    state.className='exercise-state-label';
+    state.dataset.exerciseState='';
+    state.textContent=stateText;
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='exercise-switch';
+    button.textContent=buttonText;
+    button.dataset.targetView=targetView;
+    button.addEventListener('click',()=>{
+      const exercise=button.closest('details.exercise');
+      if(!exercise) return;
+      if(targetView==='solution'){closeOtherExercises(exercise);exercise.open=true;}
+      setExerciseView(exercise,targetView);
+      exercise.querySelector('.exercise-content')?.scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
+    controls.append(state,button);
+    return controls;
+  }
+
+  function normalizeMinus(value){
+    return String(value??'').replace(/[−–—]/g,'-').replace(/[×✕]/g,'x').trim();
+  }
+  function normalizeText(value){
+    const subs={'₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9'};
+    return normalizeMinus(value).replace(/[₀-₉]/g,ch=>subs[ch]||ch).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+  }
+  function parseFlexibleNumber(value){
+    const s=normalizeMinus(value).replace(/\s+/g,'');
+    if(!s) return NaN;
+    const fraction=s.match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+))\/([+-]?(?:\d+(?:\.\d*)?|\.\d+))$/);
+    if(fraction){
+      const den=Number(fraction[2]);
+      return den===0?NaN:Number(fraction[1])/den;
+    }
+    const n=Number(s);
+    return Number.isFinite(n)?n:NaN;
+  }
+  function extractNumbers(value){
+    let s=normalizeMinus(value);
+    if(s.includes('=')) s=s.slice(s.lastIndexOf('=')+1);
+    const matches=s.match(/[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:\s*\/\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+))?/g)||[];
+    return matches.map(parseFlexibleNumber).filter(Number.isFinite);
+  }
+  function nearlyEqual(a,b){return Number.isFinite(a)&&Number.isFinite(b)&&Math.abs(a-b)<=1e-7*Math.max(1,Math.abs(a),Math.abs(b));}
+  function flattenExpected(value){return Array.isArray(value)?value.flat(Infinity):[value];}
+  function parseDimension(value){
+    const m=normalizeText(value).match(/(\d+)\s*[x]\s*(\d+)/);
+    return m?[Number(m[1]),Number(m[2])]:null;
+  }
+  function isNoValue(value){
+    const s=normalizeText(value).replace(/[^a-z0-9]/g,'');
+    return ['khong','khongtontai','none','no','invalid','khongnhan'].includes(s);
+  }
+  function arraysEqual(a,b){
+    return a.length===b.length&&a.every((v,i)=>nearlyEqual(v,b[i]));
+  }
+
+  function makeGradeField(field,exerciseIndex){
+    const wrap=document.createElement('div');
+    wrap.className='grade-field'+(field.wide?' wide':'');
+    wrap.dataset.fieldId=field.id;
+    const label=document.createElement('span');
+    label.className='grade-label';
+    label.textContent=field.label;
+    wrap.appendChild(label);
+
+    if(field.kind==='choice'){
+      const select=document.createElement('select');
+      select.className='grade-select';
+      select.dataset.gradeInput=field.id;
+      const empty=document.createElement('option');
+      empty.value='';empty.textContent='— Chọn đáp án —';
+      select.appendChild(empty);
+      field.options.forEach(option=>{
+        const node=document.createElement('option');node.value=option.value;node.textContent=option.label;select.appendChild(node);
+      });
+      wrap.appendChild(select);
+    }else if(field.kind==='checks'){
+      const grid=document.createElement('div');
+      grid.className='grade-check-grid';
+      field.options.forEach(option=>{
+        const checkLabel=document.createElement('label');
+        checkLabel.className='grade-check';
+        const input=document.createElement('input');
+        input.type='checkbox';input.value=option.value;input.dataset.gradeInput=field.id;
+        input.name='ex'+exerciseIndex+'-'+field.id;
+        checkLabel.append(input,document.createTextNode(option.label));
+        grid.appendChild(checkLabel);
+      });
+      wrap.appendChild(grid);
+    }else{
+      const useTextarea=field.kind==='matrix'||(field.kind==='array'&&flattenExpected(field.expected).length>4);
+      const input=document.createElement(useTextarea?'textarea':'input');
+      if(!useTextarea) input.type='text';
+      input.className='grade-input';
+      input.dataset.gradeInput=field.id;
+      const genericPlaceholders={
+        number:'Nhập một số',
+        array:'Ví dụ: 1, -2, 3',
+        matrix:'Ví dụ: 1 2; 3 4',
+        dimension:'Nhập dạng m×n',
+        dimOrNone:'Nhập m×n hoặc “không tồn tại”',
+        numberSet:'Ví dụ: 1, 3',
+        text:'Nhập câu trả lời ngắn'
+      };
+      input.placeholder=genericPlaceholders[field.kind]||'';
+      if(useTextarea) input.rows=field.kind==='matrix'?2:1;
+      input.autocomplete='off';
+      wrap.appendChild(input);
+    }
+    if(field.note){
+      const note=document.createElement('small');note.className='grade-field-note';note.textContent=field.note;wrap.appendChild(note);
+    }
+    return wrap;
+  }
+
+  function buildAutoGradePanel(exercise,config,index){
+    const panel=document.createElement('div');
+    panel.className='auto-grade-panel';
+    panel.innerHTML='<div class="auto-grade-head"><div><strong>✍️ Nhập đáp án để chấm tự động</strong><small>Hệ thống chỉ báo đúng/sai, không tự mở lời giải.</small></div><span class="grade-point-chip">1 điểm</span></div>';
+    const fields=document.createElement('div');fields.className='grade-fields';
+    config.fields.forEach(field=>fields.appendChild(makeGradeField(field,index)));
+    panel.appendChild(fields);
+
+    const actions=document.createElement('div');actions.className='grade-actions';
+    const gradeButton=document.createElement('button');gradeButton.type='button';gradeButton.className='btn btn-primary';gradeButton.textContent='Chấm bài';
+    const resetButton=document.createElement('button');resetButton.type='button';resetButton.className='btn btn-secondary';resetButton.textContent='Nhập lại';
+    const attempts=document.createElement('span');attempts.className='grade-attempts';attempts.dataset.gradeAttempts='';attempts.textContent='Chưa chấm';
+    actions.append(gradeButton,resetButton,attempts);
+    panel.appendChild(actions);
+    const feedback=document.createElement('div');feedback.className='grade-feedback';feedback.setAttribute('aria-live','polite');panel.appendChild(feedback);
+
+    gradeButton.addEventListener('click',()=>gradeExercise(exercise,true));
+    resetButton.addEventListener('click',()=>resetExerciseAnswer(exercise));
+    panel.addEventListener('input',()=>markExerciseDirty(exercise));
+    panel.addEventListener('change',()=>markExerciseDirty(exercise));
+    panel.addEventListener('keydown',event=>{
+      const isTextarea=event.target.tagName==='TEXTAREA';
+      if((event.key==='Enter'&&!isTextarea)||(event.key==='Enter'&&event.ctrlKey)){
+        event.preventDefault();gradeExercise(exercise,true);
+      }
+    });
+    return panel;
+  }
+
+  function getFieldValue(exercise,field){
+    const panel=exercise.querySelector('.auto-grade-panel');
+    if(field.kind==='checks') return [...panel.querySelectorAll('[data-grade-input="'+field.id+'"]:checked')].map(node=>node.value);
+    return panel.querySelector('[data-grade-input="'+field.id+'"]')?.value??'';
+  }
+  function fieldIsAnswered(value,field){
+    return field.kind==='checks'?Array.isArray(value)&&value.length>0:String(value).trim()!=='';
+  }
+  function validateField(value,field){
+    if(field.kind==='number') return nearlyEqual(parseFlexibleNumber(value),field.expected);
+    if(field.kind==='array'||field.kind==='matrix') return arraysEqual(extractNumbers(value),flattenExpected(field.expected));
+    if(field.kind==='dimension'){
+      const actual=parseDimension(value);return !!actual&&actual[0]===field.expected[0]&&actual[1]===field.expected[1];
+    }
+    if(field.kind==='dimOrNone'){
+      if(field.expected===null) return isNoValue(value);
+      const actual=parseDimension(value);return !!actual&&actual[0]===field.expected[0]&&actual[1]===field.expected[1];
+    }
+    if(field.kind==='choice') return value===field.expected;
+    if(field.kind==='checks'){
+      const actual=[...new Set(value)].sort();const expected=[...field.expected].sort();return actual.length===expected.length&&actual.every((v,i)=>v===expected[i]);
+    }
+    if(field.kind==='numberSet'){
+      const actual=[...new Set(extractNumbers(value))].sort((a,b)=>a-b);const expected=[...field.expected].sort((a,b)=>a-b);return arraysEqual(actual,expected);
+    }
+    if(field.kind==='text'){
+      const actual=normalizeText(value).replace(/[^a-z0-9]/g,'');return field.aliases.some(alias=>normalizeText(alias).replace(/[^a-z0-9]/g,'')===actual);
+    }
+    return false;
+  }
+
+  function setFeedback(exercise,type,message){
+    const feedback=exercise.querySelector('.grade-feedback');
+    feedback.className='grade-feedback show '+type;
+    feedback.textContent=message;
+  }
+  function setGradeVisual(exercise,status){
+    exercise.dataset.gradeStatus=status;
+    const badge=exercise.querySelector('.exercise-grade-badge');
+    if(!badge) return;
+    badge.textContent=status==='correct'?'✓ Đúng':status==='incorrect'?'Cần sửa':status==='dirty'?'Chấm lại':'Chưa làm';
+  }
+  function updateAttempts(exercise){
+    const index=Number(exercise.dataset.exerciseIndex);
+    const node=exercise.querySelector('[data-grade-attempts]');
+    const attempts=exerciseStates[index]?.attempts||0;
+    if(node) node.textContent=attempts?('Đã chấm '+attempts+' lần'):'Chưa chấm';
+  }
+
+  function gradeExercise(exercise,increment=true,options={}){
+    const index=Number(exercise.dataset.exerciseIndex);
+    const config=exerciseConfigs[index];
+    const values=config.fields.map(field=>getFieldValue(exercise,field));
+    const incomplete=[];
+    values.forEach((value,i)=>{if(!fieldIsAnswered(value,config.fields[i])) incomplete.push(config.fields[i].label);});
+    exercise.querySelectorAll('.grade-field').forEach(node=>node.classList.remove('correct','incorrect'));
+    if(incomplete.length){
+      if(!options.silent) setFeedback(exercise,'warn','Hãy nhập đủ: '+incomplete.join(', ')+'.');
+      if(!options.keepStatus){exerciseStates[index].status='unanswered';setGradeVisual(exercise,'unanswered');}
+      updateOverallProgress();saveExerciseProgress();
+      return false;
+    }
+    if(increment) exerciseStates[index].attempts++;
+    const wrong=[];
+    config.fields.forEach((field,i)=>{
+      const ok=validateField(values[i],field);
+      const wrapper=exercise.querySelector('.grade-field[data-field-id="'+field.id+'"]');
+      wrapper?.classList.add(ok?'correct':'incorrect');
+      if(!ok) wrong.push(field.label);
+    });
+    if(wrong.length===0){
+      exerciseStates[index].status='correct';setGradeVisual(exercise,'correct');
+      if(!options.silent) setFeedback(exercise,'good','Chính xác. Bài này được 1/1 điểm. Có thể mở lời giải để đối chiếu cách trình bày.');
+    }else{
+      exerciseStates[index].status='incorrect';setGradeVisual(exercise,'incorrect');
+      if(!options.silent){
+        let message='Chưa đúng ở: '+wrong.join(', ')+'. Hãy kiểm tra lại rồi chấm lần nữa.';
+        if(exerciseStates[index].attempts>=2&&config.hint) message+=' Gợi ý: '+config.hint;
+        setFeedback(exercise,'bad',message);
+      }
+    }
+    updateAttempts(exercise);updateOverallProgress();saveExerciseProgress();
+    return wrong.length===0;
+  }
+
+  function markExerciseDirty(exercise){
+    const index=Number(exercise.dataset.exerciseIndex);
+    if(exerciseStates[index].status==='unanswered') return;
+    exercise.querySelectorAll('.grade-field').forEach(node=>node.classList.remove('correct','incorrect'));
+    exerciseStates[index].status='dirty';setGradeVisual(exercise,'dirty');
+    const feedback=exercise.querySelector('.grade-feedback');
+    feedback.className='grade-feedback show warn';feedback.textContent='Đáp án đã thay đổi. Bấm “Chấm bài” để cập nhật điểm.';
+    updateOverallProgress();saveExerciseProgress();
+  }
+  function resetExerciseAnswer(exercise){
+    const index=Number(exercise.dataset.exerciseIndex);
+    exercise.querySelectorAll('[data-grade-input]').forEach(node=>{
+      if(node.type==='checkbox'||node.type==='radio') node.checked=false; else node.value='';
+    });
+    exercise.querySelectorAll('.grade-field').forEach(node=>node.classList.remove('correct','incorrect'));
+    const feedback=exercise.querySelector('.grade-feedback');feedback.className='grade-feedback';feedback.textContent='';
+    exerciseStates[index]={status:'unanswered',attempts:0};setGradeVisual(exercise,'unanswered');updateAttempts(exercise);updateOverallProgress();saveExerciseProgress();
+  }
+  function exerciseHasAnyAnswer(exercise,config){
+    return config.fields.some(field=>fieldIsAnswered(getFieldValue(exercise,field),field));
+  }
+  function updateOverallProgress(){
+    const correct=exerciseStates.filter(s=>s.status==='correct').length;
+    const attempted=exerciseStates.filter(s=>s.status==='correct'||s.status==='incorrect').length;
+    const dirty=exerciseStates.filter(s=>s.status==='dirty').length;
+    document.getElementById('exerciseCorrectCount').textContent=String(correct);
+    document.getElementById('exerciseAttemptedCount').textContent=String(attempted);
+    document.getElementById('exerciseRemainingCount').textContent=String(exercises.length-attempted);
+    document.getElementById('exerciseScoreText').textContent=correct+'/'+exercises.length;
+    document.getElementById('exerciseProgressBar').style.width=(correct/exercises.length*100)+'%';
+    const text=document.getElementById('exerciseProgressText');
+    if(attempted===0&&dirty===0) text.textContent='Chưa chấm bài nào. Đáp án được lưu ngay trên trình duyệt này.';
+    else text.textContent='Đã chấm '+attempted+'/'+exercises.length+' bài; đúng '+correct+' bài'+(dirty?'; '+dirty+' bài đang chờ chấm lại':'')+'.';
+  }
+  function readExerciseAnswers(exercise,config){
+    const answers={};config.fields.forEach(field=>{answers[field.id]=getFieldValue(exercise,field);});return answers;
+  }
+  function applyExerciseAnswers(exercise,config,answers){
+    if(!answers) return;
+    config.fields.forEach(field=>{
+      const value=answers[field.id];if(value===undefined) return;
+      if(field.kind==='checks'){
+        exercise.querySelectorAll('[data-grade-input="'+field.id+'"]').forEach(node=>node.checked=Array.isArray(value)&&value.includes(node.value));
+      }else{
+        const node=exercise.querySelector('[data-grade-input="'+field.id+'"]');if(node) node.value=value;
+      }
+    });
+  }
+  function saveExerciseProgress(){
+    if(isRestoringExerciseProgress) return;
+    try{
+      const payload={version:1,items:exercises.map((exercise,index)=>({status:exerciseStates[index].status,attempts:exerciseStates[index].attempts,answers:readExerciseAnswers(exercise,exerciseConfigs[index])}))};
+      localStorage.setItem(EXERCISE_STORAGE_KEY,JSON.stringify(payload));
+    }catch(_){ }
+  }
+  function restoreExerciseProgress(){
+    isRestoringExerciseProgress=true;
+    try{
+      const raw=localStorage.getItem(EXERCISE_STORAGE_KEY);if(!raw) return;
+      const payload=JSON.parse(raw);if(!payload||!Array.isArray(payload.items)) return;
+      payload.items.forEach((item,index)=>{
+        const exercise=exercises[index],config=exerciseConfigs[index];if(!exercise||!config) return;
+        applyExerciseAnswers(exercise,config,item.answers);
+        exerciseStates[index].attempts=Number(item.attempts)||0;
+        if(item.status==='correct'||item.status==='incorrect') gradeExercise(exercise,false,{silent:true});
+        else if(item.status==='dirty'){exerciseStates[index].status='dirty';setGradeVisual(exercise,'dirty');}
+        else{exerciseStates[index].status='unanswered';setGradeVisual(exercise,'unanswered');}
+        updateAttempts(exercise);
+      });
+    }catch(_){
+    }finally{
+      isRestoringExerciseProgress=false;
+      saveExerciseProgress();
+    }
+  }
+
+  exercises.forEach((exercise,index)=>{
+    exercise.dataset.exerciseIndex=String(index);
+    const summary=exercise.querySelector('summary');
+    const badge=document.createElement('span');badge.className='exercise-grade-badge';badge.textContent='Chưa làm';summary?.appendChild(badge);
+    const content=exercise.querySelector('.exercise-content');
+    const solution=content?.querySelector(':scope > .solution');
+    if(!content||!solution) return;
+    const prompt=document.createElement('div');
+    prompt.className='exercise-prompt';
+    const nodes=[...content.childNodes];
+    for(const node of nodes){if(node===solution) break;prompt.appendChild(node);}
+    content.insertBefore(prompt,solution);
+    prompt.appendChild(buildAutoGradePanel(exercise,exerciseConfigs[index],index));
+    prompt.appendChild(createControls('Đang xem đề bài','Xem lời giải','solution'));
+    solution.appendChild(createControls('Đang xem lời giải','Quay lại đề bài','question'));
+    setExerciseView(exercise,'question');setGradeVisual(exercise,'unanswered');exercise.open=false;
+    exercise.addEventListener('toggle',()=>{if(exercise.open){closeOtherExercises(exercise);}else{setExerciseView(exercise,'question');}});
+  });
+
+  restoreExerciseProgress();updateOverallProgress();
+
+  document.getElementById('gradeAllExercises').addEventListener('click',()=>{
+    let graded=0;
+    exercises.forEach((exercise,index)=>{if(exerciseHasAnyAnswer(exercise,exerciseConfigs[index])){gradeExercise(exercise,true);graded++;}});
+    if(!graded){
+      const card=document.getElementById('exerciseProgressCard');
+      card.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}],{duration:260});
+    }
+  });
+  document.getElementById('clearExerciseProgress').addEventListener('click',()=>{
+    if(!window.confirm('Xóa toàn bộ đáp án và tiến độ của 30 bài tập?')) return;
+    exercises.forEach(resetExerciseAnswer);
+    try{localStorage.removeItem(EXERCISE_STORAGE_KEY);}catch(_){ }
+  });
+  document.getElementById('resetExercises').addEventListener('click',()=>{
+    exercises.forEach(ex=>{ex.open=false;setExerciseView(ex,'question');});
+  });
+  document.getElementById('jumpExercises').addEventListener('click',()=>{
+    document.getElementById('exercises').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+
+  function parseMatrix(text,allowBar=false){
+    const rawLines=text.trim().split(/\n+/).map(s=>s.trim()).filter(Boolean);
+    if(!rawLines.length) throw new Error('Ma trận đang trống.');
+    let barIndex=null;
+    const rows=rawLines.map((line,rowIndex)=>{
+      let normalized=line;
+      if(allowBar&&line.includes('|')){
+        const parts=line.split('|');
+        if(parts.length!==2) throw new Error('Mỗi hàng chỉ nên có một dấu |.');
+        const left=parts[0].trim().split(/[\s,]+/).filter(Boolean);
+        const right=parts[1].trim().split(/[\s,]+/).filter(Boolean);
+        const currentBar=left.length;
+        if(barIndex===null) barIndex=currentBar;
+        if(barIndex!==currentBar) throw new Error('Dấu | phải nằm cùng một cột ở mọi hàng.');
+        normalized=[...left,...right].join(' ');
+      }
+      const nums=normalized.split(/[\s,]+/).filter(Boolean).map(Number);
+      if(nums.some(v=>!Number.isFinite(v))) throw new Error('Có phần tử không phải số ở hàng '+(rowIndex+1)+'.');
+      return nums;
+    });
+    const cols=rows[0].length;
+    if(!cols||rows.some(r=>r.length!==cols)) throw new Error('Các hàng phải có cùng số phần tử.');
+    return {rows,barIndex};
+  }
+  function fmt(v){
+    const n=Math.abs(v)<1e-12?0:v;
+    return Number.isInteger(n)?String(n):String(Number(n.toFixed(6)));
+  }
+  function matrixHTML(rows,barIndex=null){
+    const tr=rows.map(row=>'<tr>'+row.map((v,i)=>'<td class="'+(barIndex!==null&&i===barIndex-1?'aug-divider':'')+'">'+fmt(v)+'</td>').join('')+'</tr>').join('');
+    return '<span class="matrix-wrap"><table class="matrix">'+tr+'</table></span>';
+  }
+  function shape(M){return M.length+'×'+M[0].length;}
+  function add(A,B,sign=1){
+    if(A.length!==B.length||A[0].length!==B[0].length) throw new Error('A và B phải cùng kích thước.');
+    return A.map((r,i)=>r.map((v,j)=>v+sign*B[i][j]));
+  }
+  function multiply(A,B){
+    if(A[0].length!==B.length) throw new Error('Không nhân được: số cột A phải bằng số hàng B.');
+    return A.map(row=>B[0].map((_,j)=>row.reduce((sum,v,k)=>sum+v*B[k][j],0)));
+  }
+  function transpose(A){return A[0].map((_,j)=>A.map(row=>row[j]));}
+  function determinant(A){
+    if(A.length!==A[0].length) throw new Error('Định thức chỉ áp dụng cho ma trận vuông.');
+    const M=A.map(r=>r.slice());
+    let det=1;
+    for(let i=0;i<M.length;i++){
+      let pivot=i;
+      for(let r=i+1;r<M.length;r++) if(Math.abs(M[r][i])>Math.abs(M[pivot][i])) pivot=r;
+      if(Math.abs(M[pivot][i])<1e-12) return 0;
+      if(pivot!==i){[M[i],M[pivot]]=[M[pivot],M[i]];det*=-1;}
+      const p=M[i][i];det*=p;
+      for(let r=i+1;r<M.length;r++){
+        const factor=M[r][i]/p;
+        for(let c=i;c<M.length;c++) M[r][c]-=factor*M[i][c];
+      }
+    }
+    return det;
+  }
+
+  const resultBox=document.getElementById('matrixResult');
+  document.querySelectorAll('[data-matrix-op]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      try{
+        const A=parseMatrix(document.getElementById('matrixA').value).rows;
+        const B=parseMatrix(document.getElementById('matrixB').value).rows;
+        const op=btn.dataset.matrixOp;
+        let title='',body='',steps='';
+        if(op==='add'){
+          const C=add(A,B,1);title='A + B · '+shape(C);body=matrixHTML(C);
+        }else if(op==='subtract'){
+          const C=add(A,B,-1);title='A − B · '+shape(C);body=matrixHTML(C);
+        }else if(op==='multiply'){
+          const C=multiply(A,B);title='A × B · '+shape(C);body=matrixHTML(C);
+          const detail=[];
+          for(let i=0;i<A.length;i++){
+            for(let j=0;j<B[0].length;j++){
+              const expr=A[i].map((v,k)=>fmt(v)+'·'+fmt(B[k][j])).join(' + ');
+              detail.push('c'+(i+1)+(j+1)+' = '+expr+' = '+fmt(C[i][j]));
+            }
+          }
+          steps='<div class="history">'+detail.map(x=>'<div class="history-item">'+x+'</div>').join('')+'</div>';
+        }else if(op==='transposeA'){
+          const C=transpose(A);title='Aᵀ · '+shape(C);body=matrixHTML(C);
+        }else if(op==='transposeB'){
+          const C=transpose(B);title='Bᵀ · '+shape(C);body=matrixHTML(C);
+        }else if(op==='scalarA'){
+          const c=Number(document.getElementById('scalarValue').value);
+          if(!Number.isFinite(c)) throw new Error('Hệ số c không hợp lệ.');
+          const C=A.map(r=>r.map(v=>c*v));title=fmt(c)+'A · '+shape(C);body=matrixHTML(C);
+        }else if(op==='detA'){
+          const d=determinant(A);title='det(A)';body='<div class="formula light">'+fmt(d)+'</div>';
+        }
+        resultBox.innerHTML='<div class="result-title">'+title+'</div><div class="matrix-line">'+body+'</div>'+steps;
+      }catch(err){
+        resultBox.innerHTML='<div class="result-title" style="color:#b91c1c">Không thể tính</div><div>'+err.message+'</div>';
+      }
+    });
+  });
+
+  const rowMatrix=document.getElementById('rowMatrix');
+  const targetRow=document.getElementById('targetRow');
+  const sourceRow=document.getElementById('sourceRow');
+  const rowOperation=document.getElementById('rowOperation');
+  const rowFactor=document.getElementById('rowFactor');
+  const rowResult=document.getElementById('rowResult');
+  const rowHistory=document.getElementById('rowHistory');
+  const initialRowMatrix=rowMatrix.value;
+
+  function refreshRowSelects(){
+    try{
+      const count=parseMatrix(rowMatrix.value,true).rows.length;
+      const currentTarget=targetRow.value||'2';
+      const currentSource=sourceRow.value||'1';
+      targetRow.innerHTML='';
+      sourceRow.innerHTML='';
+      for(let i=1;i<=count;i++){
+        const a=document.createElement('option');a.value=String(i);a.textContent='R'+i;targetRow.appendChild(a);
+        const b=document.createElement('option');b.value=String(i);b.textContent='R'+i;sourceRow.appendChild(b);
+      }
+      targetRow.value=Number(currentTarget)<=count?currentTarget:'1';
+      sourceRow.value=Number(currentSource)<=count?currentSource:(count>1?'2':'1');
+    }catch(_){}
+  }
+  rowMatrix.addEventListener('input',refreshRowSelects);
+  refreshRowSelects();
+
+  function updateOpFields(){
+    const op=rowOperation.value;
+    sourceRow.disabled=op==='scale';
+    rowFactor.disabled=op==='swap';
+  }
+  rowOperation.addEventListener('change',updateOpFields);
+  updateOpFields();
+
+  document.getElementById('applyRowOperation').addEventListener('click',()=>{
+    try{
+      const parsed=parseMatrix(rowMatrix.value,true);
+      const rows=parsed.rows.map(r=>r.slice());
+      const i=Number(targetRow.value)-1;
+      const j=Number(sourceRow.value)-1;
+      const c=Number(rowFactor.value);
+      const op=rowOperation.value;
+      if(i<0||i>=rows.length||j<0||j>=rows.length) throw new Error('Chỉ số hàng không hợp lệ.');
+      let description='';
+      if(op==='add'){
+        if(!Number.isFinite(c)) throw new Error('Hệ số c không hợp lệ.');
+        if(i===j) throw new Error('Trong phép Rᵢ←Rᵢ+cRⱼ, nên chọn hai hàng khác nhau.');
+        const old=rows[i].slice();
+        rows[i]=rows[i].map((v,k)=>v+c*rows[j][k]);
+        description='R'+(i+1)+' ← R'+(i+1)+' '+(c>=0?'+ ':'− ')+fmt(Math.abs(c))+'R'+(j+1)+
+          '. Hàng đích cũ ['+old.map(fmt).join(', ')+'] được thay bằng ['+rows[i].map(fmt).join(', ')+'].';
+      }else if(op==='scale'){
+        if(!Number.isFinite(c)||Math.abs(c)<1e-12) throw new Error('Phải nhân với số c khác 0.');
+        rows[i]=rows[i].map(v=>c*v);
+        description='R'+(i+1)+' ← '+fmt(c)+'R'+(i+1)+'. Mọi phần tử của hàng được nhân với '+fmt(c)+'.';
+      }else{
+        if(i===j) throw new Error('Hãy chọn hai hàng khác nhau để đổi chỗ.');
+        [rows[i],rows[j]]=[rows[j],rows[i]];
+        description='R'+(i+1)+' ↔ R'+(j+1)+'. Hai hàng đổi vị trí, giá trị bên trong không thay đổi.';
+      }
+      const lines=rows.map(row=>{
+        if(parsed.barIndex===null) return row.map(fmt).join(' ');
+        return row.slice(0,parsed.barIndex).map(fmt).join(' ')+' | '+row.slice(parsed.barIndex).map(fmt).join(' ');
+      });
+      rowMatrix.value=lines.join('\n');
+      rowResult.innerHTML='<div class="result-title">Đã thực hiện</div><p>'+description+'</p><div class="matrix-line">'+matrixHTML(rows,parsed.barIndex)+'</div>';
+      const item=document.createElement('div');
+      item.className='history-item';
+      item.textContent=description;
+      rowHistory.prepend(item);
+      refreshRowSelects();
+    }catch(err){
+      rowResult.innerHTML='<div class="result-title" style="color:#b91c1c">Không thể thực hiện</div><div>'+err.message+'</div>';
+    }
+  });
+
+  document.getElementById('resetRowMatrix').addEventListener('click',()=>{
+    rowMatrix.value=initialRowMatrix;
+    rowHistory.innerHTML='';
+    rowResult.innerHTML='<div class="result-title">Đã khôi phục</div><span class="muted">Ví dụ ban đầu phù hợp với R₂ ← R₂ − 2R₁.</span>';
+    refreshRowSelects();
+  });
+
+  document.getElementById('gradeQuiz').addEventListener('click',()=>{
+    const questions=[...document.querySelectorAll('.quiz-question')];
+    let score=0,answered=0;
+    questions.forEach(q=>{
+      const chosen=q.querySelector('input:checked');
+      q.style.borderColor='';
+      if(chosen){answered++;if(chosen.value===q.dataset.answer){score++;q.style.borderColor='#86efac';}else{q.style.borderColor='#fca5a5';}}
+    });
+    const result=document.getElementById('quizResult');
+    result.className='quiz-result show '+(score>=8?'good':score>=5?'mid':'bad');
+    result.textContent='Kết quả: '+score+'/'+questions.length+' câu đúng. Bạn đã trả lời '+answered+'/'+questions.length+' câu.';
+  });
+})();
+</script>
+<script>try{localStorage.setItem("cs115-summary:ma-tran-chuyen-sau",JSON.stringify({correct:document.querySelectorAll(".exercise-status.correct").length||0,total:30,updated:Date.now()}))}catch(e){}</script></body>
+</html>

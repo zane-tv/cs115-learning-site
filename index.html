@@ -1,0 +1,108 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Thư viện HTML CS115 Toán cho Khoa học máy tính"><title>CS115 · Thư viện bài học</title><style>body{margin:0;background:#f6f8fc;color:#172033;font:16px system-ui}.load{width:760px;margin:100px auto;background:#fff;padding:34px;border:1px solid #dbe3ef;border-radius:18px;box-shadow:0 14px 40px rgba(20,35,65,.08)}h1{color:#0759c7;margin-top:0}.bar{height:10px;background:#e7edf6;border-radius:999px;overflow:hidden;margin-top:18px}.bar>i{display:block;height:100%;width:0;background:#1677ff;transition:width .2s}.meta{color:#596579;font-size:14px}pre{white-space:pre-wrap}</style><meta name="theme-color" content="#fdfbf7"><meta name="apple-mobile-web-app-capable" content="yes"><style id="cs115-mobile-v2">
+/* CS115 mobile UX v2 */
+html{scroll-padding-top:78px}
+body{-webkit-tap-highlight-color:rgba(45,93,161,.18);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+button,input,select,textarea,a{touch-action:manipulation}
+input,select,textarea{font-size:max(16px,1em)}
+.section,.lesson-card{content-visibility:auto;contain-intrinsic-size:1px 720px}
+.toc{overscroll-behavior-inline:contain;scrollbar-width:thin}
+.filters,.site-actions,.formula,.code,.diagram,.matrix-line,.labeled-matrix,.history{overscroll-behavior-inline:contain;scrollbar-width:thin}
+.mobile-top-button{position:fixed;z-index:1400;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));display:grid;place-items:center;width:50px;height:50px;padding:0;border:3px solid var(--ink,#2d2d2d);border-radius:50%;background:var(--red,#ff4d4d);color:#fff;box-shadow:4px 4px 0 var(--ink,#2d2d2d);font:700 25px/1 var(--head,system-ui);opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .18s,transform .18s,visibility .18s}
+.mobile-top-button.show{opacity:1;visibility:visible;transform:translateY(0)}
+.mobile-top-button:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink,#2d2d2d)}
+@media(max-width:880px){
+  .hero:before,.library-hero:before,.lesson-card:before,.section:before{display:none!important}
+  .sitebar,.hero,.library-hero,.section,.lesson-card,.sidebar,.footer{transform:none!important}
+  .sidebar{max-width:100%;overscroll-behavior-inline:contain}
+  .toc{width:100%!important;min-width:0!important;scroll-snap-type:x proximity}
+  .toc a{flex:0 0 auto;max-width:min(78vw,270px);scroll-snap-align:start}
+  .toc a span:last-child{overflow:hidden;text-overflow:ellipsis}
+  .site-actions,.filters{scroll-snap-type:x proximity}
+  .site-actions a,.filter{flex:0 0 auto;scroll-snap-align:start}
+  .formula,.code,.diagram,.matrix-line,.labeled-matrix,.history{-webkit-overflow-scrolling:touch}
+}
+@media(max-width:640px){
+  html{scroll-padding-top:70px}
+  body{line-height:1.55}
+  .shell,.page-shell,body[data-lesson='ma-tran-chuyen-sau'] .page-shell{width:calc(100% - 12px)!important;padding-bottom:max(42px,env(safe-area-inset-bottom))!important}
+  .progress{height:4px}
+  .sitebar{position:relative;gap:8px;margin-bottom:15px}
+  .sitebrand{min-width:0}
+  .sitebrand>span:last-child{max-width:calc(100vw - 86px)!important}
+  .site-actions{gap:7px;padding:2px 1px 6px}
+  .site-actions a{min-width:max-content}
+  .hero,.library-hero{margin-bottom:20px!important;padding:29px 15px!important;border-radius:22px 11px 24px 13px/14px 23px 12px 25px!important}
+  .hero h1,.library-hero h1{font-size:clamp(31px,9.5vw,38px)!important;line-height:1.06;text-underline-offset:7px;overflow-wrap:anywhere}
+  .hero p,.library-hero p{font-size:17px!important}
+  .eyebrow{max-width:100%;font-size:16px;white-space:normal;text-align:center}
+  .tags,.hero-tags{gap:6px;margin-top:17px}
+  .tag,.hero-tag{padding:4px 8px;font-size:13px;transform:none!important}
+  .hero-card{padding:15px;transform:none!important}
+  .meta-row{grid-template-columns:38px minmax(0,1fr);transform:none!important}
+  .meta-row small{overflow-wrap:anywhere}
+  .overview{gap:8px;margin:16px 0}
+  .overview-card{min-width:0;padding:10px 5px;transform:none!important;border-radius:18px!important;box-shadow:3px 3px 0 var(--ink,#2d2d2d)}
+  .overview-card strong{font-size:26px}
+  .overview-card span{display:block;font-size:14px;line-height:1.2}
+  .library-toolbar{position:relative;margin:15px 0;padding:10px;gap:9px}
+  .library-toolbar input{min-height:50px}
+  .filters{padding:1px 1px 6px}
+  .filter{min-height:46px;padding-inline:13px}
+  .library-grid{gap:15px}
+  .lesson-card{padding:17px;box-shadow:4px 4px 0 var(--ink,#2d2d2d)}
+  .lesson-card h2{font-size:24px}
+  .lesson-card .card-top{display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .topic-list{gap:5px}
+  .topic{font-size:13px}
+  .card-actions{gap:8px}
+  .card-actions a{width:100%;min-height:50px}
+  .sidebar{top:3px;padding:6px;border-width:2px;box-shadow:3px 3px 0 var(--ink,#2d2d2d)}
+  .toc{gap:5px;padding-bottom:5px}
+  .toc a{min-height:48px;max-width:76vw;padding:7px 9px;border-width:2px}
+  .section{padding:19px 13px!important;border-radius:19px 10px 20px 11px/11px 21px 10px 19px!important;box-shadow:3px 3px 0 var(--ink,#2d2d2d)}
+  .section-head{grid-template-columns:39px minmax(0,1fr);gap:9px}
+  .section-badge{width:38px;height:38px;font-size:18px;box-shadow:2px 2px 0 var(--ink,#2d2d2d)}
+  .section h2{font-size:25px!important;overflow-wrap:anywhere}
+  .section h3{font-size:21px}
+  .card,.glossary-item,.check-item{padding:14px;transform:none!important}
+  .formula{font-size:17px;text-align:left;white-space:nowrap;padding:12px 10px}
+  .code{font-size:13px;padding:12px 10px}
+  .diagram{padding:11px}
+  .worked-title{flex-wrap:wrap;font-size:18px}
+  .worked-body{padding:12px}
+  .step{padding:10px 10px 10px 42px}
+  .compare th,.compare td,.timeline th,.timeline td,.data-table th,.data-table td,.compare-table th,.compare-table td{min-width:128px;padding:8px;font-size:14px}
+  details.exercise{box-shadow:3px 3px 0 var(--ink,#2d2d2d)}
+  details.exercise summary{min-height:56px;padding:12px 47px 12px 12px;font-size:18px;line-height:1.25;overflow-wrap:anywhere}
+  .exercise-body,.exercise-content{padding:12px}
+  .answer-zone,.auto-grade-panel{padding:11px}
+  .answer-actions,.grade-actions{display:grid!important;grid-template-columns:1fr!important}
+  .answer-actions .btn,.grade-actions .btn,.exercise-switch{width:100%;min-height:50px}
+  body[data-lesson='ma-tran-chuyen-sau'] .hero{padding-top:58px!important}
+  body[data-lesson='ma-tran-chuyen-sau'] .calc-panel,body[data-lesson='ma-tran-chuyen-sau'] .exercise-progress-card,body[data-lesson='ma-tran-chuyen-sau'] .auto-grade-panel{padding:12px}
+  body[data-lesson='ma-tran-chuyen-sau'] .calc-buttons,body[data-lesson='ma-tran-chuyen-sau'] .exercise-progress-actions{display:grid!important;grid-template-columns:1fr!important}
+  body[data-lesson='ma-tran-chuyen-sau'] .calc-buttons .btn,body[data-lesson='ma-tran-chuyen-sau'] .exercise-progress-actions .btn{width:100%;min-height:50px}
+  body[data-lesson='ma-tran-chuyen-sau'] table.matrix{font-size:16px;border-spacing:7px 3px}
+  body[data-lesson='ma-tran-chuyen-sau'] .operator-read,body[data-lesson='ma-tran-chuyen-sau'] .row-op-visual{justify-items:stretch!important}
+  .mobile-top-button{display:grid}
+}
+@media(max-width:380px){
+  .overview{grid-template-columns:1fr!important}
+  .hero h1,.library-hero h1{font-size:30px!important}
+  .sitebrand>span:last-child{max-width:230px!important}
+  .section{padding-inline:11px!important}
+  .toc a{max-width:72vw}
+}
+@media(min-width:641px){.mobile-top-button{display:none!important}}
+@media(prefers-reduced-motion:reduce){.mobile-top-button{transition:none}}
+</style></head><body><div class="load"><h1>CS115 · Thư viện bài học</h1><p id="status">Đang tải nội dung đầy đủ…</p><div class="bar"><i id="progress"></i></div><p class="meta">13 bài học · 104 bài tập · dữ liệu cùng một domain</p></div><script>(()=>{const urls=["/data/c00.txt", "/data/c01.txt", "/data/c02.txt", "/data/c03.txt", "/data/c04.txt", "/data/c05.txt", "/data/c06.txt", "/data/c07.txt", "/data/c08.txt", "/data/c09.txt", "/data/c10.txt", "/data/c11.txt"];const lens=[8000, 8000, 8000, 8000, 8000, 8000, 8000, 8000, 8000, 8000, 8000, 7876];const hs=["3362002e1755e4c70eb6f22b601ed2402e65e3d55b7c3916cb60d6d2b5d9b15a", "2758248656424327ef13a0ba18efa2c9ac5beb169a48e89544a9550a7fb956ad", "b660060ca1c53d89af721b61b81c83f14c3c209d374954918e694309c5280b1c", "61d62419d6b8f63ad129b780ec247bfa852e20b16f45addcd96c28454b80d32e", "8d6c3751cd164861995774f9cdba32568ca5993910f54b1e53ebb6659b80a659", "bd9ca4f497869281cd419cabe8bff73ba23d912c3465f858281bb2d76cd8ca8a", "148dd3ff88a06757a3c017aff2fb2ceddb759c34f388f0092ff41c11176be289", "a836b6ba1636e998d8cfe333197cd0a9313df7eadcb363287ecfb28bd11470e9", "2b9b09bc70d9dc5c0c30a59019669ab2e2c4c6ab0f82ba72054a7587efa4ab7f", "a5b43da035871970c5e4da30f4ba85dc42921cdcf79ae45509423669eaa0c157", "f9095e7f1cb4c7086fc9eea8b72b7ceb68c00d6a294dec945c314fda87685248", "f79639f3b86aa27a258c02e9ca96aa9029c90ff6fa3b3313da20aa94d7aea1b5"];const status=document.getElementById('status'),progress=document.getElementById('progress');const hex=b=>Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');const fail=e=>document.body.innerHTML='<div class="load"><h1>Không thể mở thư viện</h1><pre style="color:#b91c1c">'+String(e)+'</pre><p>Hãy tải lại bằng Ctrl/Cmd + Shift + R.</p></div>';(async()=>{try{let done=0;const parts=await Promise.all(urls.map(async(u,i)=>{const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error('Không tải được '+u+' (HTTP '+r.status+')');const t=(await r.text()).trim();if(t.length!==lens[i])throw new Error('Dữ liệu '+u+' không đủ: '+t.length+'/'+lens[i]);const h=hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)));if(h!==hs[i])throw new Error('Checksum phần dữ liệu '+u+' không khớp');done++;status.textContent='Đã tải '+done+'/'+urls.length+' phần dữ liệu…';progress.style.width=(done/urls.length*55)+'%';return t}));let s=parts.join('').replace(/-/g,'+').replace(/_/g,'/');s+='='.repeat((4-s.length%4)%4);const bin=Uint8Array.from(atob(s),c=>c.charCodeAt(0));if(!('DecompressionStream'in window))throw new Error('Trình duyệt không hỗ trợ DecompressionStream.');status.textContent='Đang giải nén và kiểm tra…';progress.style.width='72%';const raw=await new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'))).text();const digest=hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw)));if(digest!=='5b4ea4f7c6220ce27933c1d12f9cad6cbcecd94f194b7e0f5a2cb917642146e2')throw new Error('Checksum nội dung không khớp');const pack=JSON.parse(raw);let path=decodeURIComponent(location.pathname||'/');if(path.length>1&&path.endsWith('/'))path=path.slice(0,-1);let h=pack.pages[path]||pack.pages['/404.html'];h=h.replace(/<link\s+rel="stylesheet"\s+href="(?:\.\.\/)?assets\/styles\.css"\s*>/i,'<style>'+pack.css+'</style>');h=h.replace(/<script\s+src="(?:\.\.\/)?assets\/app\.js"\s*><\/script>/i,'<script>'+pack.js+'<\/script>');progress.style.width='100%';h=h.replace(/<\/head>/i,'<link id="cs115-ai-style" rel="stylesheet" href="/chatbot.css"></head>');h=h.replace(/<\/body>/i,'<script id="cs115-ai-script" src="/chatbot.js"><\/script></body>');document.open();document.write(h);document.close()}catch(e){fail(e)}})()})();</script><script>(function(){
+  if(!document.querySelector('.mobile-top-button')){
+    const b=document.createElement('button');
+    b.type='button';b.className='mobile-top-button';b.setAttribute('aria-label','Lên đầu trang');b.textContent='↑';
+    b.addEventListener('click',()=>window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
+    document.body.appendChild(b);
+    const sync=()=>b.classList.toggle('show',window.scrollY>700);
+    addEventListener('scroll',sync,{passive:true});sync();
+  }
+  document.querySelectorAll('.toc a').forEach(a=>a.addEventListener('click',()=>a.scrollIntoView({block:'nearest',inline:'center'})));
+})();</script></body></html>
