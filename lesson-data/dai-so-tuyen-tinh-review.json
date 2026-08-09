@@ -1,0 +1,201 @@
+{
+  "slug": "dai-so-tuyen-tinh-review",
+  "title": "Linear Algebra Review – hệ tuyến tính, ma trận, độc lập tuyến tính, cơ sở và hạng",
+  "subtitle": "Bản ôn tập có cấu trúc từ 17 slide: hệ phương trình tuyến tính, các phép toán ma trận, inverse/transpose, giải hệ, linear independence, basis/rank, vector–matrix form và ý tưởng dimension reduction.",
+  "category": "FOUNDATION · LINEAR ALGEBRA",
+  "tags": ["Ax=b", "Matrix", "Inverse", "Linear Independence", "Basis & Rank", "Dimension Reduction"],
+  "objectives": [
+    "Chuyển hệ phương trình tuyến tính sang dạng ma trận Ax=b.",
+    "Thực hiện cộng, nhân, chuyển vị và nhận biết điều kiện để ma trận có nghịch đảo.",
+    "Giải thích linear independence bằng phương trình tổ hợp tuyến tính bằng 0.",
+    "Phân biệt generating set, basis và rank ở mức review của nguồn.",
+    "Đọc được vector/matrix form và ý tưởng giảm chiều bằng tổ hợp của ít vector cơ sở hơn."
+  ],
+  "sources": [
+    {"file": "2024_02_CS115_Linear Algebra Review.pdf", "pages": "17 slide", "note": "Bản review tháng 09/2024"}
+  ],
+  "coverage": "Rà soát toàn bộ 17 slide. Bài này giữ đúng mức review; các chủ đề inner product/eigen/projection chi tiết nằm ở bài Đại số tuyến tính mở rộng và Hình học giải tích.",
+  "sections": [
+    {
+      "id": "roadmap",
+      "title": "Roadmap của bản review",
+      "lead": "Nguồn chia nội dung thành 5 khối nối tiếp nhau.",
+      "source": "Slide 1–2",
+      "blocks": [
+        {"type": "bullets", "items": [
+          "Systems of Linear Equations.",
+          "Matrices.",
+          "Linear Independence.",
+          "Basis and Rank.",
+          "Linear Mappings."
+        ]},
+        {"type": "note", "style": "note", "title": "Cách học", "html": "Hãy coi <b>Ax=b</b> là trục xuyên suốt: A chứa cách các biến được trộn, x là vector ẩn, b là kết quả quan sát. Các khái niệm độc lập/cơ sở/rank giúp trả lời A thực sự mang bao nhiêu hướng thông tin."}
+      ]
+    },
+    {
+      "id": "systems",
+      "title": "Hệ phương trình tuyến tính và dạng Ax=b",
+      "lead": "Một hệ nhiều phương trình có thể được viết gọn bằng ma trận.",
+      "source": "Slide 3, 9–11",
+      "blocks": [
+        {"type": "formula", "latex": "\sum_{j=1}^{n}a_{ij}x_j=b_i,\qquad i=1,\ldots,m"},
+        {"type": "formula", "latex": "A\mathbf x=\mathbf b", "note": "A∈R^{m×n}, x∈R^n, b∈R^m."},
+        {"type": "p", "html": "Nguồn dùng phép khử (elimination) để giải hệ và nhắc hai nhóm lớn: phương pháp trực tiếp (direct methods) và phương pháp lặp (iterative methods). Slide review không đi sâu thuật toán lặp, nên bài này chỉ giữ mức nhận biết."},
+        {"type": "example", "title": "Ví dụ tự học: viết hệ thành ma trận", "intro": "2x+y=5 và x−y=1.", "steps": [
+          "Ma trận hệ số A=[[2,1],[1,−1]].",
+          "Vector ẩn x=[x,y]ᵀ.",
+          "Vector vế phải b=[5,1]ᵀ."
+        ], "result": "Hệ được viết là <b>Ax=b</b>."}
+      ]
+    },
+    {
+      "id": "matrix-basics",
+      "title": "Identity matrix và các tính chất ma trận",
+      "lead": "Slide 4 dùng ma trận đơn vị để nhắc lại phần tử trung hòa của phép nhân ma trận.",
+      "source": "Slide 4",
+      "blocks": [
+        {"type": "formula", "latex": "AI=IA=A"},
+        {"type": "bullets", "items": [
+          "Phép nhân ma trận có tính kết hợp: (AB)C=A(BC).",
+          "Có tính phân phối: A(B+C)=AB+AC và (A+B)C=AC+BC.",
+          "Nói chung AB≠BA; phép nhân ma trận không giao hoán.",
+          "Identity matrix có 1 trên đường chéo chính và 0 ở ngoài đường chéo."
+        ]},
+        {"type": "warning", "style": "warning", "title": "Lỗi review rất thường gặp", "html": "Không được đổi thứ tự A và B chỉ vì ở số thực ta quen ab=ba. Trong ma trận, thứ tự mang ý nghĩa biến đổi."}
+      ]
+    },
+    {
+      "id": "multiplication",
+      "title": "Cộng và nhân ma trận: kiểm tra shape trước",
+      "lead": "Nguồn nhắc điều kiện kích thước và công thức phần tử của tích.",
+      "source": "Slide 5",
+      "blocks": [
+        {"type": "formula", "latex": "(AB)_{ij}=\sum_{k=1}^{n}a_{ik}b_{kj}"},
+        {"type": "cards", "cols": 2, "items": [
+          {"title": "Cộng A+B", "html": "A và B phải cùng kích thước; cộng theo từng phần tử."},
+          {"title": "Nhân AB", "html": "Số cột của A phải bằng số hàng của B. Nếu A∈R^{m×n}, B∈R^{n×p} thì AB∈R^{m×p}."}
+        ]},
+        {"type": "example", "title": "Ví dụ tự học: một phần tử của AB", "intro": "A=[[1,2],[3,4]], B=[[5,6],[7,8]].", "steps": [
+          "(AB)₁₁ = hàng 1 của A · cột 1 của B = 1×5+2×7=19.",
+          "(AB)₁₂ = 1×6+2×8=22.",
+          "Lặp cho hàng 2."
+        ], "result": "AB=[[19,22],[43,50]]."}
+      ]
+    },
+    {
+      "id": "inverse",
+      "title": "Inverse matrix: điều kiện và ý nghĩa",
+      "lead": "Slide 6 định nghĩa nghịch đảo cho ma trận vuông và nhấn mạnh tính duy nhất.",
+      "source": "Slide 6, 8",
+      "blocks": [
+        {"type": "formula", "latex": "AB=BA=I\quad\Longrightarrow\quad B=A^{-1}"},
+        {"type": "bullets", "items": [
+          "A phải là ma trận vuông để nói về inverse theo định nghĩa trong slide.",
+          "Nếu inverse tồn tại thì nó là duy nhất.",
+          "Các từ đồng nghĩa trong slide: regular, invertible, nonsingular.",
+          "(AB)^{-1}=B^{-1}A^{-1}; thứ tự bị đảo."
+        ]},
+        {"type": "formula", "latex": "(A^T)^{-1}=(A^{-1})^T"},
+        {"type": "note", "style": "deep", "title": "Liên hệ Ax=b", "html": "Nếu A khả nghịch thì Ax=b có nghiệm duy nhất x=A^{-1}b. Trong thực hành số học, nguồn cũng nhắc elimination thay vì coi inverse là cách duy nhất để giải hệ."}
+      ]
+    },
+    {
+      "id": "transpose",
+      "title": "Transpose và symmetric matrix",
+      "lead": "Transpose đổi hàng thành cột và xuất hiện dày đặc trong vector–matrix form.",
+      "source": "Slide 7–8",
+      "blocks": [
+        {"type": "formula", "latex": "(A^T)_{ij}=A_{ji}"},
+        {"type": "formula", "latex": "(AB)^T=B^TA^T"},
+        {"type": "formula", "latex": "A^T=A", "note": "Định nghĩa ma trận đối xứng (symmetric)."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "A=[[1,2,3],[4,5,6]].", "steps": ["Hàng 1 của A trở thành cột 1 của Aᵀ.", "Hàng 2 trở thành cột 2."], "result": "Aᵀ=[[1,4],[2,5],[3,6]]."}
+      ]
+    },
+    {
+      "id": "independence",
+      "title": "Linear combination và linear independence",
+      "lead": "Slide 12 chuyển từ hệ tuyến tính sang câu hỏi các vector có thông tin dư hay không.",
+      "source": "Slide 12",
+      "blocks": [
+        {"type": "formula", "latex": "k_1\mathbf b_1+\cdots+k_n\mathbf b_n=\mathbf 0"},
+        {"type": "p", "html": "Một tập vector độc lập tuyến tính khi tổ hợp tuyến tính bằng vector 0 chỉ có nghiệm tất cả hệ số bằng 0. Nếu có một nghiệm hệ số không đồng thời bằng 0 thì tập phụ thuộc tuyến tính."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "b₁=(1,2), b₂=(2,4).", "steps": ["b₂=2b₁.", "Chọn k₁=−2, k₂=1.", "−2b₁+b₂=0 với hệ số không đồng thời bằng 0."], "result": "Hai vector <b>phụ thuộc tuyến tính</b>."}
+      ]
+    },
+    {
+      "id": "basis-rank",
+      "title": "Generating set, basis và rank",
+      "lead": "Nguồn dùng basis như một generating set tối thiểu và rank như số vector cơ sở.",
+      "source": "Slide 13",
+      "blocks": [
+        {"type": "bullets", "items": [
+          "Generating set: tập vector có thể sinh mọi vector trong không gian bằng linear combination.",
+          "Basis: generating set tối thiểu; các vector trong basis độc lập tuyến tính.",
+          "Số vector của basis được nguồn gọi là rank của vector space trong ngữ cảnh slide review.",
+          "Mỗi vector trong không gian có biểu diễn duy nhất theo một basis đã chọn."
+        ]},
+        {"type": "note", "style": "note", "title": "Tại sao basis hữu ích?", "html": "Basis cho một hệ tọa độ để lưu một vector bằng các hệ số thay vì mô tả nó bằng nhiều vector dư thừa."}
+      ]
+    },
+    {
+      "id": "matrix-form",
+      "title": "Vector/Matrix Form: gom linear combination thành phép nhân",
+      "lead": "Slide 14 cho thấy phép nhân ma trận chính là nhiều linear combination được tổ chức có hệ thống.",
+      "source": "Slide 14",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf b=\sum_{j=1}^{n}w_j\mathbf x_j=X\mathbf w"},
+        {"type": "p", "html": "Nếu các vector xⱼ đặt thành cột của ma trận X và các hệ số wⱼ đặt trong vector w, linear combination được viết ngắn là Xw. Đây là dạng xuất hiện liên tục trong regression, neural network và dimension reduction."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "x₁=(1,0), x₂=(0,1), w=(3,−2).", "steps": ["X=[[1,0],[0,1]].", "Xw = 3x₁ − 2x₂."], "result": "Xw=(3,−2)."}
+      ]
+    },
+    {
+      "id": "dimension",
+      "title": "Dimension reduction: biểu diễn D chiều bằng K hướng",
+      "lead": "Ba slide cuối minh họa ý tưởng giảm số đặc trưng bằng một tập basis nhỏ hơn.",
+      "source": "Slide 15–17",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf x\approx\sum_{k=1}^{K}w_k\mathbf v_k,\qquad K\ll D"},
+        {"type": "p", "html": "Nguồn mô tả một vector x∈R^D như linear combination của K vector cơ sở vₖ, với K nhỏ hơn nhiều D. Hệ số có thể được gom thành vector mới trong R^K."},
+        {"type": "cards", "cols": 2, "items": [
+          {"title": "Mục tiêu biểu diễn", "html": "Giảm số chiều/features nhưng vẫn giữ thông tin quan trọng để tái tạo gần đúng dữ liệu."},
+          {"title": "Hình minh họa", "html": "Slide dùng ví dụ khuôn mặt: dữ liệu ảnh nhiều chiều được biểu diễn qua một số hướng/cơ sở thấp chiều hơn."}
+        ]},
+        {"type": "warning", "style": "warning", "title": "Giới hạn của source review", "html": "Slide review nêu ý tưởng dimension reduction nhưng chưa triển khai PCA/SVD chi tiết. Website không tự chèn derivation PCA vào bài này."}
+      ]
+    }
+  ],
+  "lab": {
+    "type": "linear2",
+    "title": "Lab Ax=b cho hệ 2×2",
+    "subtitle": "Nhập hai hàng [a₁₁,a₁₂,b₁] và [a₂₁,a₂₂,b₂] để kiểm tra det(A) và nghiệm duy nhất."
+  },
+  "exercises": [
+    {"q": "Dạng ma trận chuẩn của hệ tuyến tính trong slide là gì?", "answers": ["Ax=b", "A x = b"], "solution": "A x = b.", "source": "Slide 3/9"},
+    {"q": "Nếu A∈R^(m×n) và x∈R^n thì Ax thuộc R^?", "answers": ["m", "R^m", "Rm"], "solution": "Ax∈R^m.", "source": "Slide 3"},
+    {"q": "AI bằng gì?", "answers": ["A"], "solution": "AI=A.", "source": "Slide 4"},
+    {"q": "Phép nhân ma trận có giao hoán nói chung không?", "answers": ["không", "khong", "no"], "solution": "Không; nói chung AB≠BA.", "source": "Slide 4"},
+    {"q": "A kích thước 3×4 nhân B kích thước 4×2 cho ma trận kích thước nào?", "answers": ["3×2", "3x2", "3*2"], "solution": "3×2.", "source": "Slide 5"},
+    {"q": "A 2×3 có cộng được với B 3×2 không?", "answers": ["không", "khong", "no"], "solution": "Không, cộng cần cùng kích thước.", "source": "Slide 5"},
+    {"q": "A=[[1,2],[3,4]], B=[[5,6],[7,8]]. (AB)11 bằng?", "answers": ["19"], "solution": "1×5+2×7=19.", "source": "Từ quy tắc slide 5"},
+    {"q": "Nếu B là inverse của A thì AB bằng gì?", "answers": ["I", "identity", "ma trận đơn vị", "ma tran don vi"], "solution": "AB=I (và BA=I).", "source": "Slide 6"},
+    {"q": "Inverse nếu tồn tại có duy nhất không?", "answers": ["có", "co", "yes"], "solution": "Có.", "source": "Slide 6"},
+    {"q": "Một từ tiếng Anh trong slide đồng nghĩa với invertible?", "answers": ["regular", "nonsingular"], "solution": "Regular hoặc nonsingular.", "source": "Slide 6"},
+    {"q": "Transpose của ma trận 2×3 có kích thước gì?", "answers": ["3×2", "3x2", "3*2"], "solution": "3×2.", "source": "Slide 7"},
+    {"q": "Nếu A symmetric thì A^T bằng gì?", "answers": ["A"], "solution": "Aᵀ=A.", "source": "Slide 7"},
+    {"q": "(AB)^T bằng biểu thức nào?", "answers": ["B^T A^T", "BTAT", "BTA T"], "solution": "(AB)ᵀ=BᵀAᵀ.", "source": "Slide 8"},
+    {"q": "(AB)^(-1) bằng gì?", "answers": ["B^-1 A^-1", "B^{-1}A^{-1}", "inverse B inverse A"], "solution": "B⁻¹A⁻¹.", "source": "Slide 8"},
+    {"q": "Nếu Ax=b và A khả nghịch thì x bằng gì?", "answers": ["A^-1 b", "A^{-1}b", "inverse A times b"], "solution": "x=A⁻¹b.", "source": "Suy ra trực tiếp từ slide 6/9"},
+    {"q": "Hai vector (1,2) và (2,4) độc lập hay phụ thuộc?", "answers": ["phụ thuộc", "phu thuoc", "dependent"], "solution": "Phụ thuộc vì vector thứ hai bằng 2 lần vector thứ nhất.", "source": "Từ định nghĩa slide 12"},
+    {"q": "Điều kiện độc lập: k1b1+...+knbn=0 chỉ có nghiệm nào?", "answers": ["tất cả k bằng 0", "k1=...=kn=0", "all zero", "trivial solution"], "solution": "Nghiệm tầm thường: mọi kᵢ=0.", "source": "Slide 12"},
+    {"q": "Một basis có phải là generating set có vector dư thừa không?", "answers": ["không", "khong", "no"], "solution": "Không; slide mô tả basis là generating set tối thiểu.", "source": "Slide 13"},
+    {"q": "Các vector của một basis độc lập hay phụ thuộc tuyến tính?", "answers": ["độc lập", "doc lap", "independent"], "solution": "Độc lập tuyến tính.", "source": "Slide 13"},
+    {"q": "Linear combination Σ wj xj có thể viết gọn dạng nào?", "answers": ["Xw", "X w"], "solution": "Xw.", "source": "Slide 14"},
+    {"q": "Trong dimension reduction ở slide, K so với D thường như thế nào?", "answers": ["K<<D", "K<D", "K nhỏ hơn D", "K much smaller than D"], "solution": "K≪D.", "source": "Slide 15–16"},
+    {"q": "Dimension reduction biểu diễn x bằng linear combination của các vector gì?", "answers": ["basis vectors", "vector cơ sở", "cac vector co so", "v_k"], "solution": "Các basis vectors vₖ.", "source": "Slide 16"},
+    {"q": "Hệ 2x+y=5; x−y=1 có nghiệm x bằng?", "answers": ["2"], "solution": "Cộng hai phương trình: 3x=6 nên x=2.", "source": "Ví dụ tự học từ Ax=b"},
+    {"q": "Cùng hệ trên, y bằng?", "answers": ["1"], "solution": "x−y=1 với x=2 ⇒ y=1.", "source": "Ví dụ tự học từ Ax=b"}
+  ],
+  "glossary": [
+    ["System of linear equations", "hệ phương trình tuyến tính"], ["Identity matrix", "ma trận đơn vị"], ["Inverse matrix", "ma trận nghịch đảo"], ["Transpose", "chuyển vị"], ["Symmetric matrix", "ma trận đối xứng"], ["Elimination", "phép khử"], ["Linear combination", "tổ hợp tuyến tính"], ["Linear independence", "độc lập tuyến tính"], ["Generating set", "hệ sinh"], ["Basis", "cơ sở"], ["Rank", "hạng"], ["Dimension reduction", "giảm chiều"]
+  ]
+}
