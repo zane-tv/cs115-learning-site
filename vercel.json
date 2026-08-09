@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "routes": [
     { "handle": "filesystem" },
-    { "src": "/lessons/(.*)", "dest": "/index.html" }
+    { "src": "/lessons/(.*)", "dest": "/lesson.html" }
   ]
 }
