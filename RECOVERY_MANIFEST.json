@@ -1,6 +1,6 @@
 {
   "recovered_from": "https://cs115-learning-site.vercel.app",
-  "pack_sha256": "8e14247e05de2111d90c0914f3879c58e0eeee5e78edb257a8c00896d5cac044",
+  "pack_sha256": "5b4ea4f7c6220ce27933c1d12f9cad6cbcecd94f194b7e0f5a2cb917642146e2",
   "routes": [
     "/",
     "/404.html",
@@ -17,7 +17,6 @@
     "/lessons/mang-neural.html",
     "/lessons/toi-uu-hoa.html",
     "/lessons/tong-quan-may-hoc.html",
-    "/lessons/vector-chuyen-sau.html",
     "/lessons/xac-suat-thong-ke.html",
     "/sources/dai-so-tuyen-tinh-mo-rong.pdf",
     "/sources/dai-so-tuyen-tinh-review.pdf",
@@ -44,9 +43,7 @@
     "/data/c08.txt",
     "/data/c09.txt",
     "/data/c10.txt",
-    "/data/c11.txt",
-    "/data/c12.txt",
-    "/data/c13.txt"
+    "/data/c11.txt"
   ],
-  "note": "Frontend recovered from production and extended with Vector và phép tính vector – chuyên sâu. Serverless function source remains outside this recovered frontend."
+  "note": "Frontend deployment output recovered from production. Serverless function source is not exposed by the public deployment."
 }
