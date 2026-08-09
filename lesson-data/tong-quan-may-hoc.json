@@ -1,0 +1,204 @@
+{
+  "slug": "tong-quan-may-hoc",
+  "title": "Tổng quan Machine Learning – từ E–T–P đến rủi ro thực nghiệm và tổng quát hóa",
+  "subtitle": "Bản học chi tiết từ 39 slide: định nghĩa ML, supervised/unsupervised/RL, classification/regression, design matrix, empirical risk, uncertainty, MLE, polynomial regression, deep networks, overfitting và train/validation/test.",
+  "category": "MACHINE LEARNING",
+  "tags": ["E–T–P", "Supervised Learning", "Empirical Risk", "MLE", "Overfitting", "Train/Val/Test"],
+  "objectives": [
+    "Diễn giải định nghĩa E–T–P của Tom Mitchell và gắn E,T,P vào một bài toán cụ thể.",
+    "Phân biệt supervised, unsupervised và reinforcement learning đúng theo slide.",
+    "Đọc được input, feature, output, label, sample size và design matrix.",
+    "Tính misclassification rate, empirical risk và MSE ở các ví dụ nhỏ.",
+    "Giải thích vì sao training error thấp chưa đủ và vai trò của validation/test.",
+    "Nhận ra linear regression, polynomial regression và deep network như các mức tăng năng lực mô hình."
+  ],
+  "sources": [
+    {"file": "CS115.01_Introduction to Machine Learning.pdf", "pages": "39 slide", "note": "Nguồn chính duy nhất cho bài tổng quan"}
+  ],
+  "coverage": "Rà soát toàn bộ 39 slide, từ định nghĩa ML đến No Free Lunch; phần hồi quy ở đây giữ mức tổng quan, thực hành chi tiết chuyển sang bài Linear Regression.",
+  "sections": [
+    {
+      "id": "what-is-ml",
+      "title": "Machine Learning là gì? E–T–P",
+      "lead": "Slide định nghĩa một chương trình học khi hiệu năng trên tác vụ cải thiện nhờ kinh nghiệm.",
+      "source": "Slide 2–3",
+      "blocks": [
+        {"type": "p", "html": "Theo định nghĩa được slide trích từ Tom Mitchell, một chương trình được gọi là học từ <b>kinh nghiệm E</b> đối với <b>tác vụ T</b> và <b>độ đo hiệu năng P</b> nếu hiệu năng của chương trình trên T, đo bởi P, được cải thiện nhờ E."},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "T — Task", "html": "Máy cần làm gì: phân lớp, hồi quy, dự đoán có cấu trúc…"},
+          {"title": "P — Performance", "html": "Đo tốt/xấu bằng gì: lỗi phân lớp, loss, MSE hoặc thước đo phù hợp output."},
+          {"title": "E — Experience", "html": "Dữ liệu/kinh nghiệm cung cấp cho chương trình để cải thiện hiệu năng."}
+        ]},
+        {"type": "example", "title": "Ví dụ tự học: gắn E–T–P vào phân loại hoa Iris", "steps": [
+          "T: dự đoán loài hoa từ 4 đặc trưng.",
+          "E: tập các cặp (feature vector, label) trong training set.",
+          "P: tỉ lệ phân loại đúng hoặc tương đương 1 − misclassification rate."
+        ], "result": "Định nghĩa ML trở nên cụ thể khi bạn chỉ ra được cả E, T và P."}
+      ]
+    },
+    {
+      "id": "paradigms",
+      "title": "Ba kiểu học được slide giới thiệu",
+      "lead": "Không phải mọi bài ML đều có cặp input–output giống nhau.",
+      "source": "Slide 4",
+      "blocks": [
+        {"type": "table", "headers": ["Kiểu học", "Dữ liệu trong slide", "Mục tiêu"], "rows": [
+          ["Supervised learning", "Có input xᵢ và output yᵢ tương ứng.", "Học ánh xạ từ input sang output."],
+          ["Unsupervised learning", "Có inputs nhưng không có outputs tương ứng.", "Tìm cấu trúc/đặc điểm của dữ liệu."],
+          ["Reinforcement learning", "Agent tương tác với môi trường.", "Học chiến lược a=π(s) để chọn hành động theo trạng thái."]
+        ]},
+        {"type": "note", "style": "note", "title": "Trọng tâm của file này", "html": "Phần lớn các slide tiếp theo tập trung vào <b>supervised learning</b>, đặc biệt classification và regression."}
+      ]
+    },
+    {
+      "id": "supervised",
+      "title": "Supervised learning: input, feature, output, label và training set",
+      "lead": "Đây là bộ từ vựng phải chắc trước khi đọc công thức loss.",
+      "source": "Slide 5–12",
+      "blocks": [
+        {"type": "formula", "latex": "D=\{(\mathbf x_i,y_i)\}_{i=1}^{N}", "note": "Training set gồm N cặp input–output."},
+        {"type": "bullets", "items": [
+          "Input x còn được gọi là feature vector/predictors.",
+          "Output y có thể được gọi là label, target hoặc response.",
+          "N là sample size.",
+          "Các tham số mô hình được ký hiệu θ và được ước lượng từ training data."
+        ]},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Classification", "html": "Output thuộc tập lớp rời rạc. Nhị phân có thể dùng y∈{0,1} hoặc {+1,−1}."},
+          {"title": "Regression", "html": "Output là một giá trị thực y∈ℝ."},
+          {"title": "Structured prediction", "html": "Output có cấu trúc nhiều phần, slide minh họa một ánh xạ sang chuỗi nhãn."}
+        ]},
+        {"type": "p", "html": "Với Iris, slide dùng 150 mẫu, 3 loài và 4 đặc trưng; tập dữ liệu nhỏ có thể biểu diễn bằng <b>design matrix N×D</b>. Với ảnh màu, số chiều input rất lớn vì D = C×D₁×D₂."}
+      ]
+    },
+    {
+      "id": "classifier",
+      "title": "Từ decision rule đến classifier",
+      "lead": "Slide dùng Iris để minh họa cách tham số tạo decision boundary/surface.",
+      "source": "Slide 13–15",
+      "blocks": [
+        {"type": "p", "html": "Slide xây hai luật quyết định dựa trên chiều dài và chiều rộng cánh hoa. Một threshold tạo <b>decision boundary</b>; nhiều luật ghép lại tạo <b>decision surface</b> và có thể tổ chức thành <b>decision tree</b>."},
+        {"type": "example", "title": "Ví dụ nguồn: luật quyết định trên Iris", "steps": [
+          "Nếu petal length < 2.45 → setosa.",
+          "Nếu không, dùng một luật khác dựa trên petal width để phân biệt versicolor và virginica.",
+          "Các feature và threshold tại các nút là một phần của bộ tham số θ."
+        ]},
+        {"type": "deep", "style": "deep", "title": "Ý tưởng quan trọng", "html": "Học classifier không chỉ là viết một luật thủ công; mục tiêu của ML là <b>tự động tìm tham số</b> từ dữ liệu để dự đoán tốt trên input mới."}
+      ]
+    },
+    {
+      "id": "risk",
+      "title": "Misclassification rate, loss và empirical risk",
+      "lead": "Slide chuyển từ “mô hình dự đoán” sang “đo mô hình tốt đến đâu”.",
+      "source": "Slide 16–18",
+      "blocks": [
+        {"type": "formula", "latex": "L(\theta)=\frac{1}{N}\sum_{i=1}^{N}\mathbb I\!\left(y_i\neq f(\mathbf x_i;\theta)\right)", "note": "Misclassification rate khi mọi lỗi có trọng số như nhau."},
+        {"type": "formula", "latex": "L(\theta)=\frac{1}{N}\sum_{i=1}^{N}\ell\!\left(y_i,f(\mathbf x_i;\theta)\right)", "note": "Empirical risk với loss tổng quát."},
+        {"type": "p", "html": "Slide minh họa loss bất đối xứng: một số sai lầm có thể nguy hiểm hơn sai lầm khác. Vì vậy <b>loss function</b> cho phép gán chi phí khác nhau cho các loại lỗi."},
+        {"type": "example", "title": "Ví dụ tự học: tính misclassification rate", "intro": "Một classifier dự đoán sai 3 trong 20 mẫu.", "steps": ["Số indicator bằng 1 là 3.", "Tổng indicator = 3.", "Chia cho N=20."], "result": "Misclassification rate = <b>3/20 = 0.15 = 15%</b>."},
+        {"type": "formula", "latex": "\hat\theta=\operatorname*{arg\,min}_{\theta}L(\theta)", "note": "Model fitting/training dưới góc nhìn empirical risk minimization."}
+      ]
+    },
+    {
+      "id": "uncertainty",
+      "title": "Uncertainty và mô hình xác suất",
+      "lead": "Không thể dự đoán hoàn hảo mọi output chỉ bằng một luật xác định.",
+      "source": "Slide 19–22",
+      "blocks": [
+        {"type": "cards", "cols": 2, "items": [
+          {"title": "Model uncertainty", "html": "Thiếu tri thức về ánh xạ thật từ input sang output."},
+          {"title": "Data uncertainty", "html": "Bản thân dữ liệu có nhiễu hoặc biến thiên không giải thích hết được."}
+        ]},
+        {"type": "formula", "latex": "p(y=k\mid \mathbf x;\theta)=f_k(\mathbf x;\theta)", "note": "Mô hình phân lớp có thể trả về phân phối xác suất trên C lớp."},
+        {"type": "p", "html": "Slide nối mô hình xác suất với <b>maximum likelihood estimation</b>: chọn tham số làm dữ liệu quan sát có likelihood lớn. Đây là cầu nối sang Regression Analysis trong lộ trình môn."}
+      ]
+    },
+    {
+      "id": "regression",
+      "title": "Regression, MSE và linear model",
+      "lead": "Khi output là số thực, zero-one loss không còn phù hợp.",
+      "source": "Slide 23–26",
+      "blocks": [
+        {"type": "formula", "latex": "\ell_2(y,\hat y)=(y-\hat y)^2", "note": "Quadratic loss / l2 loss trong slide."},
+        {"type": "formula", "latex": "\operatorname{MSE}(\theta)=\frac{1}{N}\sum_{i=1}^{N}\left(y_i-f(\mathbf x_i;\theta)\right)^2"},
+        {"type": "formula", "latex": "f(x;\theta)=b+wx", "note": "Linear regression 1 feature."},
+        {"type": "formula", "latex": "f(\mathbf x;\theta)=b+\mathbf w^T\mathbf x", "note": "Multiple linear regression."},
+        {"type": "example", "title": "Ví dụ tự học: MSE", "intro": "y=(2,4,5), ŷ=(2,3,7).", "steps": ["Sai số: (0,1,−2).", "Bình phương: (0,1,4).", "Trung bình: (0+1+4)/3."], "result": "MSE = <b>5/3 ≈ 1.667</b>."}
+      ]
+    },
+    {
+      "id": "polynomial",
+      "title": "Polynomial regression và feature engineering",
+      "lead": "Mô hình có thể phi tuyến theo input nhưng vẫn tuyến tính theo tham số.",
+      "source": "Slide 27–30",
+      "blocks": [
+        {"type": "formula", "latex": "\phi(x)=[1,x,x^2,\ldots,x^D]^T"},
+        {"type": "formula", "latex": "f(x;\mathbf w)=\mathbf w^T\phi(x)=w_0+w_1x+\cdots+w_Dx^D"},
+        {"type": "p", "html": "Slide gọi việc tạo vector đặc trưng φ(x) từ input ban đầu là <b>feature engineering</b>. Khi D tăng, model có nhiều bậc tự do hơn và training MSE có thể giảm mạnh."},
+        {"type": "warning", "style": "warning", "title": "Fit hoàn hảo không đồng nghĩa dự đoán tốt", "html": "Slide chỉ ra khi bậc đa thức đủ lớn có thể đạt MSE huấn luyện bằng 0 nhưng test error rất lớn — đây là dấu hiệu <b>overfitting</b>."}
+      ]
+    },
+    {
+      "id": "deep",
+      "title": "Từ feature engineering thủ công đến deep neural networks",
+      "lead": "Slide dùng neural network để minh họa việc tự học feature extractor.",
+      "source": "Slide 31–33",
+      "blocks": [
+        {"type": "formula", "latex": "f(\mathbf x;\mathbf w,\mathbf V)=\mathbf w^T\phi(\mathbf x;\mathbf V)"},
+        {"type": "p", "html": "Thay vì tự chọn φ(x), một mạng neural học tham số riêng cho bộ rút trích đặc trưng φ(x;V). Slide mô tả mạng sâu như phép hợp của nhiều hàm/layer; CNN được nêu cho ảnh và RNN cho dữ liệu chuỗi."},
+        {"type": "note", "style": "note", "title": "Phạm vi bài này", "html": "Đây chỉ là cầu nối khái niệm. Cấu trúc neuron, activation và backprop được học sâu ở bài `mang-neural`."}
+      ]
+    },
+    {
+      "id": "generalization",
+      "title": "Overfitting, generalization gap và Train/Validation/Test",
+      "lead": "Mục tiêu thật không phải chỉ tối thiểu hóa loss trên training set.",
+      "source": "Slide 34–38",
+      "blocks": [
+        {"type": "formula", "latex": "L(\theta;D_{train})=\frac{1}{|D_{train}|}\sum_{(\mathbf x,y)\in D_{train}}\ell(y,f(\mathbf x;\theta))"},
+        {"type": "formula", "latex": "L(\theta;p^*)=\mathbb E_{p^*(\mathbf x,y)}[\ell(y,f(\mathbf x;\theta))]", "note": "Population risk/expected loss lý thuyết trong slide."},
+        {"type": "p", "html": "Slide gọi chênh lệch giữa population risk và training empirical risk là <b>generalization gap</b>. Vì phân phối thật p* không biết, ta dùng dữ liệu giữ lại để ước lượng hiệu năng."},
+        {"type": "table", "headers": ["Tập", "Dùng để làm gì", "Không nên dùng để"], "rows": [
+          ["Training", "Fit tham số θ.", "Báo cáo hiệu năng cuối cùng."],
+          ["Validation", "Model selection / chọn độ phức tạp, hyperparameters.", "Huấn luyện trực tiếp như training data nếu muốn đánh giá khách quan."],
+          ["Test", "Ước lượng hiệu năng cuối cùng / test risk.", "Huấn luyện hoặc chọn model."]
+        ]},
+        {"type": "note", "style": "deep", "title": "No Free Lunch", "html": "Slide kết thúc bằng ý rằng không có một mô hình tốt nhất cho mọi vấn đề; lựa chọn mô hình phụ thuộc vấn đề và kết quả thực nghiệm."}
+      ]
+    }
+  ],
+  "lab": {
+    "type": "split",
+    "title": "Lab Train / Validation / Test",
+    "subtitle": "Thử một kích thước dataset và tỷ lệ chia để thấy vai trò ba tập dữ liệu."
+  },
+  "exercises": [
+    {"q": "Trong E–T–P, chữ E là gì?", "answers": ["experience", "kinh nghiệm"], "solution": "E = Experience.", "source": "Slide 3"},
+    {"q": "Trong E–T–P, chữ T là gì?", "answers": ["task", "tác vụ", "tac vu"], "solution": "T = Task.", "source": "Slide 3"},
+    {"q": "Trong E–T–P, chữ P là gì?", "answers": ["performance", "performance measure", "độ đo hiệu năng", "do do hieu nang"], "solution": "P = Performance measure.", "source": "Slide 3"},
+    {"q": "Học có giám sát có cần output y tương ứng với input x không?", "answers": ["có", "co", "yes"], "solution": "Có. Supervised learning dùng các cặp input–output.", "source": "Slide 4"},
+    {"q": "Unsupervised learning có nhãn/output tương ứng cho từng input không?", "answers": ["không", "khong", "no"], "solution": "Không theo định nghĩa trong slide.", "source": "Slide 4"},
+    {"q": "Trong reinforcement learning, chiến lược được ký hiệu dạng nào?", "answers": ["a=π(s)", "a=pi(s)", "pi(s)"], "solution": "a = π(s).", "source": "Slide 4"},
+    {"q": "Output của regression thuộc tập số nào?", "answers": ["R", "ℝ", "số thực", "so thuc"], "solution": "y∈ℝ.", "source": "Slide 6/23"},
+    {"q": "Classification nhị phân có thể dùng nhãn {0,1} hay {+1,−1}?", "answers": ["có", "co", "yes"], "solution": "Có.", "source": "Slide 9"},
+    {"q": "Iris dataset trong slide có bao nhiêu mẫu?", "answers": ["150"], "solution": "150 mẫu.", "source": "Slide 12"},
+    {"q": "Iris có bao nhiêu đặc trưng trong ví dụ?", "answers": ["4"], "solution": "4 đặc trưng.", "source": "Slide 12"},
+    {"q": "Design matrix của N mẫu, D đặc trưng có kích thước gì?", "answers": ["N×D", "N x D", "N*D", "NxD"], "solution": "N×D.", "source": "Slide 12"},
+    {"q": "Sai 3 trên 20 mẫu thì misclassification rate bằng bao nhiêu?", "answers": ["0.15", "15%", "15"], "solution": "3/20=0.15=15%.", "source": "Từ công thức slide 16"},
+    {"q": "Empirical risk là trung bình của đại lượng nào trên training set?", "answers": ["loss", "loss function", "mất mát", "mat mat"], "solution": "Trung bình loss.", "source": "Slide 17"},
+    {"q": "Model fitting được viết dưới dạng argmin của đại lượng nào?", "answers": ["empirical risk", "risk", "L(theta)", "loss"], "solution": "argmin empirical risk L(θ).", "source": "Slide 18"},
+    {"q": "Hai loại uncertainty được slide nêu là model uncertainty và gì?", "answers": ["data uncertainty", "bất định dữ liệu", "không chắc chắn dữ liệu"], "solution": "Data uncertainty.", "source": "Slide 19"},
+    {"q": "Loss phổ biến cho regression trong slide là gì?", "answers": ["quadratic loss", "l2 loss", "squared error", "bình phương", "loss bậc hai"], "solution": "Quadratic/l2 loss.", "source": "Slide 24"},
+    {"q": "y=(2,4,5), ŷ=(2,3,7): MSE bằng bao nhiêu?", "answers": ["5/3", "1.6667", "1.667", "1.6666666667"], "solution": "MSE=(0²+1²+(-2)²)/3=5/3.", "source": "Từ công thức slide 24"},
+    {"q": "Linear regression một đặc trưng có dạng f(x)=b+?", "answers": ["wx", "w*x"], "solution": "f(x)=b+wx.", "source": "Slide 25"},
+    {"q": "Multiple linear regression dùng biểu thức tích nào giữa w và x?", "answers": ["w^T x", "wTx", "w transpose x", "dot product"], "solution": "wᵀx.", "source": "Slide 26"},
+    {"q": "Vector đặc trưng polynomial bậc D bắt đầu bằng phần tử nào?", "answers": ["1"], "solution": "φ(x)=[1,x,x²,…,xᴰ].", "source": "Slide 27"},
+    {"q": "Training MSE bằng 0 có đảm bảo test error nhỏ không?", "answers": ["không", "khong", "no"], "solution": "Không; slide dùng đây để minh họa overfitting.", "source": "Slide 29"},
+    {"q": "Tập nào dùng để model selection?", "answers": ["validation", "validation set", "tập xác thực", "tap xac thuc"], "solution": "Validation set.", "source": "Slide 37"},
+    {"q": "Tập nào dùng để ước lượng hiệu năng cuối cùng?", "answers": ["test", "test set", "tập kiểm tra", "tap kiem tra"], "solution": "Test set.", "source": "Slide 37"},
+    {"q": "Có nên dùng test set để chọn mô hình/hyperparameter không?", "answers": ["không", "khong", "no"], "solution": "Không. Slide nhấn mạnh test set không dùng để training hay model selection.", "source": "Slide 37"}
+  ],
+  "glossary": [
+    ["Experience (E)", "kinh nghiệm/dữ liệu học"], ["Task (T)", "tác vụ"], ["Performance measure (P)", "độ đo hiệu năng"], ["Supervised learning", "học có giám sát"], ["Unsupervised learning", "học không giám sát"], ["Reinforcement learning", "học tăng cường"], ["Feature / predictor", "đặc trưng / yếu tố dự báo"], ["Label / target / response", "nhãn / giá trị đích / phản hồi"], ["Empirical risk", "rủi ro thực nghiệm"], ["Loss function", "hàm mất mát"], ["Maximum likelihood", "hợp lý cực đại"], ["Overfitting", "quá khớp"], ["Underfitting", "chưa khớp"], ["Generalization", "tổng quát hóa"], ["Validation set", "tập xác thực"], ["Test set", "tập kiểm tra"]
+  ]
+}
