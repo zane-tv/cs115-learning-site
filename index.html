@@ -1,108 +1,47 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Thư viện HTML CS115 Toán cho Khoa học máy tính"><title>CS115 · Thư viện bài học</title><style>body{margin:0;background:#f6f8fc;color:#172033;font:16px system-ui}.load{width:760px;margin:100px auto;background:#fff;padding:34px;border:1px solid #dbe3ef;border-radius:18px;box-shadow:0 14px 40px rgba(20,35,65,.08)}h1{color:#0759c7;margin-top:0}.bar{height:10px;background:#e7edf6;border-radius:999px;overflow:hidden;margin-top:18px}.bar>i{display:block;height:100%;width:0;background:#1677ff;transition:width .2s}.meta{color:#596579;font-size:14px}pre{white-space:pre-wrap}</style><meta name="theme-color" content="#fdfbf7"><meta name="apple-mobile-web-app-capable" content="yes"><style id="cs115-mobile-v2">
-/* CS115 mobile UX v2 */
-html{scroll-padding-top:78px}
-body{-webkit-tap-highlight-color:rgba(45,93,161,.18);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
-button,input,select,textarea,a{touch-action:manipulation}
-input,select,textarea{font-size:max(16px,1em)}
-.section,.lesson-card{content-visibility:auto;contain-intrinsic-size:1px 720px}
-.toc{overscroll-behavior-inline:contain;scrollbar-width:thin}
-.filters,.site-actions,.formula,.code,.diagram,.matrix-line,.labeled-matrix,.history{overscroll-behavior-inline:contain;scrollbar-width:thin}
-.mobile-top-button{position:fixed;z-index:1400;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));display:grid;place-items:center;width:50px;height:50px;padding:0;border:3px solid var(--ink,#2d2d2d);border-radius:50%;background:var(--red,#ff4d4d);color:#fff;box-shadow:4px 4px 0 var(--ink,#2d2d2d);font:700 25px/1 var(--head,system-ui);opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .18s,transform .18s,visibility .18s}
-.mobile-top-button.show{opacity:1;visibility:visible;transform:translateY(0)}
-.mobile-top-button:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink,#2d2d2d)}
-@media(max-width:880px){
-  .hero:before,.library-hero:before,.lesson-card:before,.section:before{display:none!important}
-  .sitebar,.hero,.library-hero,.section,.lesson-card,.sidebar,.footer{transform:none!important}
-  .sidebar{max-width:100%;overscroll-behavior-inline:contain}
-  .toc{width:100%!important;min-width:0!important;scroll-snap-type:x proximity}
-  .toc a{flex:0 0 auto;max-width:min(78vw,270px);scroll-snap-align:start}
-  .toc a span:last-child{overflow:hidden;text-overflow:ellipsis}
-  .site-actions,.filters{scroll-snap-type:x proximity}
-  .site-actions a,.filter{flex:0 0 auto;scroll-snap-align:start}
-  .formula,.code,.diagram,.matrix-line,.labeled-matrix,.history{-webkit-overflow-scrolling:touch}
-}
-@media(max-width:640px){
-  html{scroll-padding-top:70px}
-  body{line-height:1.55}
-  .shell,.page-shell,body[data-lesson='ma-tran-chuyen-sau'] .page-shell{width:calc(100% - 12px)!important;padding-bottom:max(42px,env(safe-area-inset-bottom))!important}
-  .progress{height:4px}
-  .sitebar{position:relative;gap:8px;margin-bottom:15px}
-  .sitebrand{min-width:0}
-  .sitebrand>span:last-child{max-width:calc(100vw - 86px)!important}
-  .site-actions{gap:7px;padding:2px 1px 6px}
-  .site-actions a{min-width:max-content}
-  .hero,.library-hero{margin-bottom:20px!important;padding:29px 15px!important;border-radius:22px 11px 24px 13px/14px 23px 12px 25px!important}
-  .hero h1,.library-hero h1{font-size:clamp(31px,9.5vw,38px)!important;line-height:1.06;text-underline-offset:7px;overflow-wrap:anywhere}
-  .hero p,.library-hero p{font-size:17px!important}
-  .eyebrow{max-width:100%;font-size:16px;white-space:normal;text-align:center}
-  .tags,.hero-tags{gap:6px;margin-top:17px}
-  .tag,.hero-tag{padding:4px 8px;font-size:13px;transform:none!important}
-  .hero-card{padding:15px;transform:none!important}
-  .meta-row{grid-template-columns:38px minmax(0,1fr);transform:none!important}
-  .meta-row small{overflow-wrap:anywhere}
-  .overview{gap:8px;margin:16px 0}
-  .overview-card{min-width:0;padding:10px 5px;transform:none!important;border-radius:18px!important;box-shadow:3px 3px 0 var(--ink,#2d2d2d)}
-  .overview-card strong{font-size:26px}
-  .overview-card span{display:block;font-size:14px;line-height:1.2}
-  .library-toolbar{position:relative;margin:15px 0;padding:10px;gap:9px}
-  .library-toolbar input{min-height:50px}
-  .filters{padding:1px 1px 6px}
-  .filter{min-height:46px;padding-inline:13px}
-  .library-grid{gap:15px}
-  .lesson-card{padding:17px;box-shadow:4px 4px 0 var(--ink,#2d2d2d)}
-  .lesson-card h2{font-size:24px}
-  .lesson-card .card-top{display:flex;align-items:center;gap:8px;justify-content:space-between}
-  .topic-list{gap:5px}
-  .topic{font-size:13px}
-  .card-actions{gap:8px}
-  .card-actions a{width:100%;min-height:50px}
-  .sidebar{top:3px;padding:6px;border-width:2px;box-shadow:3px 3px 0 var(--ink,#2d2d2d)}
-  .toc{gap:5px;padding-bottom:5px}
-  .toc a{min-height:48px;max-width:76vw;padding:7px 9px;border-width:2px}
-  .section{padding:19px 13px!important;border-radius:19px 10px 20px 11px/11px 21px 10px 19px!important;box-shadow:3px 3px 0 var(--ink,#2d2d2d)}
-  .section-head{grid-template-columns:39px minmax(0,1fr);gap:9px}
-  .section-badge{width:38px;height:38px;font-size:18px;box-shadow:2px 2px 0 var(--ink,#2d2d2d)}
-  .section h2{font-size:25px!important;overflow-wrap:anywhere}
-  .section h3{font-size:21px}
-  .card,.glossary-item,.check-item{padding:14px;transform:none!important}
-  .formula{font-size:17px;text-align:left;white-space:nowrap;padding:12px 10px}
-  .code{font-size:13px;padding:12px 10px}
-  .diagram{padding:11px}
-  .worked-title{flex-wrap:wrap;font-size:18px}
-  .worked-body{padding:12px}
-  .step{padding:10px 10px 10px 42px}
-  .compare th,.compare td,.timeline th,.timeline td,.data-table th,.data-table td,.compare-table th,.compare-table td{min-width:128px;padding:8px;font-size:14px}
-  details.exercise{box-shadow:3px 3px 0 var(--ink,#2d2d2d)}
-  details.exercise summary{min-height:56px;padding:12px 47px 12px 12px;font-size:18px;line-height:1.25;overflow-wrap:anywhere}
-  .exercise-body,.exercise-content{padding:12px}
-  .answer-zone,.auto-grade-panel{padding:11px}
-  .answer-actions,.grade-actions{display:grid!important;grid-template-columns:1fr!important}
-  .answer-actions .btn,.grade-actions .btn,.exercise-switch{width:100%;min-height:50px}
-  body[data-lesson='ma-tran-chuyen-sau'] .hero{padding-top:58px!important}
-  body[data-lesson='ma-tran-chuyen-sau'] .calc-panel,body[data-lesson='ma-tran-chuyen-sau'] .exercise-progress-card,body[data-lesson='ma-tran-chuyen-sau'] .auto-grade-panel{padding:12px}
-  body[data-lesson='ma-tran-chuyen-sau'] .calc-buttons,body[data-lesson='ma-tran-chuyen-sau'] .exercise-progress-actions{display:grid!important;grid-template-columns:1fr!important}
-  body[data-lesson='ma-tran-chuyen-sau'] .calc-buttons .btn,body[data-lesson='ma-tran-chuyen-sau'] .exercise-progress-actions .btn{width:100%;min-height:50px}
-  body[data-lesson='ma-tran-chuyen-sau'] table.matrix{font-size:16px;border-spacing:7px 3px}
-  body[data-lesson='ma-tran-chuyen-sau'] .operator-read,body[data-lesson='ma-tran-chuyen-sau'] .row-op-visual{justify-items:stretch!important}
-  .mobile-top-button{display:grid}
-}
-@media(max-width:380px){
-  .overview{grid-template-columns:1fr!important}
-  .hero h1,.library-hero h1{font-size:30px!important}
-  .sitebrand>span:last-child{max-width:230px!important}
-  .section{padding-inline:11px!important}
-  .toc a{max-width:72vw}
-}
-@media(min-width:641px){.mobile-top-button{display:none!important}}
-@media(prefers-reduced-motion:reduce){.mobile-top-button{transition:none}}
-</style></head><body><div class="load"><h1>CS115 · Thư viện bài học</h1><p id="status">Đang tải nội dung đầy đủ…</p><div class="bar"><i id="progress"></i></div><p class="meta">13 bài học · 104 bài tập · dữ liệu cùng một domain</p></div><script>(()=>{const urls=["/data/c00.txt", "/data/c01.txt", "/data/c02.txt", "/data/c03.txt", "/data/c04.txt", "/data/c05.txt", "/data/c06.txt", "/data/c07.txt", "/data/c08.txt", "/data/c09.txt", "/data/c10.txt", "/data/c11.txt"];const lens=[8000, 8000, 8000, 8000, 8000, 8000, 8000, 8000, 8000, 8000, 8000, 7876];const hs=["3362002e1755e4c70eb6f22b601ed2402e65e3d55b7c3916cb60d6d2b5d9b15a", "2758248656424327ef13a0ba18efa2c9ac5beb169a48e89544a9550a7fb956ad", "b660060ca1c53d89af721b61b81c83f14c3c209d374954918e694309c5280b1c", "61d62419d6b8f63ad129b780ec247bfa852e20b16f45addcd96c28454b80d32e", "8d6c3751cd164861995774f9cdba32568ca5993910f54b1e53ebb6659b80a659", "bd9ca4f497869281cd419cabe8bff73ba23d912c3465f858281bb2d76cd8ca8a", "148dd3ff88a06757a3c017aff2fb2ceddb759c34f388f0092ff41c11176be289", "a836b6ba1636e998d8cfe333197cd0a9313df7eadcb363287ecfb28bd11470e9", "2b9b09bc70d9dc5c0c30a59019669ab2e2c4c6ab0f82ba72054a7587efa4ab7f", "a5b43da035871970c5e4da30f4ba85dc42921cdcf79ae45509423669eaa0c157", "f9095e7f1cb4c7086fc9eea8b72b7ceb68c00d6a294dec945c314fda87685248", "f79639f3b86aa27a258c02e9ca96aa9029c90ff6fa3b3313da20aa94d7aea1b5"];const status=document.getElementById('status'),progress=document.getElementById('progress');const hex=b=>Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');const fail=e=>document.body.innerHTML='<div class="load"><h1>Không thể mở thư viện</h1><pre style="color:#b91c1c">'+String(e)+'</pre><p>Hãy tải lại bằng Ctrl/Cmd + Shift + R.</p></div>';(async()=>{try{let done=0;const parts=await Promise.all(urls.map(async(u,i)=>{const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error('Không tải được '+u+' (HTTP '+r.status+')');const t=(await r.text()).trim();if(t.length!==lens[i])throw new Error('Dữ liệu '+u+' không đủ: '+t.length+'/'+lens[i]);const h=hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)));if(h!==hs[i])throw new Error('Checksum phần dữ liệu '+u+' không khớp');done++;status.textContent='Đã tải '+done+'/'+urls.length+' phần dữ liệu…';progress.style.width=(done/urls.length*55)+'%';return t}));let s=parts.join('').replace(/-/g,'+').replace(/_/g,'/');s+='='.repeat((4-s.length%4)%4);const bin=Uint8Array.from(atob(s),c=>c.charCodeAt(0));if(!('DecompressionStream'in window))throw new Error('Trình duyệt không hỗ trợ DecompressionStream.');status.textContent='Đang giải nén và kiểm tra…';progress.style.width='72%';const raw=await new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'))).text();const digest=hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw)));if(digest!=='5b4ea4f7c6220ce27933c1d12f9cad6cbcecd94f194b7e0f5a2cb917642146e2')throw new Error('Checksum nội dung không khớp');const pack=JSON.parse(raw);let path=decodeURIComponent(location.pathname||'/');if(path.length>1&&path.endsWith('/'))path=path.slice(0,-1);let h=pack.pages[path]||pack.pages['/404.html'];h=h.replace(/<link\s+rel="stylesheet"\s+href="(?:\.\.\/)?assets\/styles\.css"\s*>/i,'<style>'+pack.css+'</style>');h=h.replace(/<script\s+src="(?:\.\.\/)?assets\/app\.js"\s*><\/script>/i,'<script>'+pack.js+'<\/script>');progress.style.width='100%';h=h.replace(/<\/head>/i,'<link id="cs115-ai-style" rel="stylesheet" href="/chatbot.css"></head>');h=h.replace(/<\/body>/i,'<script id="cs115-ai-script" src="/chatbot.js"><\/script></body>');h=h.replace(/<\/body>/i,'<script id="cs115-math-script" src="/latex-render.js"><\/script></body>');document.open();document.write(h);document.close()}catch(e){fail(e)}})()})();</script><script>(function(){
-  if(!document.querySelector('.mobile-top-button')){
-    const b=document.createElement('button');
-    b.type='button';b.className='mobile-top-button';b.setAttribute('aria-label','Lên đầu trang');b.textContent='↑';
-    b.addEventListener('click',()=>window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
-    document.body.appendChild(b);
-    const sync=()=>b.classList.toggle('show',window.scrollY>700);
-    addEventListener('scroll',sync,{passive:true});sync();
-  }
-  document.querySelectorAll('.toc a').forEach(a=>a.addEventListener('click',()=>a.scrollIntoView({block:'nearest',inline:'center'})));
-})();</script></body></html>
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Thư viện học CS115 Toán cho Khoa học máy tính, biên soạn từ 12 PDF nguồn với 14 bài học chuyên sâu và 366 bài tập tự chấm.">
+<meta name="theme-color" content="#f4f7fb">
+<title>CS115 · Thư viện Toán cho Machine Learning</title>
+<style>
+:root{--bg:#eef3f8;--paper:#fff;--ink:#142033;--muted:#607086;--line:#d7e2ee;--blue:#2563eb;--cyan:#0891b2;--green:#16803c;--amber:#a16207;--violet:#6d28d9;--shadow:0 18px 48px #18365d18}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 8% -5%,#dbeafe 0,transparent 29%),radial-gradient(circle at 98% 4%,#cffafe 0,transparent 22%),var(--bg);color:var(--ink);font:16px/1.65 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.shell{width:min(1280px,calc(100% - 28px));margin:auto;padding:26px 0 72px}.hero{position:relative;overflow:hidden;padding:48px 50px;border-radius:30px;color:white;background:linear-gradient(125deg,#062556,#1e40af 58%,#0891b2);box-shadow:var(--shadow)}.hero:after{content:"";position:absolute;width:480px;height:480px;border:65px solid #ffffff12;border-radius:50%;right:-170px;top:-225px}.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:center}.eyebrow{display:inline-block;padding:7px 12px;border:1px solid #ffffff33;border-radius:999px;background:#ffffff14;font-size:13px;font-weight:850;letter-spacing:.1em;text-transform:uppercase}.hero h1{font-size:50px;line-height:1.07;margin:18px 0 13px;letter-spacing:-.035em}.hero h1 span{color:#a5f3fc}.hero p{font-size:19px;color:#eef7ff;margin:0;max-width:760px}.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:21px}.tag{padding:6px 10px;border:1px solid #ffffff2f;border-radius:10px;background:#ffffff12;font-weight:750;font-size:14px}.hero-card{padding:21px;border:1px solid #ffffff30;border-radius:19px;background:#ffffff12}.hero-card h2{margin:0 0 12px;font-size:18px}.flow{display:grid;gap:10px}.flow div{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;padding:10px 11px;border-radius:11px;background:#ffffff0e}.flow b:first-child{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#fff;color:#1e40af}.flow small{display:block;color:#dbeafe}.overview{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.stat{padding:18px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 8px 24px #1f37590b}.stat strong{display:block;font-size:31px;color:#1d4ed8;line-height:1.15}.stat span{color:var(--muted)}.audit{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin:18px 0}.audit-card{padding:18px;border:1px solid #bfdbfe;border-radius:16px;background:#eff6ff}.audit-card h2{margin:0 0 7px;color:#1e40af;font-size:20px}.audit-card p{margin:0}.audit-card a{color:#1d4ed8;font-weight:850}.audit-note{padding:18px;border:1px solid #ddd6fe;border-radius:16px;background:#f5f3ff;color:#4c1d95}.toolbar{position:sticky;z-index:30;top:8px;display:grid;gap:10px;margin:20px 0;padding:13px;border:1px solid var(--line);border-radius:17px;background:#fffffff2;backdrop-filter:blur(10px);box-shadow:0 8px 25px #1f37590f}.toolbar input{width:100%;min-height:48px;padding:11px 13px;border:1px solid #cbd5e1;border-radius:11px;background:#fff;font:inherit}.filters{display:flex;flex-wrap:wrap;gap:8px}.filter{border:0;border-radius:999px;padding:8px 12px;background:#e2e8f0;color:#334155;font-weight:800;cursor:pointer}.filter.active{background:#2563eb;color:#fff}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{position:relative;display:flex;flex-direction:column;min-height:335px;padding:21px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 10px 26px #1f37590d;transition:transform .15s,box-shadow .15s}.card:hover{transform:translateY(-2px);box-shadow:0 16px 34px #1f375918}.top{display:flex;justify-content:space-between;gap:10px;align-items:center}.cat{display:inline-block;padding:4px 8px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:12px;font-weight:900;letter-spacing:.06em}.pages{color:var(--muted);font-size:13px;font-weight:700}.card h2{margin:13px 0 8px;font-size:25px;line-height:1.2}.card p{margin:0;color:#4d5d71}.topics{display:flex;flex-wrap:wrap;gap:6px;margin:15px 0}.topic{padding:4px 8px;border-radius:8px;background:#f1f5f9;color:#42526a;font-size:13px;font-weight:720}.source{margin-top:auto;padding:11px;border-radius:11px;background:#f8fafc;border:1px solid #e2e8f0;color:#526176;font-size:13px}.source b{color:#334155}.actions{display:flex;gap:9px;margin-top:12px}.open{flex:1;display:grid;place-items:center;min-height:46px;border-radius:10px;background:#2563eb;color:#fff;text-decoration:none;font-weight:900}.audit-link{display:grid;place-items:center;padding:0 12px;border:1px solid #93c5fd;border-radius:10px;color:#1d4ed8;text-decoration:none;font-weight:850}.hidden{display:none!important}.footer{margin-top:24px;padding:21px;border-radius:16px;background:#102a56;color:#dbeafe}.footer a{color:#a5f3fc}.empty{display:none;padding:36px;text-align:center;border:1px dashed #94a3b8;border-radius:16px;background:#fff;color:#64748b}
+@media(max-width:820px){.shell{width:calc(100% - 14px)}.hero{padding:30px 18px}.hero-grid,.audit{grid-template-columns:1fr}.hero h1{font-size:38px}.overview{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.toolbar{position:relative;top:0}.card{min-height:0}.actions{display:grid}.audit-link{min-height:44px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="hero"><div class="hero-grid"><div><span class="eyebrow">UIT · CS115 · Toán cho Khoa học máy tính</span><h1>Toán cho <span>Machine Learning</span></h1><p>Thư viện đã được rà soát lại từ đúng 12 PDF học liệu. Mỗi bài nền giờ có giải thích theo section, công thức KaTeX, ví dụ từng bước, lab tương tác, nguồn theo trang/slide và bài tập tự chấm — cùng tiêu chuẩn học sâu của bài Ma trận chuyên sâu.</p><div class="tags"><span class="tag">Source-audited</span><span class="tag">KaTeX</span><span class="tag">Interactive labs</span><span class="tag">366 bài tự chấm</span><span class="tag">Mobile friendly</span></div></div><div class="hero-card"><h2>Luồng học đề xuất</h2><div class="flow"><div><b>1</b><span><b>Nền tảng</b><small>Linear Algebra · Geometry · Calculus · Probability</small></span></div><div><b>2</b><span><b>Mô hình</b><small>Machine Learning · Linear Regression</small></span></div><div><b>3</b><span><b>Huấn luyện</b><small>Optimization · Neural Networks</small></span></div></div></div></div></header>
+<div class="overview"><div class="stat"><strong>12</strong><span>PDF nguồn đã rà soát</span></div><div class="stat"><strong>689</strong><span>trang/slide nguồn</span></div><div class="stat"><strong>14</strong><span>bài học</span></div><div class="stat"><strong>366</strong><span>bài tập tự chấm</span></div></div>
+<div class="audit"><div class="audit-card"><h2>Source audit đã hoàn tất</h2><p>Nội dung được ánh xạ PDF → bài học, vùng chồng lấn được tách rõ: Linear Algebra Review vs bản 82 slide, Vector Calculus review vs bản 131 slide, ML Overview vs Linear Regression Tutorial, Optimization vs Neural training. <a href="/SOURCE_AUDIT.md">Mở SOURCE_AUDIT.md →</a></p></div><div class="audit-note"><b>PDF gốc:</b> binary PDF chưa nằm trong repository mới nên các link `/sources/*.pdf` cũ đã được bỏ khỏi homepage để tránh 404. Tên file + phạm vi trang vẫn hiển thị trong từng bài.</div></div>
+<div class="toolbar"><input id="search" placeholder="Tìm bài hoặc thuật ngữ: gradient, Bayes, projection, Hessian, Adam, R²..."><div class="filters"><button class="filter active" data-filter="all">Tất cả</button><button class="filter" data-filter="course">Môn học</button><button class="filter" data-filter="foundation">Nền tảng</button><button class="filter" data-filter="ml">Machine Learning</button><button class="filter" data-filter="optimization">Tối ưu</button><button class="filter" data-filter="deep">Neural</button></div></div>
+<main class="grid" id="grid"></main><div class="empty" id="empty">Không tìm thấy bài phù hợp.</div>
+<footer class="footer"><b>Nguyên tắc biên soạn:</b> khái niệm, thuật ngữ và phạm vi chương bám theo 12 PDF lớp học đã cung cấp. Ví dụ tự học chỉ thay số/rút gọn từ công thức trong nguồn; phần không được nguồn hỗ trợ không được tự biến thành nội dung bắt buộc. <a href="/SOURCE_AUDIT.md">Xem chi tiết source audit</a>.</footer>
+</div>
+<script>
+const lessons=[
+{slug:'de-cuong-mon-hoc',cat:'course',label:'COURSE',pages:'8 trang',title:'Đề cương môn học CS115',desc:'Mục tiêu CG/CLO, yêu cầu học tập, timeline 15 tuần, đánh giá 40/60 và tài liệu tham khảo.',topics:['CG/CLO','15 tuần','40/60','Assessment'],source:'CS115.O11_Đề cương_Toan cho KHMT.pdf',n:15},
+{slug:'gioi-thieu-mon-hoc',cat:'course',label:'COURSE',pages:'20 slide',title:'Giới thiệu môn học · timeline 10 tuần',desc:'Phiên bản Course Introduction: CLO, Quiz/đồ án, cấu trúc buổi học, lộ trình tuần 1–10 và công cụ.',topics:['10 tuần','Quiz','Đồ án','Course flow'],source:'CS115_Course_Introduction.pdf',n:15},
+{slug:'tong-quan-may-hoc',cat:'ml',label:'ML',pages:'39 slide',title:'Tổng quan về Machine Learning',desc:'E–T–P, supervised/unsupervised/RL, empirical risk, MLE, regression, overfitting và Train/Validation/Test.',topics:['E–T–P','Empirical Risk','MLE','Generalization'],source:'CS115.01_Introduction to Machine Learning.pdf',n:24},
+{slug:'dai-so-tuyen-tinh-review',cat:'foundation',label:'FOUNDATION',pages:'17 slide',title:'Linear Algebra Review',desc:'Ax=b, matrix operations, inverse/transpose, linear independence, basis/rank và dimension reduction.',topics:['Ax=b','Inverse','Basis & Rank','Dimension'],source:'2024_02_CS115_Linear Algebra Review.pdf',n:24},
+{slug:'dai-so-tuyen-tinh-mo-rong',cat:'foundation',label:'FOUNDATION',pages:'82 slide',title:'Đại số tuyến tính mở rộng',desc:'Vector space, eigenpairs, inner product, norm/distance, cosine, k-means, Gram–Schmidt, projection và positive definite.',topics:['Eigenvalue','Inner Product','Projection','Positive Definite'],source:'Chương 1_Review ĐSTT (30_5).pdf',n:30},
+{slug:'ma-tran-chuyen-sau',cat:'foundation',label:'DEEP DIVE',pages:'nguồn ĐSTT',title:'Ma trận và phép tính ma trận – chuyên sâu',desc:'Deep-dive thao tác ma trận: shape, cộng/nhân, transpose/inverse, row operations, Gaussian elimination, calculator và 30 bài.',topics:['Matrix Calculator','R₁/R₂','Gaussian Elimination','30 bài'],source:'Linear Algebra sources',n:30,physical:true},
+{slug:'vector-chuyen-sau',cat:'foundation',label:'DEEP DIVE',pages:'LA + Geometry',title:'Vector và phép tính vector – chuyên sâu',desc:'Vector R²/R³/Rⁿ, trực quan 3D, norm, distance, dot product, angle, projection, basis, calculator và 30 bài.',topics:['3D Vector','Norm','Dot Product','Projection'],source:'Linear Algebra Review + Analytic Geometry',n:30,physical:true},
+{slug:'hinh-hoc-giai-tich',cat:'foundation',label:'FOUNDATION',pages:'126 slide',title:'Hình học giải tích cho Machine Learning',desc:'Inner product, norm/distance, KNN, cross-validation, cosine, orthogonal bases, projection, giảm chiều và definiteness.',topics:['KNN','Cosine','Cross-validation','Projection'],source:'2025_03_CS115_Analytic Geometry.pdf',n:30},
+{slug:'giai-tich-vector-on-tap',cat:'foundation',label:'FOUNDATION',pages:'20 slide',title:'Ôn tập Giải tích vector',desc:'Derivative, partial derivative, gradient, chain rule, Jacobian, matrix calculus và Hessian trong một bài review cô đọng.',topics:['Gradient','Chain Rule','Jacobian','Hessian'],source:'C1_Review Giai tich vector.pdf',n:24},
+{slug:'giai-tich-vector-day-du',cat:'foundation',label:'FOUNDATION',pages:'131 slide',title:'Vector Calculus đầy đủ',desc:'Taylor, multivariable calculus, Jacobian/Hessian, computational graph, autodiff, backprop và vectorized gradients.',topics:['Taylor','Autodiff','Backprop','Vectorization'],source:'2024_04_CS115_Vector Caculus.pdf',n:30},
+{slug:'xac-suat-thong-ke',cat:'foundation',label:'FOUNDATION',pages:'14 slide',title:'Xác suất và phân phối xác suất',desc:'Random variable, probability rules, Bayes, PMF/PDF, expectation, variance, Binomial, Poisson và Normal.',topics:['Bayes','Expectation','Variance','Normal'],source:'C1_Review_XSTK.pdf',n:24},
+{slug:'hoi-quy-tuyen-tinh',cat:'ml',label:'ML',pages:'40 slide',title:'Linear Regression – Tutorial',desc:'Squared error, gradient descent từ đầu, SGD vs normal equation, MAE/MSE/R², learning rate và polynomial regression.',topics:['Gradient Descent','Normal Equation','R²','Polynomial'],source:'LinearRegression_Tutorial.pdf',n:30},
+{slug:'toi-uu-hoa',cat:'optimization',label:'OPTIMIZATION',pages:'108 slide',title:'Optimization',desc:'Local/global optima, Hessian, GD/SGD/momentum, constraints, Lagrange, convexity, Newton, CG và derivative-free methods.',topics:['Convexity','Momentum','Lagrange','Newton'],source:'OPTIMIZATION.pdf',n:30},
+{slug:'mang-neural',cat:'deep',label:'NEURAL',pages:'84 slide',title:'Neural Network',desc:'Linear classifier, softmax, neuron/MLP, activation, backprop, generalization, early stopping, regularization và advanced training.',topics:['Softmax','MLP','Backprop','Generalization'],source:'CS115_Neuron_Network.pdf',n:30}
+];
+const grid=document.getElementById('grid'),search=document.getElementById('search'),empty=document.getElementById('empty');let active='all';
+function draw(){const q=search.value.trim().toLowerCase();let visible=0;grid.innerHTML=lessons.map(l=>{const hay=[l.title,l.desc,l.source,...l.topics].join(' ').toLowerCase(),show=(active==='all'||l.cat===active)&&(!q||hay.includes(q));if(show)visible++;return `<article class="card ${show?'':'hidden'}" data-cat="${l.cat}"><div class="top"><span class="cat">${l.label}</span><span class="pages">${l.pages}</span></div><h2>${l.title}</h2><p>${l.desc}</p><div class="topics">${l.topics.map(t=>`<span class="topic">${t}</span>`).join('')}</div><div class="source"><b>Nguồn:</b> ${l.source}<br><b>Bài tự chấm:</b> ${l.n}</div><div class="actions"><a class="open" href="/lessons/${l.slug}.html">Mở bài học</a><a class="audit-link" href="/SOURCE_AUDIT.md">Nguồn</a></div></article>`}).join('');empty.style.display=visible?'none':'block'}
+document.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');active=b.dataset.filter;draw()});search.addEventListener('input',draw);draw();
+</script>
+<link rel="stylesheet" href="/chatbot.css"><script src="/chatbot.js"></script>
+</body>
+</html>
