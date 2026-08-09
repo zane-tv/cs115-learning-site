@@ -1,0 +1,33 @@
+name: Upgrade advanced vector lesson
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/upgrade_vector_lesson.py'
+      - '.github/workflows/upgrade-vector.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate vector lesson and rebuild packed frontend
+        run: python3 tools/upgrade_vector_lesson.py
+      - name: Commit generated site
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html data lessons recovered-source RECOVERY_MANIFEST.json
+          if git diff --cached --quiet; then
+            echo 'No generated changes.'
+            exit 0
+          fi
+          git commit -m 'Add Vector và phép tính vector – chuyên sâu'
+          git push
