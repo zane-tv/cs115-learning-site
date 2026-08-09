@@ -27,7 +27,7 @@ function block(b){
  if(b.type==='p')return `<p>${b.html}</p>`;
  if(b.type==='bullets')return `<ul class="bullets">${b.items.map(x=>`<li>${x}</li>`).join('')}</ul>`;
  if(b.type==='formula')return `<div class="formula ${b.light?'light':''}" data-latex="${esc(b.latex)}"></div>${b.note?`<div class="formula-note">${b.note}</div>`:''}`;
- if(b.type==='note')return `<div class="${b.style||'note'}"><span class="box-title">${b.title||'Ghi chú'}</span>${b.html}</div>`;
+ if(['note','deep','warning','success'].includes(b.type))return `<div class="${b.style||b.type||'note'}"><span class="box-title">${b.title||'Ghi chú'}</span>${b.html}</div>`;
  if(b.type==='cards')return `<div class="grid${b.cols||2}">${b.items.map((x,i)=>`<div class="card ${x.style||['blue','green','amber','violet'][i%4]}"><h4>${x.title}</h4>${x.html}</div>`).join('')}</div>`;
  if(b.type==='example')return `<div class="worked"><div class="worked-title">${b.title}</div><div class="worked-body">${b.intro?`<p>${b.intro}</p>`:''}<div class="steps">${(b.steps||[]).map((x,i)=>`<div class="step" data-step="${i+1}">${x}</div>`).join('')}</div>${b.result?`<div class="success"><span class="box-title">Kết quả</span>${b.result}</div>`:''}</div></div>`;
  if(b.type==='table')return `<div class="table-wrap"><table class="data"><thead><tr>${b.headers.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${b.rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
