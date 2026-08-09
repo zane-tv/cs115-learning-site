@@ -1,0 +1,230 @@
+{
+  "slug": "hinh-hoc-giai-tich",
+  "title": "Hình học giải tích cho Machine Learning – inner product, distance, KNN, cosine và projection",
+  "subtitle": "Bản học đầy đủ từ 126 slide Analytic Geometry: inner product, norm/distance, Cauchy–Schwarz, feature distance, KNN, validation/cross-validation, cosine similarity, clustering, orthogonal bases, Gram–Schmidt, projection, dimensionality reduction và definiteness.",
+  "category": "FOUNDATION · ANALYTIC GEOMETRY",
+  "tags": ["Inner Product", "Norm & Distance", "KNN", "Cross-validation", "Cosine", "Projection", "Eigenpairs"],
+  "objectives": [
+    "Kiểm tra một inner product và dùng nó để xây norm/distance/góc.",
+    "Tính Euclidean distance và giải thích việc scale feature ảnh hưởng KNN như thế nào.",
+    "Phân biệt train/validation/test và hiểu vai trò k-fold cross-validation trong chọn hyperparameter.",
+    "Tính cosine similarity và giải thích khác biệt với Euclidean distance.",
+    "Làm việc với orthogonal/orthonormal bases, Gram–Schmidt và orthogonal complement.",
+    "Tính projection lên một vector/subspace ở ví dụ nhỏ và nối với dimensionality reduction.",
+    "Nhận diện eigenpair và positive/negative definiteness ở mức nguồn."
+  ],
+  "sources": [
+    {"file": "2025_03_CS115_Analytic Geometry.pdf", "pages": "126 slide", "note": "Nguồn chính cho bài hình học giải tích"}
+  ],
+  "coverage": "Rà soát toàn bộ 126 slide. Các ví dụ KNN/cosine/clustering được giữ trong vai trò ứng dụng của hình học; phần thuật toán ML ngoài slide không được tự mở rộng.",
+  "sections": [
+    {
+      "id": "inner-product",
+      "title": "Inner product: phép đo hình học trên vector",
+      "lead": "Nguồn mở đầu bằng các tiên đề để tổng quát hóa dot product.",
+      "source": "Phần đầu: Inner Products",
+      "blocks": [
+        {"type": "formula", "latex": "\langle \mathbf x,\mathbf y\rangle=\mathbf x^T\mathbf y"},
+        {"type": "bullets", "items": [
+          "Đối xứng: ⟨x,y⟩=⟨y,x⟩ trong không gian thực.",
+          "Tuyến tính theo từng đối số theo các tiên đề nguồn trình bày.",
+          "Positive definite: ⟨x,x⟩≥0 và bằng 0 chỉ khi x=0."
+        ]},
+        {"type": "p", "html": "Nguồn cũng cho các inner product có trọng số/ma trận. Điều cần giữ là: khi đổi inner product, khái niệm độ dài và góc kéo theo cũng thay đổi."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "x=(1,2), y=(3,−1).", "steps": ["xᵀy=1×3+2×(−1).", "=3−2=1."], "result": "Dot product bằng <b>1</b>."}
+      ]
+    },
+    {
+      "id": "norm",
+      "title": "Norm, length, distance và Cauchy–Schwarz",
+      "lead": "Từ inner product suy ra độ dài và khoảng cách Euclid.",
+      "source": "Phần Norms / Length / Distance",
+      "blocks": [
+        {"type": "formula", "latex": "\|\mathbf x\|=\sqrt{\langle\mathbf x,\mathbf x\rangle}"},
+        {"type": "formula", "latex": "d(\mathbf x,\mathbf y)=\|\mathbf x-\mathbf y\|"},
+        {"type": "formula", "latex": "|\langle\mathbf x,\mathbf y\rangle|\le \|\mathbf x\|\,\|\mathbf y\|", "note": "Cauchy–Schwarz inequality."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "x=(1,2), y=(4,6).", "steps": ["x−y=(−3,−4).", "||x−y||₂=sqrt(9+16)."], "result": "Khoảng cách Euclid = <b>5</b>."}
+      ]
+    },
+    {
+      "id": "feature-distance",
+      "title": "Feature distance: khoảng cách chỉ có ý nghĩa khi representation phù hợp",
+      "lead": "Nguồn dùng dữ liệu và ảnh để cho thấy Euclidean distance phụ thuộc biểu diễn/scale.",
+      "source": "Phần Feature Distance / Image Distance",
+      "blocks": [
+        {"type": "p", "html": "Khi mỗi mẫu được biểu diễn thành feature vector, khoảng cách giữa các vector trở thành thước đo độ gần. Nhưng feature có thang đo lớn có thể chi phối Euclidean distance."},
+        {"type": "formula", "latex": "d_2(\mathbf x,\mathbf y)=\sqrt{\sum_{j=1}^{D}(x_j-y_j)^2}"},
+        {"type": "cards", "cols": 2, "items": [
+          {"title": "Scale matter", "html": "Nếu một feature được đo bằng hàng nghìn còn feature khác trong [0,1], feature thứ nhất có thể chi phối distance."},
+          {"title": "Images", "html": "Nguồn minh họa khoảng cách pixel có thể không tương ứng hoàn hảo với sự giống nhau về ngữ nghĩa của ảnh."}
+        ]},
+        {"type": "warning", "style": "warning", "title": "Kết luận từ nguồn", "html": "Đừng xem distance như một con số trung lập; nó phụ thuộc cách xây feature space và metric."}
+      ]
+    },
+    {
+      "id": "knn",
+      "title": "K-Nearest Neighbors dưới góc nhìn hình học",
+      "lead": "KNN dùng distance trực tiếp để quyết định hàng xóm.",
+      "source": "Phần KNN / nearest neighbor",
+      "blocks": [
+        {"type": "bullets", "items": [
+          "Tính distance từ mẫu cần dự đoán đến các mẫu training.",
+          "Chọn k điểm gần nhất.",
+          "Dùng nhãn của các hàng xóm để ra quyết định theo quy tắc KNN trong nguồn."
+        ]},
+        {"type": "p", "html": "Nguồn dùng ví dụ ảnh/classification để chỉ ra các ưu/nhược điểm trực giác: KNN đơn giản nhưng chi phí dự đoán phụ thuộc số điểm training và chất lượng metric."},
+        {"type": "note", "style": "note", "title": "Hyperparameter k", "html": "k không học trực tiếp như trọng số mô hình; nó được chọn bằng validation/cross-validation trong phần tiếp theo của slide."}
+      ]
+    },
+    {
+      "id": "validation",
+      "title": "Train / Validation / Test và cross-validation",
+      "lead": "Nguồn đưa model selection vào ngay sau KNN vì cần chọn k mà không nhìn test set.",
+      "source": "Phần Hyperparameters / Validation / Cross-validation",
+      "blocks": [
+        {"type": "table", "headers": ["Tập", "Vai trò"], "rows": [
+          ["Training", "Dữ liệu dùng cho quy tắc/mô hình học từ mẫu."],
+          ["Validation", "Chọn hyperparameter như k, distance choice hoặc cấu hình model."],
+          ["Test", "Đánh giá cuối cùng sau khi đã chốt lựa chọn."]
+        ]},
+        {"type": "p", "html": "k-fold cross-validation chia dữ liệu thành k phần (folds), lần lượt dùng một fold để validation và các fold còn lại để train, sau đó tổng hợp hiệu năng. Nguồn dùng phương pháp này để minh họa chọn hyperparameter ổn định hơn một split duy nhất."},
+        {"type": "warning", "style": "warning", "title": "Data leakage", "html": "Nếu dùng test set để chọn k, test không còn là ước lượng khách quan cho hiệu năng cuối cùng."}
+      ]
+    },
+    {
+      "id": "angle-cosine",
+      "title": "Angle và cosine similarity",
+      "lead": "Cosine đo hướng của vector thay vì chủ yếu dựa vào độ lớn tuyệt đối.",
+      "source": "Phần Angles / Cosine Similarity",
+      "blocks": [
+        {"type": "formula", "latex": "\cos\theta=\frac{\langle\mathbf x,\mathbf y\rangle}{\|\mathbf x\|\|\mathbf y\|}"},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "cos=1", "html": "Cùng hướng."},
+          {"title": "cos=0", "html": "Trực giao với hai vector khác 0."},
+          {"title": "cos=−1", "html": "Ngược hướng."}
+        ]},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "x=(1,0), y=(2,0).", "steps": ["x·y=2.", "||x||=1, ||y||=2.", "cos=2/(1×2)=1."], "result": "Hai vector có độ lớn khác nhau nhưng cosine similarity = <b>1</b>."}
+      ]
+    },
+    {
+      "id": "clustering",
+      "title": "Clustering và k-means như bài toán hình học",
+      "lead": "Nguồn nối distance/cosine với việc nhóm các điểm trong feature space.",
+      "source": "Phần Clustering / K-means",
+      "blocks": [
+        {"type": "formula", "latex": "\mu_k=\frac{1}{|C_k|}\sum_{\mathbf x_i\in C_k}\mathbf x_i"},
+        {"type": "p", "html": "K-means lặp giữa gán mỗi điểm vào centroid gần nhất và cập nhật centroid. Về hình học, mỗi centroid là một điểm đại diện trong không gian feature."},
+        {"type": "note", "style": "deep", "title": "Vai trò của metric", "html": "Thay đổi representation hoặc distance có thể thay đổi cấu trúc lân cận/cluster; đây là lý do phần hình học đứng trước clustering trong nguồn."}
+      ]
+    },
+    {
+      "id": "orthogonality",
+      "title": "Orthogonality, Pythagoras và orthogonal matrices",
+      "lead": "Trực giao cho phép tách các thành phần không chồng lấn theo inner product.",
+      "source": "Phần Orthogonality / Orthogonal Matrices",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf x\perp\mathbf y\quad\Longleftrightarrow\quad \langle\mathbf x,\mathbf y\rangle=0"},
+        {"type": "formula", "latex": "\|\mathbf x+\mathbf y\|^2=\|\mathbf x\|^2+\|\mathbf y\|^2\quad\text{nếu }\mathbf x\perp\mathbf y"},
+        {"type": "formula", "latex": "Q^TQ=I", "note": "Với ma trận Q có các cột orthonormal."},
+        {"type": "p", "html": "Nguồn nhấn mạnh orthogonal transformations/bases giúp bảo toàn độ dài và góc, làm phép tính tọa độ đơn giản hơn."}
+      ]
+    },
+    {
+      "id": "gram-schmidt",
+      "title": "Orthonormal basis và Gram–Schmidt",
+      "lead": "Từ một basis độc lập sang một basis trực chuẩn cùng span.",
+      "source": "Phần Orthonormal Bases / Gram–Schmidt",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf q_1=\frac{\mathbf a_1}{\|\mathbf a_1\|}"},
+        {"type": "formula", "latex": "\tilde{\mathbf a}_j=\mathbf a_j-\sum_{i<j}(\mathbf q_i^T\mathbf a_j)\mathbf q_i,\qquad \mathbf q_j=\frac{\tilde{\mathbf a}_j}{\|\tilde{\mathbf a}_j\|}"},
+        {"type": "example", "title": "Ví dụ tự học 2D", "intro": "a₁=(1,1), a₂=(1,0).", "steps": ["q₁=(1/√2,1/√2).", "q₁·a₂=1/√2.", "ã₂=a₂−(1/√2)q₁=(1/2,−1/2).", "Chuẩn hóa ã₂ → q₂=(1/√2,−1/√2)."], "result": "q₁,q₂ trực chuẩn và span cùng R²."}
+      ]
+    },
+    {
+      "id": "complement",
+      "title": "Orthogonal complement",
+      "lead": "Nguồn formalize tập các vector vuông góc với một subspace.",
+      "source": "Phần Orthogonal Complement",
+      "blocks": [
+        {"type": "formula", "latex": "U^{\perp}=\{\mathbf x:\langle\mathbf x,\mathbf u\rangle=0\;\forall\mathbf u\in U\}"},
+        {"type": "p", "html": "Nếu U là một đường thẳng qua gốc trong R², U⊥ là đường thẳng qua gốc vuông góc với U. Trong không gian cao chiều, ý tưởng tương tự nhưng tập bổ trực giao có thể có nhiều chiều."},
+        {"type": "note", "style": "note", "title": "Tách vector", "html": "Projection cho phép viết một vector thành phần thuộc U và phần dư thuộc U⊥."}
+      ]
+    },
+    {
+      "id": "projection",
+      "title": "Orthogonal projection lên đường thẳng và subspace",
+      "lead": "Projection là điểm gần nhất trong subspace theo Euclidean norm.",
+      "source": "Phần Orthogonal Projections",
+      "blocks": [
+        {"type": "formula", "latex": "\operatorname{proj}_{\mathbf b}(\mathbf a)=\frac{\mathbf a^T\mathbf b}{\mathbf b^T\mathbf b}\mathbf b"},
+        {"type": "formula", "latex": "P=Q Q^T", "note": "Nếu các cột Q là một orthonormal basis của subspace."},
+        {"type": "formula", "latex": "\hat{\mathbf a}=P\mathbf a,\qquad \mathbf a-\hat{\mathbf a}\in U^{\perp}"},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "a=(3,4), b=(1,0).", "steps": ["aᵀb=3; bᵀb=1.", "proj=3b=(3,0).", "Residual=(0,4)."], "result": "Residual vuông góc với b."}
+      ]
+    },
+    {
+      "id": "dimension-reduction",
+      "title": "Linear projection và dimensionality reduction",
+      "lead": "Nguồn dùng projection để giải thích giảm số chiều representation.",
+      "source": "Phần Dimensionality Reduction",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf z=W^T\mathbf x,\qquad \mathbf z\in\mathbb R^K,\;K<D"},
+        {"type": "p", "html": "Một projection tuyến tính ánh xạ dữ liệu D chiều sang K chiều. Mục tiêu trực giác là giữ những hướng/đặc trưng hữu ích đồng thời giảm chi phí biểu diễn."},
+        {"type": "warning", "style": "warning", "title": "Không tự thêm derivation PCA", "html": "Nguồn có hướng giảm chiều/eigen nhưng bài này chỉ trình bày những gì slide hỗ trợ; derivation PCA đầy đủ không được tự bổ sung từ ngoài."}
+      ]
+    },
+    {
+      "id": "eigen-definite",
+      "title": "Eigenpairs và positive/negative definiteness",
+      "lead": "Phần cuối dùng eigenvalue để mô tả hướng đặc biệt của phép biến đổi và dấu của quadratic form.",
+      "source": "Phần Eigenvalues/Eigenvectors / Definiteness",
+      "blocks": [
+        {"type": "formula", "latex": "A\mathbf v=\lambda\mathbf v"},
+        {"type": "formula", "latex": "\mathbf x^TA\mathbf x>0\quad\forall\mathbf x\ne0", "note": "Positive definite."},
+        {"type": "formula", "latex": "\mathbf x^TA\mathbf x<0\quad\forall\mathbf x\ne0", "note": "Negative definite."},
+        {"type": "p", "html": "Với ma trận đối xứng, dấu của eigenvalues là một cách nguồn dùng để xét definiteness. Ý tưởng này nối trực tiếp sang Hessian và cực trị trong Optimization."}
+      ]
+    }
+  ],
+  "lab": {
+    "type": "vector",
+    "title": "Lab distance · cosine · projection",
+    "subtitle": "Dùng cùng hai vector để so sánh nhiều khái niệm hình học xuất hiện xuyên suốt 126 slide."
+  },
+  "exercises": [
+    {"q":"Inner product Euclid của (1,2) và (3,-1) bằng?","answers":["1"],"solution":"3−2=1.","source":"Inner Products"},
+    {"q":"Norm sinh bởi inner product Euclid của (3,4) bằng?","answers":["5"],"solution":"sqrt(9+16)=5.","source":"Norms"},
+    {"q":"Distance Euclid giữa (1,2) và (4,6) bằng?","answers":["5"],"solution":"Hiệu (−3,−4) có norm 5.","source":"Distance"},
+    {"q":"Cauchy–Schwarz có dạng |<x,y>| ≤ tích của gì?","answers":["hai norm","norms","||x||||y||","độ dài hai vector"],"solution":"≤||x||·||y||.","source":"Cauchy–Schwarz"},
+    {"q":"Nếu một feature có scale cực lớn, nó có thể chi phối Euclidean distance không?","answers":["có","co","yes"],"solution":"Có; metric phụ thuộc scale representation.","source":"Feature Distance"},
+    {"q":"KNN chọn các điểm nào để dự đoán?","answers":["k điểm gần nhất","k hang xom gan nhat","k nearest neighbors"],"solution":"k hàng xóm gần nhất theo distance.","source":"KNN"},
+    {"q":"k trong KNN là parameter học trực tiếp hay hyperparameter?","answers":["hyperparameter","siêu tham số","sieu tham so"],"solution":"Hyperparameter.","source":"Hyperparameters"},
+    {"q":"Tập nào dùng để chọn k?","answers":["validation","validation set","tập xác thực","tap xac thuc"],"solution":"Validation set/cross-validation.","source":"Validation"},
+    {"q":"Có nên chọn k dựa trên test set không?","answers":["không","khong","no"],"solution":"Không.","source":"Train/Validation/Test"},
+    {"q":"5-fold cross-validation có bao nhiêu folds?","answers":["5"],"solution":"5 folds.","source":"Cross-validation"},
+    {"q":"Cosine similarity của (1,0) và (2,0) bằng?","answers":["1"],"solution":"Hai vector cùng hướng.","source":"Cosine Similarity"},
+    {"q":"Cosine của hai vector trực giao khác 0 bằng?","answers":["0"],"solution":"cos 90°=0.","source":"Angles"},
+    {"q":"Cosine của hai vector ngược hướng bằng?","answers":["-1","−1"],"solution":"cos 180°=−1.","source":"Cosine Similarity"},
+    {"q":"Centroid k-means là đại lượng gì của các điểm trong cluster?","answers":["trung bình","trung binh","mean","average"],"solution":"Vector trung bình.","source":"K-means"},
+    {"q":"x⊥y tương đương inner product bằng bao nhiêu?","answers":["0"],"solution":"<x,y>=0.","source":"Orthogonality"},
+    {"q":"Nếu x⊥y, ||x+y||² bằng gì?","answers":["||x||²+||y||²","||x||^2+||y||^2","sum of squared norms"],"solution":"Pythagoras: ||x+y||²=||x||²+||y||².","source":"Pythagoras"},
+    {"q":"Q có các cột orthonormal thì Q^T Q bằng?","answers":["I","identity","ma trận đơn vị","ma tran don vi"],"solution":"QᵀQ=I.","source":"Orthogonal Matrices"},
+    {"q":"Orthonormal vector có norm bằng?","answers":["1"],"solution":"1.","source":"Orthonormal Bases"},
+    {"q":"Gram–Schmidt biến một basis độc lập thành loại basis nào?","answers":["orthonormal","trực chuẩn","truc chuan"],"solution":"Orthonormal basis cùng span.","source":"Gram–Schmidt"},
+    {"q":"U^perp chứa các vector có quan hệ gì với mọi u∈U?","answers":["trực giao","truc giao","orthogonal"],"solution":"Trực giao với mọi vector trong U.","source":"Orthogonal Complement"},
+    {"q":"proj của (3,4) lên (1,0) là?","answers":["(3,0)","3,0"],"solution":"(3,0).","source":"Projection"},
+    {"q":"Residual sau orthogonal projection thuộc U hay U^perp?","answers":["U^perp","U⊥","orthogonal complement"],"solution":"U⊥.","source":"Projection"},
+    {"q":"Nếu Q orthonormal basis của U, projection matrix bằng?","answers":["QQ^T","Q Q^T","Q Q transpose"],"solution":"P=QQᵀ.","source":"Projection"},
+    {"q":"Dimensionality reduction từ D xuống K yêu cầu K so với D?","answers":["K<D","K nhỏ hơn D","K<<D","K much smaller than D"],"solution":"K<D (thường K≪D).","source":"Dimensionality Reduction"},
+    {"q":"Phương trình eigenpair là?","answers":["Av=λv","Av=lambda v","A v = lambda v"],"solution":"Av=λv.","source":"Eigenpairs"},
+    {"q":"Positive definite yêu cầu x^T A x dấu gì với x≠0?","answers":["dương","duong","positive",">0"],"solution":">0.","source":"Definiteness"},
+    {"q":"Negative definite yêu cầu x^T A x dấu gì với x≠0?","answers":["âm","am","negative","<0"],"solution":"<0.","source":"Definiteness"},
+    {"q":"Ma trận symmetric positive definite có eigenvalues dương hay âm?","answers":["dương","duong","positive"],"solution":"Dương.","source":"Definiteness"},
+    {"q":"Euclidean distance quan tâm mạnh đến magnitude hơn cosine không?","answers":["có","co","yes"],"solution":"Có; cosine chuẩn hóa theo norm và tập trung vào hướng.","source":"Distance vs Cosine"},
+    {"q":"Projection trực giao lên subspace có thể xem là điểm gần nhất trong subspace theo Euclidean norm không?","answers":["có","co","yes"],"solution":"Có, theo diễn giải hình học của phần projection.","source":"Orthogonal Projections"}
+  ],
+  "glossary": [
+    ["Inner product","tích trong"],["Cauchy–Schwarz inequality","bất đẳng thức Cauchy–Schwarz"],["Norm","chuẩn"],["Feature distance","khoảng cách đặc trưng"],["Nearest neighbor","hàng xóm gần nhất"],["Hyperparameter","siêu tham số"],["Cross-validation","kiểm định chéo"],["Cosine similarity","độ tương đồng cosine"],["Clustering","phân cụm"],["Centroid","tâm cụm"],["Orthogonal complement","phần bù trực giao"],["Orthonormal basis","cơ sở trực chuẩn"],["Projection matrix","ma trận chiếu"],["Dimensionality reduction","giảm chiều"],["Positive definite","xác định dương"],["Negative definite","xác định âm"]
+  ]
+}
