@@ -1,0 +1,47 @@
+name: Fix LaTeX injection
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-latex-injection.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Normalize loader injection
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          text=p.read_text(encoding='utf-8')
+          needle='document.open();document.write(h);document.close()'
+          i=text.find(needle)
+          if i<0:
+              raise SystemExit('Loader write point not found')
+          j=text.rfind('h=h.replace',0,i)
+          if j<0 or 'latex-render.js' not in text[j:i]:
+              raise SystemExit('LaTeX injection not found before loader write point')
+          safe=r'''h=h.replace(/<\/body>/i,'<script id="cs115-math-script" src="/latex-render.js"><\/script></body>');'''
+          text=text[:j]+safe+text[i:]
+          p.write_text(text,encoding='utf-8')
+          PY
+      - name: Commit fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Fix LaTeX loader injection'
+          git push
