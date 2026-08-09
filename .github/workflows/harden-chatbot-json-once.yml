@@ -1,0 +1,46 @@
+name: Harden chatbot JSON parsing once
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/harden-chatbot-json-once.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Patch chatbot response parsing
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('chatbot.js')
+          s = p.read_text(encoding='utf-8')
+          marker = "function safeUrl(raw){"
+          helper = """async function readJsonResponse(response){\n  const raw=await response.text();\n  try{return JSON.parse(raw)}catch{\n    const preview=raw.replace(/\\s+/g,' ').trim().slice(0,220)||'(phản hồi rỗng)';\n    throw new Error(`Backend trả về dữ liệu không phải JSON (HTTP ${response.status}): ${preview}`);\n  }\n}\n\n"""
+          if 'async function readJsonResponse(response)' not in s:
+              i = s.find(marker)
+              if i < 0:
+                  raise SystemExit('Không tìm thấy safeUrl để chèn helper')
+              s = s[:i] + helper + s[i:]
+          count = s.count('const data=await r.json();')
+          s = s.replace('const data=await r.json();', 'const data=await readJsonResponse(r);')
+          if count < 2:
+              raise SystemExit(f'Chỉ tìm thấy {count} chỗ r.json(), mong đợi ít nhất 2')
+          p.write_text(s, encoding='utf-8')
+          Path('.github/workflows/harden-chatbot-json-once.yml').unlink()
+          PY
+          node --check chatbot.js
+      - name: Commit patch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add chatbot.js .github/workflows/harden-chatbot-json-once.yml
+          git commit -m 'Handle non-JSON chatbot backend responses'
+          git push
