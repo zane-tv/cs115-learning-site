@@ -1,225 +1,379 @@
 {
   "slug": "dai-so-tuyen-tinh-mo-rong",
   "title": "Đại số tuyến tính mở rộng – từ không gian vector đến eigen, trực giao và xác định dương",
-  "subtitle": "Bản học đầy đủ từ 82 slide ôn tập ĐSTT: ma trận và hệ tuyến tính, vector space, linear combination/span/independence, eigenpairs, inner product, norm/distance/angle, cosine, k-means, Gram–Schmidt, projection và positive definite matrices.",
+  "subtitle": "Bản học chi tiết bám theo 82 slide ôn tập Đại số tuyến tính của CS115: từ ma trận và hệ tuyến tính đến không gian vector, tổ hợp tuyến tính, độc lập–hệ sinh, trị riêng, tích trong, norm–distance–cosine, trực giao–chiếu trực giao và ma trận xác định dương. Thuật toán Gram–Schmidt được tách rõ là phần bổ sung từ tài liệu Hình học giải tích của cùng học phần.",
   "category": "FOUNDATION · LINEAR ALGEBRA",
-  "tags": ["Vector Space", "Eigenpairs", "Inner Product", "Norm", "Cosine", "Gram–Schmidt", "Positive Definite"],
+  "tags": ["Vector Space", "Linear Combination", "Basis", "Eigenvalue", "Inner Product", "Norm", "Cosine", "Orthogonal", "Projection", "Positive Definite"],
   "objectives": [
-    "Đọc được ma trận, hệ tuyến tính và các tiêu chuẩn nghiệm theo rank ở mức nguồn.",
-    "Giải thích vector space, span, linear independence và basis bằng tổ hợp tuyến tính.",
-    "Tính eigenvalue/eigenvector cho ví dụ nhỏ và hiểu Av=λv.",
-    "Tính inner product, các norm L1/L2/L∞, distance, angle và cosine similarity.",
-    "Thực hiện Gram–Schmidt và phép chiếu trực giao ở ví dụ 2D/3D.",
-    "Nhận biết positive definite matrix bằng quadratic form/eigenvalue/principal-minor tests được nguồn nêu."
+    "Đọc đúng ký hiệu, kích thước vector/ma trận và hiểu Ax là tổ hợp tuyến tính các cột của A.",
+    "Phân loại nghiệm của Ax=b bằng khử Gauss, pivot, biến tự do và rank.",
+    "Giải thích vector space, subspace, linear combination, span, linear independence và basis bằng cả đại số lẫn trực giác hình học.",
+    "Tìm và kiểm tra eigenvalue/eigenvector từ Av=λv và det(A−λI)=0.",
+    "Dùng inner product để xây dựng norm, distance, angle, cosine similarity, orthogonality và projection.",
+    "Phân biệt orthogonal và orthonormal; hiểu vì sao một họ trực giao không chứa vector 0 là độc lập tuyến tính.",
+    "Nhận biết positive definite / semidefinite / indefinite bằng quadratic form, dấu eigenvalue và các định thức con chính theo nội dung nguồn.",
+    "Nhận ra và hiểu các thuật ngữ Anh–Việt thường gặp trong slide, bài tập và code ML."
   ],
   "sources": [
-    {"file": "Chương 1_Review ĐSTT (30_5).pdf", "pages": "82 slide", "note": "Nguồn chính cho đại số tuyến tính mở rộng"}
+    {"file": "Chương 1_Review ĐSTT (30_5).pdf", "pages": "82 slide", "note": "Nguồn chính cho toàn bộ mạch Đại số tuyến tính mở rộng"},
+    {"file": "2025_03_CS115_Analytic Geometry.pdf", "pages": "slide 92–96", "note": "Nguồn bổ sung duy nhất cho thuật toán Gram–Schmidt tường minh"}
   ],
-  "coverage": "Toàn bộ 82 slide đã được rà soát. Các phần k-means/cosine được trình bày đúng mức liên hệ hình học của nguồn; không biến bài này thành một chương clustering độc lập.",
+  "coverage": "Nội dung chính bám theo 82 slide Review ĐSTT: ma trận/hệ tuyến tính, vector space và ứng dụng, eigenpairs, inner product, norm, distance, cosine similarity, orthogonal/orthonormal, orthogonal projection và positive-definite matrices. Thuật toán Gram–Schmidt tường minh được tách thành phần bổ sung từ Analytic Geometry slide 92–96, không gán nhầm cho nguồn 82 slide.",
   "sections": [
     {
-      "id": "matrices",
-      "title": "Ma trận và các loại ma trận",
-      "lead": "Nguồn bắt đầu bằng ký hiệu, kích thước và một số loại ma trận thường gặp.",
-      "source": "Khoảng slide 2–13",
+      "id": "notation-matrix",
+      "title": "Ký hiệu, vector và ma trận: đọc đúng trước khi tính",
+      "lead": "Theo dõi đúng đối tượng và kích thước là điều kiện đầu tiên để không dùng sai phép toán.",
+      "source": "Slide 4–14",
       "blocks": [
-        {"type": "formula", "latex": "A=[a_{ij}]\in\mathbb R^{m\times n}"},
+        {"type": "p", "html": "Nguồn quy ước <b>x, y, z</b> cho vector; <b>A, B, X</b> cho ma trận; <b>ℝ</b> cho số thực, <b>ℝⁿ</b> cho không gian n chiều và <b>‖v‖</b> cho norm. Kích thước không chỉ là ký hiệu phụ: nó quyết định phép toán nào hợp lệ."},
+        {"type": "formula", "latex": "\\mathbf x\\in\\mathbb R^n,\\qquad A\\in\\mathbb R^{m\\times n}"},
         {"type": "cards", "cols": 3, "items": [
-          {"title": "Square / diagonal", "html": "Ma trận vuông có m=n; diagonal matrix chỉ có thể khác 0 trên đường chéo chính."},
-          {"title": "Identity", "html": "I có 1 trên đường chéo, là phần tử trung hòa của phép nhân."},
-          {"title": "Symmetric", "html": "A đối xứng khi Aᵀ=A; loại ma trận này xuất hiện lại ở phần positive definite."}
+          {"title": "Vector", "html": "Một dãy có thứ tự các thành phần. Trong phép nhân ma trận thường viết vector dạng cột."},
+          {"title": "Matrix", "html": "Bảng m hàng × n cột; cũng có thể nhìn mỗi cột như một vector trong ℝᵐ."},
+          {"title": "Scalar", "html": "Một số thực dùng để co giãn vector hoặc ma trận."}
         ]},
-        {"type": "p", "html": "Nguồn ôn cộng, nhân vô hướng, nhân ma trận, chuyển vị, determinant/inverse ở mức nền tảng. Bài `ma-tran-chuyen-sau` đã dành riêng cho thao tác ma trận nên phần này tập trung vào ý nghĩa để nối sang không gian vector."}
+        {"type": "p", "html": "Nếu A có các cột a₁,…,aₙ và x=(x₁,…,xₙ)ᵀ thì <b>Ax chính là tổ hợp tuyến tính của các cột A</b>. Cách nhìn này là chiếc cầu nối phép nhân ma trận với hệ tuyến tính, span, independence và rank."},
+        {"type": "formula", "latex": "A\\mathbf x=x_1\\mathbf a_1+x_2\\mathbf a_2+\\cdots+x_n\\mathbf a_n", "note": "Cách nhìn theo cột của phép nhân ma trận."},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Transpose Aᵀ", "html": "Đổi hàng thành cột: phần tử (i,j) chuyển sang (j,i)."},
+          {"title": "Diagonal matrix", "html": "Ma trận vuông có các phần tử ngoài đường chéo chính bằng 0."},
+          {"title": "Symmetric matrix", "html": "A=Aᵀ; tính đối xứng trở lại ở phần positive definiteness."},
+          {"title": "Identity I", "html": "Ma trận đơn vị; IA=AI=A khi kích thước phù hợp."},
+          {"title": "Zero matrix", "html": "Mọi phần tử bằng 0."},
+          {"title": "Matrix product", "html": "Mỗi phần tử (AB)ᵢⱼ là tích vô hướng hàng i của A với cột j của B."}
+        ]},
+        {"type": "note", "style": "warning", "title": "Lỗi hay gặp", "html": "AB chỉ xác định khi số cột của A bằng số hàng của B. Điều kiện hai ma trận cùng kích thước là điều kiện của phép cộng, không phải phép nhân."}
       ]
     },
     {
-      "id": "systems",
-      "title": "Hệ tuyến tính, Gaussian elimination và rank",
-      "lead": "Nguồn dùng ma trận mở rộng và phép biến đổi sơ cấp để xét nghiệm của hệ.",
-      "source": "Khoảng slide 14–25",
+      "id": "linear-systems",
+      "title": "Hệ phương trình tuyến tính: từ hình học đến Ax=b",
+      "lead": "Một hệ tuyến tính vừa là bài toán giao của các ràng buộc, vừa là bài toán tạo b từ các cột của A.",
+      "source": "Slide 15–25",
       "blocks": [
-        {"type": "formula", "latex": "A\mathbf x=\mathbf b"},
-        {"type": "p", "html": "Các phép biến đổi sơ cấp trên hàng giữ nguyên tập nghiệm. Sau khi đưa hệ về dạng bậc thang, rank giúp phân loại hệ có nghiệm duy nhất, vô số nghiệm hoặc vô nghiệm."},
-        {"type": "formula", "latex": "\operatorname{rank}(A)=\operatorname{rank}([A\mid b])", "note": "Điều kiện tương thích được nguồn dùng khi xét hệ."},
+        {"type": "formula", "latex": "A\\mathbf x=\\mathbf b"},
+        {"type": "p", "html": "Mỗi hàng của A tương ứng một phương trình, x chứa các ẩn và b là vế phải. Nếu b=0, nguồn gọi đây là <b>hệ tuyến tính thuần nhất</b> (homogeneous system). Hệ thuần nhất luôn có nghiệm x=0."},
         {"type": "cards", "cols": 3, "items": [
-          {"title": "Nghiệm duy nhất", "html": "Hệ tương thích và rank bằng số ẩn."},
-          {"title": "Vô số nghiệm", "html": "Hệ tương thích nhưng rank nhỏ hơn số ẩn → có biến tự do."},
-          {"title": "Vô nghiệm", "html": "rank(A) khác rank([A|b])."}
+          {"title": "No solution", "html": "Các ràng buộc mâu thuẫn; trong 2D có thể là hai đường thẳng song song khác nhau."},
+          {"title": "Unique solution", "html": "Các ràng buộc đủ độc lập để xác định đúng một điểm nghiệm."},
+          {"title": "Infinitely many", "html": "Có biến tự do; nghiệm tạo thành một họ tham số."}
         ]},
-        {"type": "example", "title": "Ví dụ tự học", "intro": "x+y=2; 2x+2y=4.", "steps": ["Hàng 2 = 2×hàng 1.", "rank(A)=rank([A|b])=1.", "Có 2 ẩn nhưng rank 1."], "result": "Hệ có <b>vô số nghiệm</b>."}
+        {"type": "p", "html": "Khử Gauss dùng các phép biến đổi sơ cấp trên hàng để tạo một hệ tương đương dễ đọc pivot và biến tự do hơn: đổi hai hàng, nhân một hàng với số khác 0, hoặc cộng vào một hàng một bội của hàng khác."},
+        {"type": "formula", "latex": "\\operatorname{rank}(A)=\\operatorname{rank}([A\\mid\\mathbf b])", "note": "Điều kiện hệ tương thích."},
+        {"type": "table", "headers": ["Trạng thái", "Điều kiện rank", "Ý nghĩa"], "rows": [
+          ["Nghiệm duy nhất", "rank(A)=rank([A|b])=n", "Không có biến tự do."],
+          ["Vô số nghiệm", "rank(A)=rank([A|b])<n", "Có ít nhất một biến tự do."],
+          ["Vô nghiệm", "rank(A)≠rank([A|b])", "Ma trận bổ sung chứa ràng buộc mâu thuẫn."]
+        ]},
+        {"type": "example", "title": "Ví dụ đọc nghiệm bằng rank", "intro": "x+y=2; 2x+2y=4.", "steps": ["Hàng 2 là 2 lần hàng 1.", "rank(A)=rank([A|b])=1.", "Có 2 ẩn nhưng chỉ 1 pivot, do đó có 1 biến tự do."], "result": "Hệ có vô số nghiệm, ví dụ x=t, y=2−t."},
+        {"type": "note", "style": "deep", "title": "Nối sang vector space", "html": "Ax=b có nghiệm khi b nằm trong span của các cột A. Vì vậy hệ tuyến tính và hệ sinh là hai cách nhìn của cùng một câu hỏi."}
       ]
     },
     {
       "id": "vector-space",
-      "title": "Vector space, subspace và linear combination",
-      "lead": "Từ vector cụ thể sang tập vector đóng dưới cộng và nhân vô hướng.",
-      "source": "Khoảng slide 26–37",
+      "title": "Không gian vector và không gian con",
+      "lead": "Vector space là khung chứa các đối tượng mà phép cộng vector và nhân scalar hoạt động nhất quán.",
+      "source": "Slide 26–29",
       "blocks": [
-        {"type": "formula", "latex": "\mathbf w=c_1\mathbf v_1+\cdots+c_k\mathbf v_k"},
-        {"type": "p", "html": "Nguồn giới thiệu không gian vector và không gian con qua các tính chất đóng. Trong thực hành, câu hỏi thường chuyển thành: một vector có viết được dưới dạng linear combination của tập vector đã cho không?"},
-        {"type": "formula", "latex": "\operatorname{span}\{\mathbf v_1,\ldots,\mathbf v_k\}=\left\{\sum_i c_i\mathbf v_i\right\}"},
-        {"type": "example", "title": "Ví dụ tự học: membership trong span", "intro": "v₁=(1,0), v₂=(0,1), x=(3,−2).", "steps": ["x=3v₁−2v₂.", "Vì tồn tại hệ số 3 và −2, x thuộc span{v₁,v₂}."], "result": "Hai vector chuẩn sinh toàn bộ R²."}
+        {"type": "p", "html": "Nguồn chuyển từ vector cụ thể sang <b>không gian vector</b> (vector space) và nêu ứng dụng trong điều khiển–robot, xử lý ảnh/âm thanh, máy học, mật mã và kinh tế. Vector vì thế không bị giới hạn ở mũi tên 2D/3D; nó là phần tử của một không gian có cấu trúc tuyến tính."},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Đóng dưới phép cộng", "html": "Nếu u,v thuộc V thì u+v vẫn thuộc V."},
+          {"title": "Đóng dưới nhân scalar", "html": "Nếu v thuộc V và α∈ℝ thì αv vẫn thuộc V."},
+          {"title": "Vector 0 và vector đối", "html": "Không gian chứa 0 và mỗi v có −v để v+(−v)=0."}
+        ]},
+        {"type": "p", "html": "<b>Subspace</b> là một tập con vẫn giữ được cấu trúc vector space với cùng phép cộng và nhân scalar. Cách kiểm tra thực dụng là tập phải chứa 0 và đóng dưới tổ hợp tuyến tính."},
+        {"type": "formula", "latex": "\\alpha\\mathbf u+\\beta\\mathbf v\\in W\\quad\\text{với mọi }\\mathbf u,\\mathbf v\\in W,\\ \\alpha,\\beta\\in\\mathbb R"},
+        {"type": "example", "title": "Ví dụ trực giác về subspace", "intro": "W={(x,y,z)∈ℝ³ | z=0}.", "steps": ["Vector 0=(0,0,0) thuộc W.", "Cộng hai vector có z=0 vẫn cho z=0.", "Nhân scalar cũng giữ z=0."], "result": "W là một không gian con của ℝ³."},
+        {"type": "note", "style": "warning", "title": "Điểm phân biệt", "html": "Một đường thẳng không đi qua gốc tọa độ không chứa vector 0 nên không là subspace của ℝ², dù hình dạng vẫn là một đường thẳng."}
+      ]
+    },
+    {
+      "id": "linear-combination",
+      "title": "Tổ hợp tuyến tính: ngôn ngữ cốt lõi của cả chương",
+      "lead": "Từ các vector đang có, ta tạo được những vector nào bằng cách co giãn rồi cộng?",
+      "source": "Slide 30–31",
+      "blocks": [
+        {"type": "formula", "latex": "\\mathbf w=c_1\\mathbf v_1+c_2\\mathbf v_2+\\cdots+c_k\\mathbf v_k"},
+        {"type": "p", "html": "Các số c₁,…,cₖ là <b>coefficients</b>. Mỗi hệ số đổi độ dài và có thể đảo hướng một vector; phép cộng ghép các đóng góp thành vector mới. Khái niệm này xuất hiện lại trong Ax, span, basis và eigenvector."},
+        {"type": "example", "title": "Ví dụ", "intro": "v₁=(1,2), v₂=(3,1), w=2v₁−v₂.", "steps": ["2v₁=(2,4).", "−v₂=(−3,−1).", "Cộng: (2,4)+(−3,−1)=(−1,3)."], "result": "w=(−1,3)."},
+        {"type": "p", "html": "Nếu đặt v₁,…,vₖ làm các cột của V và c=(c₁,…,cₖ)ᵀ thì tổ hợp tuyến tính viết gọn thành Vc. Vì thế bài toán “w có nằm trong span không?” trở thành bài toán hệ Vc=w có nghiệm hay không."},
+        {"type": "formula", "latex": "V\\mathbf c=\\mathbf w"},
+        {"type": "note", "style": "note", "title": "Cách giải bài", "html": "Khi số chiều lớn, đừng đoán hệ số bằng mắt. Dựng ma trận có các vector làm cột rồi giải hệ tuyến tính."}
       ]
     },
     {
       "id": "independence",
-      "title": "Linear independence, spanning set và basis",
-      "lead": "Basis vừa đủ để sinh không gian mà không chứa hướng dư thừa.",
-      "source": "Khoảng slide 32–40",
+      "title": "Độc lập tuyến tính và phụ thuộc tuyến tính",
+      "lead": "Độc lập tuyến tính đo xem trong một tập vector có hướng nào dư thừa hay không.",
+      "source": "Slide 32–38",
       "blocks": [
-        {"type": "formula", "latex": "c_1\mathbf v_1+\cdots+c_k\mathbf v_k=\mathbf0"},
-        {"type": "p", "html": "Tập độc lập tuyến tính khi phương trình trên chỉ có nghiệm c₁=…=cₖ=0. Một basis là tập độc lập đồng thời span không gian đang xét."},
+        {"type": "formula", "latex": "c_1\\mathbf v_1+\\cdots+c_k\\mathbf v_k=\\mathbf0"},
+        {"type": "p", "html": "Tập {v₁,…,vₖ} <b>độc lập tuyến tính</b> nếu phương trình trên chỉ có nghiệm c₁=⋯=cₖ=0. Nếu tồn tại một bộ hệ số không đồng thời bằng 0 mà vẫn cho tổng bằng 0 thì tập <b>phụ thuộc tuyến tính</b>."},
         {"type": "cards", "cols": 2, "items": [
-          {"title": "Phụ thuộc", "html": "Có ít nhất một vector có thể tạo từ các vector còn lại → thông tin hướng bị dư."},
-          {"title": "Cơ sở", "html": "Mỗi vector trong không gian có tọa độ duy nhất theo basis đã chọn."}
+          {"title": "Independent", "html": "Không vector nào có thể tái tạo từ các vector còn lại; mỗi hướng đóng góp thông tin mới."},
+          {"title": "Dependent", "html": "Có một quan hệ tuyến tính không tầm thường; một hoặc nhiều hướng bị dư thừa."}
         ]},
-        {"type": "example", "title": "Ví dụ tự học", "intro": "v₁=(1,2), v₂=(3,1).", "steps": ["det[[1,3],[2,1]]=1−6=−5≠0.", "Hai vector không cùng phương."], "result": "v₁,v₂ độc lập và tạo một basis của R²."}
+        {"type": "p", "html": "Trong 2D, hai vector khác 0 cùng nằm trên một đường thẳng thì phụ thuộc; nếu không cùng phương thì độc lập. Trực giác này hữu ích, nhưng định nghĩa qua hệ thuần nhất mới áp dụng cho mọi số chiều."},
+        {"type": "example", "title": "Kiểm tra nhanh trong 2D", "intro": "v₁=(1,2), v₂=(3,1).", "steps": ["Dựng A=[v₁ v₂].", "det(A)=1·1−3·2=−5≠0.", "A khả nghịch nên Ac=0 chỉ có nghiệm c=0."], "result": "v₁,v₂ độc lập tuyến tính."},
+        {"type": "note", "style": "warning", "title": "Độc lập không đồng nghĩa trực giao", "html": "Các vector trực giao khác 0 luôn độc lập, nhưng một tập độc lập không bắt buộc có inner product bằng 0 từng cặp."}
+      ]
+    },
+    {
+      "id": "span-basis",
+      "title": "Hệ sinh, span và basis",
+      "lead": "Span mô tả toàn bộ những gì một tập vector có thể tạo ra; basis là một hệ sinh không dư thừa.",
+      "source": "Slide 39–40",
+      "blocks": [
+        {"type": "formula", "latex": "\\operatorname{span}\\{\\mathbf v_1,\\ldots,\\mathbf v_k\\}=\\left\\{\\sum_{i=1}^{k}c_i\\mathbf v_i:c_i\\in\\mathbb R\\right\\}"},
+        {"type": "p", "html": "<b>Spanning set</b> là tập vector có span bằng không gian đang xét. Một hệ sinh có thể chứa vector dư thừa. <b>Basis</b> vừa sinh toàn bộ không gian, vừa độc lập tuyến tính."},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Span", "html": "Tập tất cả tổ hợp tuyến tính tạo được."},
+          {"title": "Spanning set", "html": "Tập vector đủ để sinh toàn bộ không gian mục tiêu."},
+          {"title": "Basis", "html": "Spanning set + linear independence."}
+        ]},
+        {"type": "p", "html": "Ý nghĩa quan trọng của basis là <b>biểu diễn duy nhất</b>: khi basis cố định, mỗi vector trong không gian có đúng một bộ tọa độ theo basis đó."},
+        {"type": "example", "title": "Cơ sở chuẩn của ℝ²", "steps": ["e₁=(1,0), e₂=(0,1) độc lập.", "Mọi (x,y)=x e₁+y e₂ nên chúng sinh ℝ²."], "result": "{e₁,e₂} là basis của ℝ²."},
+        {"type": "note", "style": "deep", "title": "Rank nhìn theo basis", "html": "Rank(A) là số hướng độc lập trong các cột/hàng; có thể xem như dimension của column space. Vì vậy rank đo lượng thông tin tuyến tính độc lập mà A chứa."}
       ]
     },
     {
       "id": "eigen",
-      "title": "Eigenvalue và eigenvector",
-      "lead": "Một eigendirection là hướng mà phép biến đổi ma trận chỉ co giãn/đảo hướng.",
-      "source": "Khoảng slide 41–47",
+      "title": "Trị riêng và vector riêng: hướng đặc biệt của phép biến đổi",
+      "lead": "Eigenvector là vector khác 0 mà sau phép biến đổi A vẫn nằm trên cùng đường thẳng với chính nó.",
+      "source": "Slide 41–47",
       "blocks": [
-        {"type": "formula", "latex": "A\mathbf v=\lambda\mathbf v,\qquad \mathbf v\ne\mathbf0"},
-        {"type": "formula", "latex": "\det(A-\lambda I)=0", "note": "Characteristic equation để tìm eigenvalues."},
-        {"type": "example", "title": "Ví dụ tự học: ma trận chéo", "intro": "A=diag(2,3).", "steps": ["Ae₁=2e₁ nên λ=2 với eigenvector e₁.", "Ae₂=3e₂ nên λ=3 với eigenvector e₂."], "result": "Các trục chuẩn là eigendirections của ma trận chéo."},
-        {"type": "note", "style": "note", "title": "Liên hệ về sau", "html": "Nguồn dùng eigenvalues trở lại khi xét positive definiteness. Bài Hình học giải tích cũng dùng eigenpairs trong mạch giảm chiều."}
+        {"type": "formula", "latex": "A\\mathbf v=\\lambda\\mathbf v,\\qquad \\mathbf v\\neq\\mathbf0"},
+        {"type": "p", "html": "Công thức nói rằng A không tạo hướng mới từ v; kết quả chỉ là λ lần v. Nếu λ>1 thì kéo dài theo hướng đó; 0<λ<1 thì co lại; λ<0 thì đồng thời đảo hướng; λ=0 thì hướng đó bị đưa về vector 0."},
+        {"type": "example", "title": "Ví dụ theo nguồn", "intro": "A=[[1,2],[1,0]], v=(2,1)ᵀ.", "steps": ["Av=(4,2)ᵀ.", "(4,2)ᵀ=2(2,1)ᵀ."], "result": "v là eigenvector và λ=2."},
+        {"type": "p", "html": "Để tìm λ khi chưa biết v, chuyển Av=λv thành (A−λI)v=0. Muốn có nghiệm v≠0, A−λI phải suy biến, nên determinant bằng 0."},
+        {"type": "formula", "latex": "(A-\\lambda I)\\mathbf v=\\mathbf0,\\qquad \\det(A-\\lambda I)=0"},
+        {"type": "example", "title": "Ví dụ λ=7 trong nguồn", "intro": "A=[[1,6],[5,2]].", "steps": ["A−7I=[[-6,6],[5,−5]].", "Giải (A−7I)x=0 cho x₁=x₂.", "Mọi x=t(1,1)ᵀ với t≠0 đều là vector riêng."], "result": "7 là eigenvalue tương ứng với hướng (1,1)."},
+        {"type": "bullets", "items": ["Nếu v là eigenvector của λ thì kv, k≠0, cũng là eigenvector cùng λ.", "Ma trận vuông bậc n có n eigenvalue khi tính cả bội trong miền phức.", "Với ma trận đối xứng thực, tất cả eigenvalue đều thực.", "Nguồn nối positive definite với điều kiện mọi eigenvalue đều dương."]},
+        {"type": "note", "style": "warning", "title": "Vector 0 không phải eigenvector", "html": "A0=λ0 đúng với mọi λ, nên nếu cho phép vector 0 thì khái niệm eigenvalue mất ý nghĩa. Định nghĩa bắt buộc v≠0."}
       ]
     },
     {
       "id": "inner-product",
-      "title": "Inner product và dot product",
-      "lead": "Inner product biến hai vector thành một scalar và tạo nền cho norm, angle, orthogonality.",
-      "source": "Khoảng slide 48–54",
+      "title": "Tích trong: từ đại số sang hình học",
+      "lead": "Inner product tạo ra một scalar từ hai vector và là nền cho độ dài, góc và trực giao.",
+      "source": "Slide 48–54",
       "blocks": [
-        {"type": "formula", "latex": "\langle\mathbf x,\mathbf y\rangle=\mathbf x^T\mathbf y=\sum_i x_i y_i"},
-        {"type": "bullets", "items": [
-          "Tuyến tính theo đối số.",
-          "Đối xứng trong không gian thực.",
-          "Positive definite: ⟨x,x⟩≥0 và bằng 0 chỉ khi x=0."
-        ]},
-        {"type": "example", "title": "Ví dụ tự học", "intro": "x=(2,−1,3), y=(−1,4,2).", "steps": ["x·y=2(−1)+(−1)4+3·2.", "=−2−4+6=0."], "result": "Inner product bằng 0, nên hai vector khác 0 này trực giao."}
+        {"type": "formula", "latex": "\\langle\\cdot,\\cdot\\rangle:V\\times V\\to\\mathbb R"},
+        {"type": "bullets", "items": ["Đối xứng trong không gian thực: ⟨u,v⟩=⟨v,u⟩.", "Phân phối theo phép cộng: ⟨u+v,w⟩=⟨u,w⟩+⟨v,w⟩.", "Tương thích với nhân scalar: ⟨cu,v⟩=c⟨u,v⟩.", "Xác định dương: ⟨v,v⟩≥0 và bằng 0 khi và chỉ khi v=0."]},
+        {"type": "p", "html": "Trong ℝⁿ với Euclidean inner product, inner product chính là dot product."},
+        {"type": "formula", "latex": "\\langle\\mathbf u,\\mathbf v\\rangle=\\mathbf u^T\\mathbf v=\\sum_{i=1}^{n}u_i v_i"},
+        {"type": "example", "title": "Ví dụ trực giao", "intro": "u=(2,−1,3), v=(−1,4,2).", "steps": ["u·v=2(−1)+(−1)4+3·2.", "=−2−4+6=0.", "Hai vector đều khác 0."], "result": "u và v trực giao theo Euclidean inner product."},
+        {"type": "note", "style": "warning", "title": "Không phải mọi phép ghép hai vector là inner product", "html": "Một ánh xạ muốn là inner product phải thỏa đủ các tính chất, đặc biệt positive definiteness. Nguồn có ví dụ phản chứng bằng cách chọn vector làm ⟨v,v⟩ không dương."}
       ]
     },
     {
       "id": "norm-distance",
-      "title": "Norm, chuẩn hóa và distance",
-      "lead": "Nguồn so sánh p-norm, L1/L2/L∞ và dùng norm của hiệu để đo khoảng cách.",
-      "source": "Khoảng slide 52–61",
+      "title": "Norm và distance: độ lớn của vector, độ xa giữa hai điểm",
+      "lead": "Norm là khái niệm độ dài tổng quát; distance thường được xây bằng norm của vector hiệu.",
+      "source": "Slide 55–65",
       "blocks": [
-        {"type": "formula", "latex": "\|\mathbf x\|_p=\left(\sum_i|x_i|^p\right)^{1/p}"},
-        {"type": "formula", "latex": "\|\mathbf x\|_1=\sum_i|x_i|,\quad \|\mathbf x\|_2=\sqrt{\mathbf x^T\mathbf x},\quad \|\mathbf x\|_\infty=\max_i|x_i|"},
-        {"type": "formula", "latex": "d(\mathbf x,\mathbf y)=\|\mathbf x-\mathbf y\|"},
-        {"type": "formula", "latex": "\hat{\mathbf x}=\frac{\mathbf x}{\|\mathbf x\|_2},\qquad \mathbf x\ne\mathbf0", "note": "L2 normalization."},
-        {"type": "example", "title": "Ví dụ tự học", "intro": "x=(3,4).", "steps": ["||x||₂=5.", "x̂=(3/5,4/5).", "||x̂||₂=1."], "result": "Chuẩn hóa giữ hướng và đưa độ dài về 1."}
+        {"type": "bullets", "items": ["Không âm: ‖v‖≥0 và ‖v‖=0 khi và chỉ khi v=0.", "Đồng bậc: ‖αv‖=|α|‖v‖.", "Bất đẳng thức tam giác: ‖u+v‖≤‖u‖+‖v‖."]},
+        {"type": "formula", "latex": "\\|\\mathbf v\\|_p=\\left(\\sum_{i=1}^{n}|v_i|^p\\right)^{1/p}"},
+        {"type": "formula", "latex": "\\|\\mathbf v\\|_1=\\sum_i|v_i|,\\qquad \\|\\mathbf v\\|_2=\\sqrt{\\mathbf v^T\\mathbf v},\\qquad \\|\\mathbf v\\|_\\infty=\\max_i|v_i|"},
+        {"type": "example", "title": "Cùng một vector, nhiều norm", "intro": "v=(3,−4).", "steps": ["‖v‖₁=3+4=7.", "‖v‖₂=√(9+16)=5.", "‖v‖∞=4."], "result": "Norm không phải một công thức duy nhất; phải biết đang dùng norm nào."},
+        {"type": "formula", "latex": "d(\\mathbf u,\\mathbf v)=\\|\\mathbf u-\\mathbf v\\|"},
+        {"type": "p", "html": "u−v là vector dịch chuyển từ v đến u; norm của vector đó là độ dài đoạn nối hai điểm. Nguồn minh họa distance giữa các văn bản Wikipedia sau khi biểu diễn mỗi tài liệu bằng vector tần suất từ với 4423 chiều — cho thấy hình học vector áp dụng được ở không gian rất cao chiều."},
+        {"type": "note", "style": "deep", "title": "Khoảng cách phụ thuộc biểu diễn", "html": "Nếu đổi scale của feature hoặc đổi norm, quan hệ gần/xa có thể thay đổi. Đây là lý do hiểu norm trước khi dùng thuật toán ML là quan trọng."}
       ]
     },
     {
-      "id": "angle-cosine",
-      "title": "Góc, trực giao và cosine similarity",
-      "lead": "Dot product cho phép chuyển từ tọa độ sang hình học góc.",
-      "source": "Khoảng slide 60–68",
+      "id": "cosine",
+      "title": "Góc và cosine similarity: so sánh hướng",
+      "lead": "Cosine similarity chuẩn hóa inner product bởi độ dài hai vector, nhấn mạnh hướng hơn độ lớn tuyệt đối.",
+      "source": "Slide 66–69",
       "blocks": [
-        {"type": "formula", "latex": "\cos\theta=\frac{\mathbf x^T\mathbf y}{\|\mathbf x\|_2\|\mathbf y\|_2}"},
+        {"type": "formula", "latex": "\\cos\\theta=\\frac{\\langle\\mathbf u,\\mathbf v\\rangle}{\\|\\mathbf u\\|\\,\\|\\mathbf v\\|}", "note": "Hai vector phải khác 0."},
         {"type": "cards", "cols": 3, "items": [
-          {"title": "x·y>0", "html": "Góc nhọn; nhìn chung hai hướng tương đồng."},
-          {"title": "x·y=0", "html": "Với x,y khác 0: trực giao."},
-          {"title": "x·y<0", "html": "Góc tù; hai hướng có xu hướng đối nghịch."}
+          {"title": "cos θ ≈ 1", "html": "Hai vector gần cùng hướng."},
+          {"title": "cos θ = 0", "html": "Hai vector trực giao trong Euclidean geometry."},
+          {"title": "cos θ ≈ −1", "html": "Hai vector gần ngược hướng."}
         ]},
-        {"type": "p", "html": "Nguồn liên hệ cosine similarity với so sánh vector tài liệu/feature. Khác Euclidean distance, cosine chủ yếu nhìn <b>hướng</b> sau khi đã chuẩn hóa theo độ dài."}
-      ]
-    },
-    {
-      "id": "kmeans",
-      "title": "Khoảng cách và k-means trong không gian vector",
-      "lead": "Clustering xuất hiện như một ứng dụng trực tiếp của distance/centroid.",
-      "source": "Khoảng slide 64–69",
-      "blocks": [
-        {"type": "formula", "latex": "\mu_k=\frac{1}{|C_k|}\sum_{\mathbf x_i\in C_k}\mathbf x_i"},
-        {"type": "bullets", "items": [
-          "Chọn/khởi tạo K centroids.",
-          "Gán mỗi điểm vào centroid gần nhất theo distance.",
-          "Cập nhật centroid bằng trung bình các điểm trong cluster.",
-          "Lặp gán–cập nhật đến khi ổn định theo tiêu chí thuật toán."
-        ]},
-        {"type": "warning", "style": "warning", "title": "Phạm vi nguồn", "html": "Nguồn dùng k-means để minh họa vai trò của distance và vector mean; không cung cấp một phân tích hội tụ đầy đủ, nên bài này không thêm chứng minh ngoài slide."}
+        {"type": "p", "html": "Khác Euclidean distance, nếu nhân một vector với scalar dương thì hướng không đổi nên cosine similarity không đổi, trong khi khoảng cách Euclid thường thay đổi. Vì vậy cosine hữu ích khi mẫu phân bố theo tọa độ quan trọng hơn độ lớn tuyệt đối."},
+        {"type": "example", "title": "Ví dụ", "intro": "u=(1,2), v=(2,4).", "steps": ["u·v=10.", "‖u‖=√5, ‖v‖=2√5.", "cosθ=10/(√5·2√5)=1."], "result": "Hai vector cùng hướng dù độ dài khác nhau."},
+        {"type": "note", "style": "warning", "title": "Vector 0", "html": "Cosine similarity không xác định nếu một vector có norm bằng 0 vì mẫu số bằng 0."}
       ]
     },
     {
       "id": "orthogonal",
-      "title": "Orthogonal/orthonormal sets và Gram–Schmidt",
-      "lead": "Biến một hệ độc lập thành hệ trục trực chuẩn thuận tiện cho tọa độ và projection.",
-      "source": "Khoảng slide 69–75",
+      "title": "Trực giao và trực chuẩn",
+      "lead": "Orthogonal nói về inner product bằng 0; orthonormal thêm điều kiện mỗi vector có norm bằng 1.",
+      "source": "Slide 70–71",
       "blocks": [
-        {"type": "formula", "latex": "\mathbf q_i^T\mathbf q_j=\delta_{ij}"},
-        {"type": "formula", "latex": "\mathbf q_1=\frac{\mathbf a_1}{\|\mathbf a_1\|},\qquad \tilde{\mathbf a}_2=\mathbf a_2-(\mathbf q_1^T\mathbf a_2)\mathbf q_1"},
-        {"type": "formula", "latex": "\mathbf q_2=\frac{\tilde{\mathbf a}_2}{\|\tilde{\mathbf a}_2\|}"},
-        {"type": "example", "title": "Ví dụ tự học: Gram–Schmidt", "intro": "a₁=(1,0), a₂=(1,1).", "steps": ["q₁=(1,0).", "q₁·a₂=1.", "ã₂=(1,1)−1(1,0)=(0,1).", "q₂=(0,1)."], "result": "q₁,q₂ là basis trực chuẩn của cùng span."}
+        {"type": "formula", "latex": "\\langle\\mathbf u_i,\\mathbf u_j\\rangle=0\\quad(i\\neq j)"},
+        {"type": "p", "html": "Hai vector trực giao khi inner product của chúng bằng 0. Một họ S={u₁,…,uₚ} trực giao nếu mọi cặp khác chỉ số đều trực giao."},
+        {"type": "formula", "latex": "\\langle\\mathbf u_i,\\mathbf u_j\\rangle=\\delta_{ij}", "note": "Cách viết gọn cho một họ orthonormal."},
+        {"type": "p", "html": "Một họ <b>orthonormal</b> vừa trực giao vừa có ‖uᵢ‖=1. Nếu một basis đồng thời orthogonal/orthonormal thì gọi là orthogonal/orthonormal basis."},
+        {"type": "bullets", "items": ["Một họ trực giao không chứa vector 0 là độc lập tuyến tính.", "Trong không gian tích trong n chiều, một họ trực giao gồm n vector khác 0 là một orthogonal basis.", "Nguồn nêu rằng từ một họ độc lập tuyến tính có thể thay bằng họ trực giao/trực chuẩn giữ nguyên các span lũy tiến."]},
+        {"type": "p", "html": "Vì sao trực giao ⇒ độc lập? Giả sử c₁u₁+⋯+cₖuₖ=0. Lấy inner product với uⱼ; mọi hạng i≠j biến mất, còn cⱼ‖uⱼ‖²=0. Vì uⱼ≠0 nên ‖uⱼ‖²>0, suy ra cⱼ=0. Lặp cho mọi j."},
+        {"type": "note", "style": "deep", "title": "Lợi ích của orthonormal basis", "html": "Hệ số theo hướng qᵢ có thể lấy trực tiếp bằng ⟨x,qᵢ⟩ thay vì giải một hệ tuyến tính tổng quát."}
       ]
     },
     {
       "id": "projection",
-      "title": "Orthogonal projection",
-      "lead": "Projection tách vector thành phần song song với một hướng và phần dư trực giao.",
-      "source": "Khoảng slide 74–78",
+      "title": "Phép chiếu trực giao: lấy phần của u theo hướng v",
+      "lead": "Projection tách vector thành thành phần song song với v và phần còn lại vuông góc với v.",
+      "source": "Slide 72–74",
       "blocks": [
-        {"type": "formula", "latex": "\operatorname{proj}_{\mathbf v}(\mathbf x)=\frac{\mathbf x^T\mathbf v}{\mathbf v^T\mathbf v}\mathbf v"},
-        {"type": "formula", "latex": "\mathbf r=\mathbf x-\operatorname{proj}_{\mathbf v}(\mathbf x),\qquad \mathbf r^T\mathbf v=0"},
-        {"type": "example", "title": "Ví dụ tự học", "intro": "x=(3,4), v=(1,0).", "steps": ["x·v=3; v·v=1.", "projᵥ(x)=3(1,0)=(3,0).", "r=(0,4) và r·v=0."], "result": "Projection nằm trên span(v), phần dư vuông góc v."}
+        {"type": "formula", "latex": "\\operatorname{proj}_{\\mathbf v}(\\mathbf u)=\\frac{\\langle\\mathbf u,\\mathbf v\\rangle}{\\langle\\mathbf v,\\mathbf v\\rangle}\\mathbf v,\\qquad \\mathbf v\\neq\\mathbf0"},
+        {"type": "p", "html": "Hệ số ⟨u,v⟩/⟨v,v⟩ chọn đúng độ dài có dấu trên hướng v. Kết quả projection luôn là bội của v nên nằm trên span{v}."},
+        {"type": "p", "html": "Đặt p=projᵥ(u) và r=u−p. Ý nghĩa “orthogonal projection” là r trực giao với v; đây cũng là tiêu chuẩn mạnh để kiểm tra kết quả."},
+        {"type": "formula", "latex": "\\mathbf u=\\operatorname{proj}_{\\mathbf v}(\\mathbf u)+\\mathbf r,\\qquad \\langle\\mathbf r,\\mathbf v\\rangle=0"},
+        {"type": "example", "title": "Ví dụ theo nguồn", "intro": "u=(6,2,4), v=(1,2,0).", "steps": ["⟨u,v⟩=10.", "⟨v,v⟩=5.", "Hệ số chiếu=10/5=2.", "projᵥ(u)=2(1,2,0)=(2,4,0)."], "result": "Hình chiếu trực giao là (2,4,0)."},
+        {"type": "note", "style": "note", "title": "Nếu v là unit vector", "html": "Khi ‖v‖=1 thì ⟨v,v⟩=1 và công thức rút gọn thành projᵥ(u)=⟨u,v⟩v."}
+      ]
+    },
+    {
+      "id": "gram-schmidt",
+      "title": "Bổ sung: trực giao hóa Gram–Schmidt",
+      "lead": "Làm tường minh định lý trực giao hóa bằng thuật toán từ tài liệu Analytic Geometry của cùng học phần.",
+      "source": "Nguồn bổ sung: 2025_03_CS115_Analytic Geometry, slide 92–96",
+      "blocks": [
+        {"type": "note", "style": "note", "title": "Phân biệt nguồn", "html": "Review ĐSTT 82 slide nêu định lý có thể thay một họ độc lập bằng họ trực giao/trực chuẩn giữ cùng span. Công thức thuật toán bên dưới lấy từ Analytic Geometry slide 92–96."},
+        {"type": "p", "html": "Gram–Schmidt xử lý từng vector theo thứ tự. Ở bước i, ta trừ khỏi aᵢ tất cả các thành phần đã nằm trên các hướng trực chuẩn q₁,…,qᵢ₋₁. Phần còn lại q̃ᵢ vuông góc với các q trước; sau đó chuẩn hóa thành qᵢ."},
+        {"type": "formula", "latex": "\\widetilde{\\mathbf q}_i=\\mathbf a_i-\\sum_{j=1}^{i-1}(\\mathbf q_j^T\\mathbf a_i)\\mathbf q_j"},
+        {"type": "formula", "latex": "\\mathbf q_i=\\frac{\\widetilde{\\mathbf q}_i}{\\|\\widetilde{\\mathbf q}_i\\|}"},
+        {"type": "bullets", "items": ["Nếu q̃ᵢ=0, aᵢ đã nằm trong span của các vector trước nên tập đầu vào phụ thuộc tuyến tính.", "Nếu thuật toán không dừng sớm, các vector đầu vào độc lập và ta thu được một họ orthonormal.", "Mỗi bước có thể hiểu là bóc bỏ phần đã nằm trong các hướng cũ, chỉ giữ hướng thông tin mới rồi chuẩn hóa."]}
+      ]
+    },
+    {
+      "id": "applications",
+      "title": "Ứng dụng hình học vector: dữ liệu, distance và k-means",
+      "lead": "Khi dữ liệu được mã hóa thành vector, các khái niệm hình học trở thành công cụ so sánh và gom nhóm.",
+      "source": "Khoảng slide 58–69 và phần Applications",
+      "blocks": [
+        {"type": "p", "html": "Khi một đối tượng dữ liệu được biểu diễn bằng feature vector, norm đo độ lớn, distance đo độ gần, cosine đo tương đồng hướng và inner product đo mối liên hệ hình học theo không gian đã chọn."},
+        {"type": "formula", "latex": "\\boldsymbol\\mu_k=\\frac{1}{|C_k|}\\sum_{\\mathbf x_i\\in C_k}\\mathbf x_i", "note": "Centroid của cluster Cₖ."},
+        {"type": "p", "html": "Trong k-means, centroid là trung bình vector của các điểm trong cluster. Quy trình lặp giữa gán điểm vào centroid gần và cập nhật centroid. Ở bài này k-means chỉ là ví dụ ứng dụng của vector/distance đúng mức nguồn, không mở rộng thành một chương clustering riêng."},
+        {"type": "bullets", "items": ["Biểu diễn đối tượng thành vector.", "Khởi tạo K centroid.", "Gán mỗi điểm vào centroid gần nhất.", "Cập nhật centroid bằng trung bình các vector trong cluster.", "Lặp cho đến khi việc gán/centroid ổn định theo tiêu chí triển khai."]},
+        {"type": "note", "style": "deep", "title": "Điều cần nhớ", "html": "K-means phụ thuộc mạnh vào cách biểu diễn feature và thước đo khoảng cách; vì vậy lựa chọn hình học của không gian dữ liệu là một phần của mô hình."}
       ]
     },
     {
       "id": "positive-definite",
-      "title": "Positive definite matrices",
-      "lead": "Nguồn kết thúc bằng quadratic form và các cách kiểm tra xác định dương.",
-      "source": "Khoảng slide 78–82",
+      "title": "Ma trận xác định dương: quadratic form luôn dương theo mọi hướng khác 0",
+      "lead": "Positive definiteness nối ma trận đối xứng, quadratic form, eigenvalue và các định thức con chính.",
+      "source": "Slide 75–82",
       "blocks": [
-        {"type": "formula", "latex": "\mathbf x^TA\mathbf x>0\qquad\forall\mathbf x\ne\mathbf0"},
-        {"type": "p", "html": "Với ma trận đối xứng thực, nguồn nêu các tiêu chuẩn tương đương/kiểm tra phổ biến: eigenvalues dương và các principal minors thích hợp dương. Positive definiteness sẽ xuất hiện lại trong Hessian của bài Optimization."},
-        {"type": "example", "title": "Ví dụ tự học: ma trận chéo", "intro": "A=diag(2,5).", "steps": ["xᵀAx=2x₁²+5x₂².", "Với x≠0, ít nhất một bình phương dương.", "Hai hệ số 2,5 đều dương."], "result": "A là positive definite."}
+        {"type": "p", "html": "Nguồn xét ma trận vuông đối xứng thực A và scalar <b>xᵀAx</b>. Dấu của scalar này trên mọi x≠0 quyết định loại definiteness."},
+        {"type": "formula", "latex": "\\mathbf x^T A\\mathbf x>0\\quad\\forall\\mathbf x\\neq\\mathbf0", "note": "A positive definite (PD)."},
+        {"type": "table", "headers": ["Loại", "Điều kiện quadratic form", "Dấu eigenvalue với A đối xứng"], "rows": [
+          ["Positive definite", "xᵀAx>0 với mọi x≠0", "Tất cả >0"],
+          ["Positive semidefinite", "xᵀAx≥0", "Tất cả ≥0"],
+          ["Negative definite", "xᵀAx<0 với mọi x≠0", "Tất cả <0"],
+          ["Negative semidefinite", "xᵀAx≤0", "Tất cả ≤0"],
+          ["Indefinite", "Có hướng cho giá trị dương và hướng cho giá trị âm", "Có cả eigenvalue dương và âm"]
+        ]},
+        {"type": "p", "html": "Với eigenvector Av=λv, ta có vᵀAv=λ‖v‖². Vì ‖v‖²>0 với v≠0 nên dấu của quadratic form theo một eigenvector chính là dấu của λ. Đây là lý do dấu eigenvalue kiểm tra definiteness cho ma trận đối xứng."},
+        {"type": "formula", "latex": "\\mathbf v^T A\\mathbf v=\\lambda\\,\\mathbf v^T\\mathbf v=\\lambda\\|\\mathbf v\\|_2^2"},
+        {"type": "p", "html": "Nguồn cũng dùng các định thức con chính để kiểm tra. Với ma trận đối xứng thực, tiêu chuẩn Sylvester cho biết A positive definite khi và chỉ khi mọi <b>leading principal minor</b> đều dương."},
+        {"type": "formula", "latex": "\\det(A_1)>0,\\ \\det(A_2)>0,\\ \\ldots,\\ \\det(A_n)>0"},
+        {"type": "example", "title": "Ví dụ đơn giản", "intro": "A=diag(2,1).", "steps": ["xᵀAx=2x₁²+x₂².", "Nếu x≠0 thì ít nhất một trong x₁,x₂ khác 0.", "Do đó 2x₁²+x₂²>0."], "result": "A positive definite."},
+        {"type": "note", "style": "warning", "title": "PD khác PSD", "html": "PSD cho phép tồn tại x≠0 với xᵀAx=0; PD thì không. Tương ứng, PSD cho phép eigenvalue bằng 0 còn PD yêu cầu mọi eigenvalue >0."}
+      ]
+    },
+    {
+      "id": "concept-map",
+      "title": "Bản đồ khái niệm: các phần nối với nhau như thế nào?",
+      "lead": "Hãy nhìn chương như một chuỗi câu hỏi về hướng thông tin trong không gian thay vì các định nghĩa rời rạc.",
+      "source": "Tổng hợp từ slide 6, 26–82",
+      "blocks": [
+        {"type": "table", "headers": ["Câu hỏi", "Khái niệm", "Công cụ"], "rows": [
+          ["b có tạo từ các cột A không?", "Span / linear system", "Giải Ax=b"],
+          ["Các hướng có dư thừa không?", "Linear independence", "Giải Ac=0 / rank"],
+          ["Bộ hướng tối thiểu để biểu diễn?", "Basis", "Independent + spanning"],
+          ["Hướng nào A chỉ co giãn?", "Eigenvector", "Av=λv"],
+          ["Hai vector vuông góc không?", "Inner product / orthogonal", "⟨u,v⟩=0"],
+          ["Vector dài bao nhiêu?", "Norm", "‖v‖"],
+          ["Hai điểm cách nhau bao xa?", "Distance", "‖u−v‖"],
+          ["Hai vector cùng hướng đến mức nào?", "Cosine similarity", "⟨u,v⟩/(‖u‖‖v‖)"],
+          ["Phần nào của u nằm theo v?", "Projection", "projᵥ(u)"],
+          ["Quadratic form có luôn dương?", "Positive definiteness", "xᵀAx / eigenvalues / minors"]
+        ]},
+        {"type": "note", "style": "success", "title": "Mạch học nên nhớ", "html": "Ax=b → linear combination → span → independence → basis → eigen → inner product → norm/distance/angle → orthogonal/projection → positive definiteness."}
       ]
     }
   ],
   "lab": {
     "type": "vector",
-    "title": "Lab vector hình học",
-    "subtitle": "Tính dot product, norm, distance, cosine và projection — các phép toán xuyên suốt nửa sau của nguồn."
+    "title": "Lab vector: dot product, norm, distance, cosine và projection",
+    "subtitle": "Nhập hai vector cùng số chiều để kiểm tra các khái niệm hình học trong bài."
   },
   "exercises": [
-    {"q":"A∈R^(3×5), x∈R^5 thì Ax thuộc R^?","answers":["3","R^3","R3"],"solution":"Ax∈R³.","source":"Phần ma trận/hệ tuyến tính"},
-    {"q":"Điều kiện tương thích rank(A) và rank([A|b]) là gì?","answers":["bằng nhau","bang nhau","equal","rank(A)=rank([A|b])"],"solution":"Hệ có nghiệm khi hai rank bằng nhau.","source":"Phần hệ tuyến tính"},
-    {"q":"Hệ tương thích có 3 ẩn nhưng rank=2: duy nhất hay vô số nghiệm?","answers":["vô số","vo so","vô số nghiệm","infinitely many"],"solution":"Vô số nghiệm vì có biến tự do.","source":"Phần hệ tuyến tính"},
-    {"q":"span{v1,...,vk} chứa loại vector nào?","answers":["các tổ hợp tuyến tính","cac to hop tuyen tinh","linear combinations"],"solution":"Tất cả linear combinations của các vector đó.","source":"Phần vector space"},
-    {"q":"(3,-2) có thuộc span{(1,0),(0,1)} không?","answers":["có","co","yes"],"solution":"Có: 3(1,0)-2(0,1).","source":"Phần span"},
-    {"q":"Hai vector (1,2) và (2,4) độc lập hay phụ thuộc?","answers":["phụ thuộc","phu thuoc","dependent"],"solution":"Phụ thuộc vì vector thứ hai bằng 2 lần vector thứ nhất.","source":"Phần independence"},
-    {"q":"Nếu det của hai vector cột trong R2 khác 0 thì độc lập hay phụ thuộc?","answers":["độc lập","doc lap","independent"],"solution":"Độc lập.","source":"Từ tiêu chuẩn hệ 2D"},
-    {"q":"Phương trình eigenvector cơ bản là gì?","answers":["Av=λv","Av=lambda v","A v = lambda v"],"solution":"Av=λv với v≠0.","source":"Phần eigenpairs"},
-    {"q":"Eigenvalues được tìm từ det(A−λI)=?","answers":["0"],"solution":"Bằng 0.","source":"Phần eigenpairs"},
-    {"q":"A=diag(2,3): eigenvalue ứng với e1 là?","answers":["2"],"solution":"Ae₁=2e₁.","source":"Từ định nghĩa eigenpair"},
-    {"q":"(2,-1,3)·(-1,4,2) bằng?","answers":["0"],"solution":"−2−4+6=0.","source":"Phần inner product"},
-    {"q":"Hai vector khác 0 có dot product bằng 0 gọi là gì?","answers":["trực giao","truc giao","orthogonal"],"solution":"Trực giao.","source":"Phần angle/orthogonality"},
-    {"q":"||(3,4)||2 bằng?","answers":["5"],"solution":"sqrt(9+16)=5.","source":"Phần norm"},
-    {"q":"||(−2,3,−4)||1 bằng?","answers":["9"],"solution":"2+3+4=9.","source":"Phần norm"},
-    {"q":"||(−2,3,−4)||∞ bằng?","answers":["4"],"solution":"max(2,3,4)=4.","source":"Phần norm"},
-    {"q":"Vector đơn vị cùng hướng (3,4) là?","answers":["(3/5,4/5)","3/5,4/5","(0.6,0.8)","0.6,0.8"],"solution":"Chia cho norm 5.","source":"Phần normalization"},
-    {"q":"d2((1,2),(4,6)) bằng?","answers":["5"],"solution":"Hiệu là (3,4), L2 norm bằng 5.","source":"Phần distance"},
-    {"q":"Cosine similarity dùng dot product chia cho tích của đại lượng nào?","answers":["hai norm","norms","||x||||y||","độ dài hai vector"],"solution":"||x||·||y||.","source":"Phần cosine"},
-    {"q":"Hai vector cùng hướng dương có cosine bằng?","answers":["1"],"solution":"cos(0)=1.","source":"Phần cosine"},
-    {"q":"Hai vector trực giao khác 0 có góc bao nhiêu độ?","answers":["90","90°"],"solution":"90°.","source":"Phần angle"},
-    {"q":"Trong k-means, centroid của cluster là đại lượng gì của các điểm?","answers":["trung bình","trung binh","mean","average"],"solution":"Vector trung bình của các điểm trong cluster.","source":"Phần k-means"},
-    {"q":"Orthonormal nghĩa là trực giao và mỗi vector có norm bằng?","answers":["1"],"solution":"Norm bằng 1.","source":"Phần orthonormal"},
-    {"q":"Gram–Schmidt có giữ nguyên span ban đầu không?","answers":["có","co","yes"],"solution":"Có, với tập độc lập đầu vào.","source":"Phần Gram–Schmidt"},
-    {"q":"Chiếu x=(3,4) lên v=(1,0) được vector nào?","answers":["(3,0)","3,0"],"solution":"proj=(3,0).","source":"Phần projection"},
-    {"q":"Phần dư sau projection có quan hệ gì với hướng chiếu?","answers":["trực giao","truc giao","orthogonal"],"solution":"Phần dư trực giao với không gian/hướng chiếu.","source":"Phần projection"},
-    {"q":"A positive definite yêu cầu x^T A x > 0 với mọi x nào?","answers":["x khác 0","x!=0","x≠0","nonzero x"],"solution":"Mọi vector x≠0.","source":"Phần positive definite"},
-    {"q":"Ma trận đối xứng positive definite có eigenvalues dấu gì?","answers":["dương","duong","positive"],"solution":"Các eigenvalues dương.","source":"Phần positive definite"},
-    {"q":"diag(2,5) positive definite không?","answers":["có","co","yes"],"solution":"Có vì quadratic form 2x1²+5x2²>0 với x≠0.","source":"Phần positive definite"},
-    {"q":"Có thể normalize vector 0 bằng x/||x|| không?","answers":["không","khong","no"],"solution":"Không vì chia cho 0.","source":"Phần normalization"},
-    {"q":"Projection lên vector v=0 có xác định theo công thức nguồn không?","answers":["không","khong","no"],"solution":"Không vì mẫu vᵀv=0.","source":"Phần projection"}
+    {"q": "Cho v=(3,4). Tính ‖v‖₂.", "answers": ["5"], "solution": "‖v‖₂=√(3²+4²)=5.", "source": "Norm, slide 55–56"},
+    {"q": "Hai vector u=(1,0), v=(0,2) có trực giao không? Trả lời yes/no.", "answers": ["yes", "co", "có"], "solution": "u·v=1·0+0·2=0 nên hai vector khác 0 trực giao.", "source": "Orthogonal, slide 70"},
+    {"q": "A=[[1,0],[0,3]]. Eigenvalue ứng với e₂=(0,1) là bao nhiêu?", "answers": ["3"], "solution": "Ae₂=(0,3)=3e₂ nên λ=3.", "source": "Eigenvalue/eigenvector, slide 41–47"},
+    {"q": "Cho u=(6,2,4), v=(1,2,0). proj_v(u) là gì?", "answers": ["(2,4,0)", "2,4,0"], "solution": "u·v=10, v·v=5 nên hệ số chiếu là 2; projection=(2,4,0).", "source": "Orthogonal projection, slide 72–74"},
+    {"q": "Một ma trận đối xứng có các eigenvalue 2, 1, 0. Nó là PD hay PSD?", "answers": ["psd", "positive semidefinite", "nua xac dinh duong", "nửa xác định dương"], "solution": "Mọi eigenvalue không âm nhưng có eigenvalue 0 nên ma trận PSD, không phải PD.", "source": "Positive definite matrix, slide 75–82"},
+    {"q": "Tập {(1,0),(2,0)} độc lập hay phụ thuộc tuyến tính?", "answers": ["phu thuoc", "phụ thuộc", "dependent", "linear dependent"], "solution": "(2,0)=2(1,0), nên tồn tại quan hệ 2v₁−v₂=0 không tầm thường.", "source": "Linear dependence, slide 32–38"}
   ],
   "glossary": [
-    ["Vector space","không gian vector"],["Subspace","không gian con"],["Span","không gian sinh"],["Linear independence","độc lập tuyến tính"],["Basis","cơ sở"],["Rank","hạng"],["Eigenvalue","trị riêng"],["Eigenvector","vector riêng"],["Inner product","tích trong"],["Norm","chuẩn"],["Distance","khoảng cách"],["Cosine similarity","độ tương đồng cosine"],["Orthogonal","trực giao"],["Orthonormal","trực chuẩn"],["Gram–Schmidt","quy trình trực chuẩn hóa Gram–Schmidt"],["Projection","phép chiếu"],["Positive definite","xác định dương"],["Quadratic form","dạng toàn phương"]
+    ["Scalar", "Vô hướng; một số đơn lẻ dùng để co giãn vector hoặc ma trận."],
+    ["Vector", "Vectơ; phần tử của vector space, trong ℝⁿ thường biểu diễn bằng n tọa độ có thứ tự."],
+    ["Matrix", "Ma trận; bảng số m×n, cũng có thể nhìn như một tập các vector cột."],
+    ["Dimension / size", "Kích thước; vector có số thành phần, ma trận có số hàng × số cột."],
+    ["Transpose", "Chuyển vị; đổi hàng thành cột, ký hiệu Aᵀ."],
+    ["Diagonal matrix", "Ma trận đường chéo; ma trận vuông có phần tử ngoài đường chéo chính bằng 0."],
+    ["Symmetric matrix", "Ma trận đối xứng; A=Aᵀ."],
+    ["Identity matrix", "Ma trận đơn vị I; phần tử trung hòa của phép nhân ma trận."],
+    ["Zero matrix", "Ma trận không; mọi phần tử bằng 0."],
+    ["Matrix multiplication", "Phép nhân ma trận; mỗi phần tử kết quả là tích vô hướng một hàng với một cột."],
+    ["Linear system", "Hệ phương trình tuyến tính; có thể viết gọn dưới dạng Ax=b."],
+    ["Homogeneous system", "Hệ tuyến tính thuần nhất; Ax=0."],
+    ["Augmented matrix", "Ma trận bổ sung [A|b] dùng khi khử Gauss."],
+    ["Elementary row operation", "Phép biến đổi sơ cấp trên hàng: đổi hàng, nhân hàng với số khác 0, cộng bội của hàng khác."],
+    ["Gaussian elimination", "Phương pháp khử Gauss; đưa hệ về dạng bậc thang để đọc nghiệm."],
+    ["Pivot", "Vị trí trụ trong dạng bậc thang; gắn với một biến cơ sở."],
+    ["Free variable", "Biến tự do; biến không có pivot tương ứng và có thể dùng làm tham số nghiệm."],
+    ["Rank", "Hạng; số hướng tuyến tính độc lập của hàng/cột, hay dimension của column space."],
+    ["Consistent system", "Hệ tương thích; hệ có ít nhất một nghiệm."],
+    ["Vector space", "Không gian vector; tập đối tượng đóng dưới cộng vector và nhân scalar, thỏa các tiên đề tuyến tính."],
+    ["Subspace", "Không gian con; tập con vẫn là vector space với cùng phép cộng và nhân scalar."],
+    ["Closure", "Tính đóng; thực hiện phép toán hợp lệ trên các phần tử của tập vẫn thu phần tử trong tập."],
+    ["Linear combination", "Tổ hợp tuyến tính c₁v₁+⋯+cₖvₖ."],
+    ["Coefficient", "Hệ số cᵢ trong một tổ hợp tuyến tính."],
+    ["Linear independence", "Độc lập tuyến tính; c₁v₁+⋯+cₖvₖ=0 chỉ có nghiệm tất cả cᵢ=0."],
+    ["Linear dependence", "Phụ thuộc tuyến tính; tồn tại quan hệ tuyến tính không tầm thường cho tổng bằng 0."],
+    ["Span", "Không gian sinh; tập tất cả tổ hợp tuyến tính của một tập vector."],
+    ["Spanning set", "Hệ sinh/tập sinh; tập vector có span bằng không gian mục tiêu."],
+    ["Basis", "Cơ sở; một spanning set đồng thời độc lập tuyến tính."],
+    ["Coordinate vector", "Vector tọa độ; bộ hệ số biểu diễn một vector theo một basis đã chọn."],
+    ["Eigenvalue", "Trị riêng λ; scalar trong quan hệ Av=λv với v≠0."],
+    ["Eigenvector", "Vector riêng v; hướng khác 0 mà A chỉ co giãn hoặc đảo hướng bằng λ."],
+    ["Characteristic equation", "Phương trình đặc trưng det(A−λI)=0 để tìm eigenvalue."],
+    ["Inner product", "Tích trong; ánh xạ hai vector thành scalar thỏa đối xứng, tuyến tính và xác định dương trong không gian thực."],
+    ["Dot product", "Tích vô hướng Euclid uᵀv=Σuᵢvᵢ; một inner product chuẩn trên ℝⁿ."],
+    ["Norm", "Chuẩn; khái niệm độ dài tổng quát thỏa không âm, đồng bậc và bất đẳng thức tam giác."],
+    ["p-norm", "Chuẩn ℓp: (Σ|vᵢ|ᵖ)^(1/p)."],
+    ["Manhattan norm / ℓ1", "Chuẩn L1; tổng trị tuyệt đối các tọa độ."],
+    ["Euclidean norm / ℓ2", "Chuẩn L2; căn tổng bình phương, bằng √(vᵀv)."],
+    ["Infinity norm / ℓ∞", "Chuẩn vô cực; trị tuyệt đối lớn nhất trong các tọa độ."],
+    ["Unit vector", "Vector đơn vị; vector có norm bằng 1."],
+    ["Normalization", "Chuẩn hóa độ dài; thường là chia vector khác 0 cho norm để thu unit vector."],
+    ["Distance", "Khoảng cách; thường d(u,v)=‖u−v‖ với norm đã chọn."],
+    ["Cosine similarity", "Độ tương tự cosine; inner product chia cho tích hai norm, đo mức tương đồng về hướng."],
+    ["Orthogonal", "Trực giao; hai vector có inner product bằng 0."],
+    ["Orthogonal set", "Họ trực giao; mọi cặp vector khác nhau trong họ đều trực giao."],
+    ["Orthonormal", "Trực chuẩn; trực giao và mọi vector có norm bằng 1."],
+    ["Orthogonal basis", "Cơ sở trực giao; basis đồng thời là một họ trực giao."],
+    ["Orthonormal basis", "Cơ sở trực chuẩn; basis mà các vector đôi một trực giao và đều có norm 1."],
+    ["Orthogonal projection", "Phép chiếu trực giao; thành phần của u nằm trên span của v sao cho phần dư vuông góc với v."],
+    ["Gram–Schmidt", "Thuật toán trực giao hóa một họ độc lập tuyến tính; công thức tường minh trong bài lấy từ Analytic Geometry slide 92–96."],
+    ["Centroid", "Tâm cụm; vector trung bình của các điểm trong một cluster."],
+    ["k-means", "Thuật toán phân cụm lặp giữa gán điểm vào centroid gần nhất và cập nhật centroid."],
+    ["Quadratic form", "Dạng toàn phương xᵀAx; scalar dùng để xét dấu của ma trận đối xứng."],
+    ["Positive definite (PD)", "Xác định dương; xᵀAx>0 với mọi x≠0."],
+    ["Positive semidefinite (PSD)", "Nửa xác định dương; xᵀAx≥0 và có thể bằng 0 ở một hướng khác 0."],
+    ["Negative definite", "Xác định âm; xᵀAx<0 với mọi x≠0."],
+    ["Negative semidefinite", "Nửa xác định âm; xᵀAx≤0 với mọi x≠0."],
+    ["Indefinite", "Không xác định dấu; quadratic form nhận cả giá trị dương và âm theo các hướng khác nhau."],
+    ["Principal minor", "Định thức con chính; determinant của ma trận con lấy cùng tập chỉ số hàng và cột."],
+    ["Leading principal minor", "Định thức con chính đầu; lấy k hàng và k cột đầu."],
+    ["Sylvester criterion", "Với ma trận đối xứng thực, A positive definite khi và chỉ khi mọi leading principal minor đều dương."]
   ]
 }
