@@ -1,0 +1,211 @@
+{
+  "slug": "giai-tich-vector-day-du",
+  "title": "Vector Calculus đầy đủ – Taylor, Jacobian, Hessian, computational graph và backpropagation",
+  "subtitle": "Bản học chuyên sâu từ 131 slide: differentiation, Taylor linearization, multivariable gradients, chain rule, Jacobian/matrix calculus, Hessian, gradient descent motivation, computational graphs, automatic differentiation, backpropagation và vectorized gradients.",
+  "category": "FOUNDATION · VECTOR CALCULUS",
+  "tags": ["Taylor", "Gradient", "Jacobian", "Hessian", "Computational Graph", "Autodiff", "Backprop", "Vectorization"],
+  "objectives": [
+    "Tính derivative/partial/gradient và dùng Taylor bậc một để tuyến tính hóa cục bộ.",
+    "Dùng chain rule cho scalar và vector-valued compositions; kiểm tra shape Jacobian.",
+    "Tính Hessian cho hàm scalar nhiều biến và hiểu thông tin curvature ở mức nguồn.",
+    "Đọc computational graph theo forward pass và truyền đạo hàm ngược bằng chain rule.",
+    "Giải thích automatic differentiation khác việc tự viết symbolic derivative ở mức ý tưởng của slide.",
+    "Viết gradient cho các biểu thức vector hóa điển hình như ||x||² và linear layer."
+  ],
+  "sources": [
+    {"file": "2024_04_CS115_Vector Caculus.pdf", "pages": "131 slide", "note": "Nguồn vector calculus đầy đủ"}
+  ],
+  "coverage": "Toàn bộ 131 slide được rà soát, gồm phần calculus nền tảng, computational graph/autodiff/backprop và cầu nối neural networks. Các kiến trúc neural chỉ được dùng để minh họa chain rule; bài Neural Network giữ phần huấn luyện mạng chi tiết.",
+  "sections": [
+    {
+      "id": "univariate",
+      "title": "Univariate differentiation và local linear change",
+      "lead": "Nguồn bắt đầu từ derivative như tốc độ thay đổi cục bộ.",
+      "source": "Phần đầu: Differentiation",
+      "blocks": [
+        {"type": "formula", "latex": "f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}{h}"},
+        {"type": "p", "html": "Derivative cho biết thay đổi nhỏ của x tạo thay đổi đầu ra xấp xỉ bao nhiêu. Đây là nền tảng của linear approximation và gradient-based optimization."},
+        {"type": "formula", "latex": "f(x+\Delta x)\approx f(x)+f'(x)\Delta x"},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "f(x)=x² tại x=3, Δx=0.1.", "steps": ["f(3)=9.", "f′(3)=6.", "Linear approximation: f(3.1)≈9+6×0.1=9.6."], "result": "Giá trị thật 9.61, nên xấp xỉ bậc một khá gần khi Δx nhỏ."}
+      ]
+    },
+    {
+      "id": "taylor",
+      "title": "Taylor series và linearization",
+      "lead": "Nguồn dùng Taylor để hệ thống hóa approximation bằng derivative các cấp.",
+      "source": "Phần Taylor Series",
+      "blocks": [
+        {"type": "formula", "latex": "f(x+h)=f(x)+f'(x)h+\frac{f''(x)}{2!}h^2+\cdots"},
+        {"type": "p", "html": "Giữ hạng bậc một cho linearization; thêm đạo hàm bậc hai để mô tả curvature tốt hơn. Slide dùng ý tưởng này như cầu nối sang Hessian/Newton trong tối ưu."},
+        {"type": "example", "title": "Ví dụ tự học: eˣ quanh 0", "steps": ["e⁰=1.", "Mọi đạo hàm của eˣ tại 0 đều bằng 1.", "Bậc hai: eˣ≈1+x+x²/2."], "result": "Đây là một Taylor approximation trực tiếp từ công thức nguồn."}
+      ]
+    },
+    {
+      "id": "multivariate",
+      "title": "Partial derivatives và gradient nhiều biến",
+      "lead": "Gradient gom các độ dốc theo từng trục thành một vector.",
+      "source": "Phần Multivariate Calculus",
+      "blocks": [
+        {"type": "formula", "latex": "\nabla f(\mathbf x)=\left[\frac{\partial f}{\partial x_1},\ldots,\frac{\partial f}{\partial x_n}\right]^T"},
+        {"type": "formula", "latex": "f(\mathbf x+\Delta\mathbf x)\approx f(\mathbf x)+\nabla f(\mathbf x)^T\Delta\mathbf x", "note": "First-order multivariate approximation."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "f(x,y)=x²+xy+2y².", "steps": ["∂f/∂x=2x+y.", "∂f/∂y=x+4y."], "result": "∇f=(2x+y, x+4y)ᵀ."}
+      ]
+    },
+    {
+      "id": "chain",
+      "title": "Chain rule: local derivatives ghép thành derivative toàn cục",
+      "lead": "Nguồn lặp lại chain rule ở nhiều mức vì đây là lõi của backprop.",
+      "source": "Phần Chain Rule",
+      "blocks": [
+        {"type": "formula", "latex": "\frac{dy}{dx}=\frac{dy}{du}\frac{du}{dx}"},
+        {"type": "formula", "latex": "J_{\mathbf f\circ\mathbf g}(\mathbf x)=J_{\mathbf f}(\mathbf g(\mathbf x))J_{\mathbf g}(\mathbf x)"},
+        {"type": "p", "html": "Trong scalar graph, derivative dọc một đường được nhân. Nếu một biến ảnh hưởng output qua nhiều nhánh, các đóng góp của các nhánh được cộng lại."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "y=(sin x)².", "steps": ["u=sin x.", "dy/du=2u.", "du/dx=cos x."], "result": "dy/dx=2 sin(x) cos(x)."}
+      ]
+    },
+    {
+      "id": "jacobian",
+      "title": "Jacobian cho vector-valued functions",
+      "lead": "Mỗi hàng theo một output, mỗi cột theo một input trong convention của nguồn.",
+      "source": "Phần Vector-valued Gradients / Jacobian",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf f:\mathbb R^n\to\mathbb R^m,\qquad J_{ij}=\frac{\partial f_i}{\partial x_j}"},
+        {"type": "formula", "latex": "J\in\mathbb R^{m\times n}"},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "f(x,y)=(x+y,xy,x²).", "steps": ["Row 1: (1,1).", "Row 2: (y,x).", "Row 3: (2x,0)."], "result": "J=[[1,1],[y,x],[2x,0]], shape 3×2."},
+        {"type": "warning", "style": "warning", "title": "Shape trước công thức", "html": "Nếu đổi convention row/column derivative, biểu thức có thể chuyển vị. Website giữ convention mà nguồn sử dụng trong các ví dụ."}
+      ]
+    },
+    {
+      "id": "matrix-calculus",
+      "title": "Matrix calculus và các gradient vector hóa thường dùng",
+      "lead": "Nguồn chuyển từ từng phần tử sang công thức vector để viết code hiệu quả.",
+      "source": "Phần Derivatives w.r.t. Vectors/Matrices",
+      "blocks": [
+        {"type": "formula", "latex": "\nabla_{\mathbf x}(\mathbf a^T\mathbf x)=\mathbf a"},
+        {"type": "formula", "latex": "\nabla_{\mathbf x}(\mathbf x^T\mathbf x)=2\mathbf x"},
+        {"type": "formula", "latex": "\nabla_{\mathbf x}\frac12\|A\mathbf x-\mathbf b\|_2^2=A^T(A\mathbf x-\mathbf b)"},
+        {"type": "p", "html": "Công thức cuối cùng là dạng gradient điển hình nguồn dùng để liên hệ calculus với least squares/optimization. Nó cũng minh họa vì sao transpose xuất hiện tự nhiên khi đưa residual ngược về không gian x."}
+      ]
+    },
+    {
+      "id": "hessian",
+      "title": "Hessian và second-order information",
+      "lead": "Đạo hàm cấp hai mô tả cách gradient thay đổi.",
+      "source": "Phần Higher-order Derivatives",
+      "blocks": [
+        {"type": "formula", "latex": "H_f(\mathbf x)=\nabla^2f(\mathbf x)=\left[\frac{\partial^2f}{\partial x_i\partial x_j}\right]"},
+        {"type": "formula", "latex": "f(\mathbf x+\Delta)\approx f(\mathbf x)+\nabla f^T\Delta+\frac12\Delta^TH\Delta", "note": "Second-order local approximation."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "f=x²+2xy+3y².", "steps": ["Gradient=(2x+2y,2x+6y).", "Hxx=2, Hxy=Hyx=2, Hyy=6."], "result": "H=[[2,2],[2,6]]."}
+      ]
+    },
+    {
+      "id": "optimization-bridge",
+      "title": "Tại sao gradient dẫn tới tối ưu",
+      "lead": "Nguồn dùng gradient descent như một động cơ để thấy derivative được sử dụng thế nào.",
+      "source": "Phần Optimization Motivation",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf x_{t+1}=\mathbf x_t-\eta\nabla f(\mathbf x_t)"},
+        {"type": "p", "html": "Gradient chỉ hướng tăng nhanh cục bộ trong hình học Euclid; đi theo hướng âm gradient là quy tắc descent cơ bản. PDF Optimization 108 trang sẽ phân tích điều kiện và biến thể sâu hơn."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "f(x)=x², x₀=2, η=0.1.", "steps": ["f′(2)=4.", "x₁=2−0.1×4=1.6.", "f(1.6)=2.56 < f(2)=4."], "result": "Một bước gradient descent làm objective giảm trong ví dụ."}
+      ]
+    },
+    {
+      "id": "graph",
+      "title": "Computational graph: chia biểu thức thành các phép toán cục bộ",
+      "lead": "Graph làm lộ rõ dependency để chain rule có thể tự động hóa.",
+      "source": "Phần Computational Graph",
+      "blocks": [
+        {"type": "p", "html": "Một biểu thức phức tạp được tách thành các node phép toán. Forward pass tính giá trị từ input đến output; backward pass dùng local derivative tại từng node để truyền gradient ngược."},
+        {"type": "example", "title": "Ví dụ tự học: y=(xw+b)²", "steps": ["Node 1: m=xw.", "Node 2: z=m+b.", "Node 3: y=z².", "Backward: dy/dz=2z; dz/dm=1; dm/dw=x."], "result": "dy/dw=2z·x=2(xw+b)x."},
+        {"type": "note", "style": "note", "title": "Local → global", "html": "Mỗi node chỉ cần biết đạo hàm cục bộ và gradient đi từ phía output; đây là cách slide xây trực giác cho backpropagation."}
+      ]
+    },
+    {
+      "id": "autodiff",
+      "title": "Automatic differentiation",
+      "lead": "Nguồn trình bày autodiff như thực thi chain rule trên graph đã biết.",
+      "source": "Phần Automatic Differentiation",
+      "blocks": [
+        {"type": "cards", "cols": 2, "items": [
+          {"title": "Forward", "html": "Tính giá trị trung gian và giữ những thông tin cần cho derivative cục bộ."},
+          {"title": "Backward", "html": "Bắt đầu từ derivative của output theo chính nó (=1), rồi lan gradient ngược qua graph."}
+        ]},
+        {"type": "p", "html": "Slide dùng các ví dụ cộng, nhân, max/sigmoid và graph nhiều nhánh để minh họa local gradient. Autodiff không cần người dùng khai triển thủ công toàn bộ derivative cuối cùng."},
+        {"type": "warning", "style": "warning", "title": "Không phải numerical finite difference", "html": "Trong mạch nguồn, automatic differentiation dùng chain rule chính xác trên các phép toán của graph; không phải xấp xỉ derivative bằng cách perturb input như finite differences."}
+      ]
+    },
+    {
+      "id": "backprop",
+      "title": "Backpropagation: reverse-mode chain rule cho loss",
+      "lead": "Khi output/loss là scalar và parameters rất nhiều, truyền ngược gradient là cấu trúc tự nhiên.",
+      "source": "Phần Backpropagation",
+      "blocks": [
+        {"type": "formula", "latex": "\frac{\partial L}{\partial x}=\frac{\partial L}{\partial y}\frac{\partial y}{\partial x}"},
+        {"type": "p", "html": "Trong graph nhiều tầng, upstream gradient được nhân với local Jacobian/derivative. Nếu một node fan-out sang nhiều nhánh, các gradient trở về node đó được cộng."},
+        {"type": "example", "title": "Ví dụ tự học: linear + square loss", "intro": "z=wx+b, L=1/2(z−t)².", "steps": ["∂L/∂z=z−t.", "∂z/∂w=x; ∂z/∂b=1.", "∂L/∂w=(z−t)x.", "∂L/∂b=z−t."], "result": "Các parameter gradients được tính bằng một backward pass."}
+      ]
+    },
+    {
+      "id": "vectorization",
+      "title": "Vectorized gradients và code không cần vòng lặp phần tử",
+      "lead": "Các slide cuối nhấn mạnh biểu diễn vector/matrix giúp derivative khớp code ML.",
+      "source": "Phần Vectorized Operations / Gradients",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf z=W\mathbf x+\mathbf b"},
+        {"type": "formula", "latex": "\frac{\partial L}{\partial W}=\boldsymbol\delta\,\mathbf x^T,\qquad \frac{\partial L}{\partial\mathbf x}=W^T\boldsymbol\delta", "note": "Với δ=∂L/∂z theo layout phù hợp slide."},
+        {"type": "p", "html": "Một linear layer có thể xử lý toàn bộ vector một lần. Backward của nó cũng được viết bằng matrix multiplication/outer product, là nền tảng triển khai neural networks hiệu quả."}
+      ]
+    },
+    {
+      "id": "neural-bridge",
+      "title": "Cầu nối sang neural networks",
+      "lead": "Nguồn kết thúc bằng neuron/activation/layer để đặt calculus vào đúng ngữ cảnh học sâu.",
+      "source": "Các slide cuối",
+      "blocks": [
+        {"type": "formula", "latex": "z=\mathbf w^T\mathbf x+b,\qquad a=\phi(z)"},
+        {"type": "p", "html": "Một neuron tính linear combination rồi đi qua activation. Nhiều layer tạo composition sâu; backprop chỉ là chain rule được tổ chức để tính gradient của loss theo mọi parameter."},
+        {"type": "note", "style": "deep", "title": "Phân ranh bài học", "html": "Vector Calculus giải thích <b>đạo hàm được truyền thế nào</b>; bài Neural Network giải thích <b>mạng được cấu trúc và huấn luyện như thế nào</b>."}
+      ]
+    }
+  ],
+  "lab": {
+    "type": "gradient2",
+    "title": "Lab gradient + Hessian",
+    "subtitle": "Thực hành shape và second derivatives trên họ hàm bậc hai trước khi chuyển sang computational graph."
+  },
+  "exercises": [
+    {"q":"Linear approximation một biến dùng f(x)+ đại lượng nào nhân Δx?","answers":["f'(x)","f prime x","derivative"],"solution":"f(x+Δx)≈f(x)+f′(x)Δx.","source":"Differentiation"},
+    {"q":"f=x² tại x=3 có derivative bằng?","answers":["6"],"solution":"f′=2x nên f′(3)=6.","source":"Differentiation"},
+    {"q":"Taylor bậc hai có hệ số trước f''(x)h² là?","answers":["1/2","1/2!","0.5"],"solution":"1/2!.","source":"Taylor"},
+    {"q":"Taylor bậc hai của e^x quanh 0 bắt đầu 1+x+?","answers":["x²/2","x^2/2","0.5x²"],"solution":"x²/2.","source":"Taylor"},
+    {"q":"Gradient của f:R^n→R có shape bao nhiêu thành phần?","answers":["n"],"solution":"n.","source":"Gradient"},
+    {"q":"f=x²+xy+2y²: ∂f/∂x bằng?","answers":["2x+y"],"solution":"2x+y.","source":"Multivariate calculus"},
+    {"q":"Cùng f: ∂f/∂y bằng?","answers":["x+4y"],"solution":"x+4y.","source":"Multivariate calculus"},
+    {"q":"Chain rule scalar qua u: dy/dx = dy/du nhân gì?","answers":["du/dx","u'","derivative of u"],"solution":"du/dx.","source":"Chain Rule"},
+    {"q":"Nếu một biến ảnh hưởng loss qua hai nhánh, gradient trở về biến được cộng hay chỉ chọn một nhánh?","answers":["cộng","cong","sum"],"solution":"Cộng các đóng góp.","source":"Computational graph"},
+    {"q":"f:R^2→R^3 có Jacobian shape?","answers":["3×2","3x2","3 x 2"],"solution":"3×2 theo convention nguồn.","source":"Jacobian"},
+    {"q":"f=(x+y,xy,x²): hàng đầu của Jacobian là?","answers":["(1,1)","1,1"],"solution":"(1,1).","source":"Jacobian"},
+    {"q":"∇x(a^T x) bằng?","answers":["a"],"solution":"a.","source":"Matrix calculus"},
+    {"q":"∇x(x^T x) bằng?","answers":["2x","2 x"],"solution":"2x.","source":"Matrix calculus"},
+    {"q":"Gradient của 1/2||Ax-b||² theo x có dạng?","answers":["A^T(Ax-b)","AT(Ax-b)","A transpose (Ax-b)"],"solution":"Aᵀ(Ax−b).","source":"Matrix calculus"},
+    {"q":"Hessian chứa derivatives cấp mấy?","answers":["2","hai","cấp hai"],"solution":"Cấp hai.","source":"Higher-order derivatives"},
+    {"q":"f=x²+2xy+3y²: Hessian H11 bằng?","answers":["2"],"solution":"2.","source":"Hessian"},
+    {"q":"Cùng f: H12 bằng?","answers":["2"],"solution":"2.","source":"Hessian"},
+    {"q":"Cùng f: H22 bằng?","answers":["6"],"solution":"6.","source":"Hessian"},
+    {"q":"Gradient descent cập nhật x theo gradient dương hay âm?","answers":["âm","am","negative","-gradient"],"solution":"x←x−η∇f.","source":"Optimization motivation"},
+    {"q":"f=x², x0=2, eta=0.1: x1 bằng?","answers":["1.6"],"solution":"2−0.1×4=1.6.","source":"Gradient descent example"},
+    {"q":"Computational graph forward pass tính gì?","answers":["giá trị","gia tri","values","intermediate values"],"solution":"Tính output và các giá trị trung gian.","source":"Computational Graph"},
+    {"q":"Backward pass truyền đại lượng nào ngược graph?","answers":["gradient","đạo hàm","dao ham","derivatives"],"solution":"Gradient/derivative.","source":"Backpropagation"},
+    {"q":"Backward bắt đầu ở scalar output L với ∂L/∂L bằng?","answers":["1"],"solution":"1.","source":"Autodiff"},
+    {"q":"Automatic differentiation trong nguồn có phải finite difference không?","answers":["không","khong","no"],"solution":"Không; nó thực thi chain rule trên computational graph.","source":"Automatic Differentiation"},
+    {"q":"z=wx+b, L=1/2(z-t)²: ∂L/∂z bằng?","answers":["z-t","z−t"],"solution":"z−t.","source":"Backprop example"},
+    {"q":"Cùng ví dụ: ∂L/∂w bằng?","answers":["(z-t)x","(z−t)x","x(z-t)"],"solution":"(z−t)x.","source":"Backprop example"},
+    {"q":"Linear layer z=Wx+b: gradient về input x có W hay W^T?","answers":["W^T","WT","W transpose"],"solution":"Wᵀδ.","source":"Vectorized gradients"},
+    {"q":"Linear layer: gradient theo W có dạng outer product δ với vector nào?","answers":["x","input x"],"solution":"δxᵀ.","source":"Vectorized gradients"},
+    {"q":"Một neuron trước activation tính z bằng biểu thức nào?","answers":["w^T x+b","wTx+b","dot product + bias"],"solution":"z=wᵀx+b.","source":"Neural bridge"},
+    {"q":"Backprop về bản chất dựa chủ yếu trên quy tắc calculus nào?","answers":["chain rule","quy tắc dây chuyền","quy tac day chuyen"],"solution":"Chain rule.","source":"Backpropagation"}
+  ],
+  "glossary": [
+    ["Linearization","tuyến tính hóa cục bộ"],["Taylor series","chuỗi Taylor"],["Partial derivative","đạo hàm riêng"],["Gradient","gradient"],["Jacobian","ma trận Jacobian"],["Hessian","ma trận Hessian"],["Computational graph","đồ thị tính toán"],["Forward pass","lan truyền xuôi"],["Backward pass","lan truyền ngược"],["Automatic differentiation","vi phân tự động"],["Backpropagation","lan truyền ngược gradient"],["Upstream gradient","gradient từ phía sau/output"],["Local gradient","gradient/đạo hàm cục bộ"],["Vectorization","vector hóa"],["Linear layer","lớp tuyến tính"],["Activation","hàm kích hoạt"]
+  ]
+}
