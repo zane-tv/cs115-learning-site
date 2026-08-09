@@ -1,0 +1,204 @@
+{
+  "slug": "hoi-quy-tuyen-tinh",
+  "title": "Linear Regression – objective, gradient descent, normal equation và đánh giá mô hình",
+  "subtitle": "Bản thực hành đầy đủ từ 40 slide/tutorial: dữ liệu hồi quy, squared-error objective, gradient descent từ đầu, so sánh GD/SGD/normal equation, MAE–MSE–R², learning-rate failure, polynomial regression và bài thực hành dữ liệu nhà ở.",
+  "category": "MACHINE LEARNING · REGRESSION",
+  "tags": ["Linear Model", "Squared Error", "Gradient Descent", "SGD", "Normal Equation", "MAE/MSE/R²", "Polynomial"],
+  "objectives": [
+    "Viết mô hình ŷ=b+wᵀx và objective bình phương sai số.",
+    "Tự suy ra gradient của MSE cho linear regression một biến.",
+    "Thực hiện nhiều bước gradient descent và nhận biết learning rate quá lớn.",
+    "Phân biệt batch GD, SGD và nghiệm closed-form/normal equation theo tutorial.",
+    "Tính MAE, MSE và R² cho prediction nhỏ.",
+    "Biến input thành polynomial features để fit quan hệ phi tuyến trong input nhưng tuyến tính theo coefficients."
+  ],
+  "sources": [
+    {"file": "LinearRegression_Tutorial.pdf", "pages": "40 slide", "note": "Tutorial thực hành Linear Regression"}
+  ],
+  "coverage": "Toàn bộ 40 slide đã được rà soát. Các ví dụ code/sklearn được chuyển thành giải thích thuật toán và lab số; website không tự tải dataset Boston từ nguồn ngoài.",
+  "sections": [
+    {
+      "id": "problem",
+      "title": "Bài toán regression và dữ liệu (x,y)",
+      "lead": "Tutorial bắt đầu bằng dữ liệu tổng hợp và đồ thị để nhìn quan hệ input–output.",
+      "source": "Phần đầu tutorial: generated data / visualization",
+      "blocks": [
+        {"type": "formula", "latex": "D=\{(x_i,y_i)\}_{i=1}^{N}"},
+        {"type": "p", "html": "Mỗi điểm dữ liệu có input x và target y liên tục. Mục tiêu là tìm một hàm dự đoán y từ x sao cho sai số trên dữ liệu nhỏ và có khả năng dự đoán mẫu mới."},
+        {"type": "cards", "cols": 2, "items": [
+          {"title": "Feature", "html": "Biến đầu vào x; nhiều feature được gom thành vector x."},
+          {"title": "Target", "html": "Biến liên tục y cần dự đoán."}
+        ]},
+        {"type": "note", "style": "note", "title": "Nhìn dữ liệu trước khi fit", "html": "Tutorial dùng scatter plot để quan sát xu hướng. Một đường thẳng phù hợp khi quan hệ có thể được mô tả hợp lý bằng linear model trong feature representation hiện tại."}
+      ]
+    },
+    {
+      "id": "model",
+      "title": "Linear model và prediction",
+      "lead": "Một biến dùng slope + intercept; nhiều biến dùng dot product.",
+      "source": "Phần Recall Linear Regression",
+      "blocks": [
+        {"type": "formula", "latex": "\hat y=b+wx"},
+        {"type": "formula", "latex": "\hat y=b+\mathbf w^T\mathbf x"},
+        {"type": "p", "html": "w kiểm soát mức thay đổi của prediction theo feature; b là intercept/bias. Trong multiple regression, mỗi component wⱼ gắn với một feature xⱼ."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "w=2, b=1, x=3.", "steps": ["wx=6.", "Cộng intercept b=1."], "result": "ŷ=<b>7</b>."}
+      ]
+    },
+    {
+      "id": "objective",
+      "title": "Squared-error objective",
+      "lead": "Tutorial tối ưu tổng/trung bình bình phương residual.",
+      "source": "Phần Objective / Loss",
+      "blocks": [
+        {"type": "formula", "latex": "e_i=y_i-\hat y_i"},
+        {"type": "formula", "latex": "J(w,b)=\frac{1}{N}\sum_{i=1}^{N}(y_i-(wx_i+b))^2"},
+        {"type": "p", "html": "Bình phương làm sai số âm/dương không triệt tiêu nhau và phạt residual lớn mạnh hơn. Tutorial dùng objective này để suy ra gradient descent."},
+        {"type": "example", "title": "Ví dụ tự học: MSE", "intro": "y=(2,4,5), ŷ=(1,5,5).", "steps": ["Residual=(1,−1,0).", "Squares=(1,1,0).", "Average=2/3."], "result": "MSE=<b>0.6667</b>."}
+      ]
+    },
+    {
+      "id": "gradient",
+      "title": "Gradient của linear regression một biến",
+      "lead": "Đạo hàm objective cho biết cách thay đổi w,b để giảm error.",
+      "source": "Phần Gradient Descent derivation",
+      "blocks": [
+        {"type": "formula", "latex": "\frac{\partial J}{\partial w}=-\frac{2}{N}\sum_i x_i\big(y_i-(wx_i+b)\big)"},
+        {"type": "formula", "latex": "\frac{\partial J}{\partial b}=-\frac{2}{N}\sum_i \big(y_i-(wx_i+b)\big)"},
+        {"type": "p", "html": "Đây là chain rule áp dụng cho squared residual. Dấu âm xuất hiện vì residual y−ŷ giảm khi prediction tăng."},
+        {"type": "note", "style": "deep", "title": "Vector form", "html": "Với X là design matrix, gradient theo w có cấu trúc Xᵀ(Xw−y), đúng mạch matrix calculus đã học ở Vector Calculus."}
+      ]
+    },
+    {
+      "id": "gd",
+      "title": "Gradient Descent từ đầu",
+      "lead": "Tutorial triển khai vòng lặp predict → gradient → update.",
+      "source": "Phần Gradient Descent / pseudocode / from-scratch class",
+      "blocks": [
+        {"type": "formula", "latex": "w\leftarrow w-\eta\frac{\partial J}{\partial w},\qquad b\leftarrow b-\eta\frac{\partial J}{\partial b}"},
+        {"type": "bullets", "items": [
+          "Khởi tạo w,b.",
+          "Tính prediction trên batch dữ liệu.",
+          "Tính residual/loss và gradients.",
+          "Cập nhật parameters bằng learning rate η.",
+          "Lặp qua số iterations/epochs được chọn."
+        ]},
+        {"type": "example", "title": "Ví dụ tự học một bước", "intro": "Giả sử w=0, b=0 và gradient hiện tại ∂J/∂w=−10, ∂J/∂b=−4, η=0.1.", "steps": ["w_new=0−0.1(−10)=1.", "b_new=0−0.1(−4)=0.4."], "result": "Parameters dịch chuyển ngược hướng gradient."}
+      ]
+    },
+    {
+      "id": "learning-rate",
+      "title": "Learning rate: quá nhỏ chậm, quá lớn có thể diverge",
+      "lead": "Tutorial có ví dụ cấu hình learning rate làm loss nổ thay vì giảm.",
+      "source": "Phần thí nghiệm learning rate / divergence",
+      "blocks": [
+        {"type": "p", "html": "η kiểm soát kích thước bước update. Nếu quá nhỏ, cần nhiều bước; nếu quá lớn, update có thể vượt qua vùng tốt, dao động hoặc làm objective tăng rất nhanh."},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "η nhỏ", "html": "Bước thận trọng nhưng hội tụ chậm."},
+          {"title": "η phù hợp", "html": "Loss giảm ổn định trong ví dụ."},
+          {"title": "η quá lớn", "html": "Tutorial minh họa divergence/numerical instability."}
+        ]},
+        {"type": "warning", "style": "warning", "title": "Theo dõi loss", "html": "Đừng chỉ nhìn số iterations. Nếu loss tăng hoặc xuất hiện giá trị số bất thường, kiểm tra learning rate và scale dữ liệu."}
+      ]
+    },
+    {
+      "id": "gd-sgd-normal",
+      "title": "Batch GD, SGD và LinearRegression/normal equation",
+      "lead": "Tutorial so sánh nhiều cách fit cùng một mô hình tuyến tính.",
+      "source": "Phần compare GradientDescent / SGDRegressor / LinearRegression",
+      "blocks": [
+        {"type": "table", "headers": ["Cách fit", "Gradient dùng", "Đặc điểm trong tutorial"], "rows": [
+          ["Batch Gradient Descent", "Toàn bộ training set mỗi update", "Dễ hiểu, ổn định nhưng mỗi bước dùng toàn bộ dữ liệu."],
+          ["SGD / SGDRegressor", "Mẫu hoặc mini-batch nhỏ", "Update thường xuyên, có tính nhiễu hơn."],
+          ["LinearRegression / normal equation", "Không cần vòng lặp GD theo cách minh họa", "Tìm nghiệm least-squares bằng linear algebra của thư viện."]
+        ]},
+        {"type": "formula", "latex": "\hat{\mathbf w}=(X^TX)^{-1}X^T\mathbf y", "note": "Normal-equation form khi inverse thích hợp tồn tại; tutorial dùng sklearn LinearRegression để đối chiếu."},
+        {"type": "warning", "style": "warning", "title": "Đừng hiểu công thức inverse quá máy móc", "html": "Nguồn tutorial so sánh nghiệm closed-form với iterative methods. Trong dữ liệu thực, implementation thư viện có thể dùng kỹ thuật số ổn định hơn việc tự tính inverse trực tiếp."}
+      ]
+    },
+    {
+      "id": "metrics",
+      "title": "MAE, MSE và R²",
+      "lead": "Tutorial dùng ba metric để nhìn error từ các góc khác nhau.",
+      "source": "Phần Evaluate Performance",
+      "blocks": [
+        {"type": "formula", "latex": "\operatorname{MAE}=\frac1N\sum_i|y_i-\hat y_i|"},
+        {"type": "formula", "latex": "\operatorname{MSE}=\frac1N\sum_i(y_i-\hat y_i)^2"},
+        {"type": "formula", "latex": "R^2=1-\frac{\sum_i(y_i-\hat y_i)^2}{\sum_i(y_i-\bar y)^2}"},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "MAE", "html": "Average absolute residual; cùng đơn vị với y."},
+          {"title": "MSE", "html": "Phạt residual lớn mạnh hơn do bình phương."},
+          {"title": "R²", "html": "So sánh residual sum of squares với baseline quanh mean y theo công thức tutorial."}
+        ]}
+      ]
+    },
+    {
+      "id": "polynomial",
+      "title": "Polynomial Regression bằng feature expansion",
+      "lead": "Mô hình vẫn linear theo coefficients sau khi tạo feature x²,x³,…",
+      "source": "Phần Polynomial Regression / PolynomialFeatures",
+      "blocks": [
+        {"type": "formula", "latex": "\phi(x)=[1,x,x^2,\ldots,x^D]^T"},
+        {"type": "formula", "latex": "\hat y=\mathbf w^T\phi(x)"},
+        {"type": "p", "html": "Tutorial dùng `PolynomialFeatures` để tạo representation mới rồi áp linear regression. Đường prediction trở nên cong theo x nhưng bài toán vẫn linear theo vector coefficients w."},
+        {"type": "warning", "style": "warning", "title": "Degree cao không mặc định tốt hơn", "html": "Polynomial degree tăng độ linh hoạt và có thể overfit. Việc chọn degree nên được đánh giá trên validation/test thay vì chỉ training loss."}
+      ]
+    },
+    {
+      "id": "practice",
+      "title": "Bài thực hành dữ liệu nhà ở trong tutorial",
+      "lead": "Các slide cuối chuyển từ dữ liệu tổng hợp sang một bài thực hành nhiều feature.",
+      "source": "Các slide cuối: Boston Housing practice",
+      "blocks": [
+        {"type": "p", "html": "Tutorial yêu cầu áp dụng quy trình regression lên bộ dữ liệu nhà ở: chuẩn bị feature/target, fit model, predict và dùng các metric đã học để đánh giá."},
+        {"type": "bullets", "items": [
+          "Xác định X và y.",
+          "Chia/chuẩn bị dữ liệu phù hợp cho đánh giá.",
+          "Fit linear regression hoặc biến thể trong tutorial.",
+          "Tính MAE, MSE, R².",
+          "Quan sát ảnh hưởng của representation/polynomial features khi cần."
+        ]},
+        {"type": "note", "style": "note", "title": "Data source hiện tại", "html": "PDF chỉ mô tả bài thực hành; repository mới không kèm binary dataset Boston. Vì vậy website không tự tải dataset bên ngoài để tránh thay đổi nguồn học liệu."}
+      ]
+    }
+  ],
+  "lab": {
+    "type": "regression",
+    "title": "Lab fit đường thẳng từ dữ liệu nhỏ",
+    "subtitle": "Nhập x,y để tính least-squares ŷ=b+wx cùng MAE, MSE và R²."
+  },
+  "exercises": [
+    {"q":"Linear regression một biến có prediction dạng?","answers":["b+wx","wx+b","yhat=b+wx"],"solution":"ŷ=b+wx.","source":"Linear model"},
+    {"q":"w=2,b=1,x=3 thì prediction bằng?","answers":["7"],"solution":"1+2×3=7.","source":"Linear model"},
+    {"q":"Residual e_i thường viết y_i trừ gì?","answers":["yhat_i","prediction","ŷ_i"],"solution":"eᵢ=yᵢ−ŷᵢ.","source":"Objective"},
+    {"q":"Squared-error objective bình phương đại lượng nào?","answers":["residual","sai số","sai so","y-yhat"],"solution":"Residual y−ŷ.","source":"Objective"},
+    {"q":"y=(2,4,5), yhat=(1,5,5): MSE bằng?","answers":["2/3","0.6667","0.6666667"],"solution":"(1²+(-1)²+0²)/3=2/3.","source":"MSE"},
+    {"q":"Gradient descent cập nhật parameter theo hướng nào của gradient?","answers":["ngược","nguoc","âm","negative","-gradient"],"solution":"Ngược/âm gradient.","source":"Gradient Descent"},
+    {"q":"Learning rate thường ký hiệu bằng chữ Hy Lạp nào trong bài?","answers":["η","eta"],"solution":"η (eta).","source":"Gradient Descent"},
+    {"q":"w=0, gradient=-10, eta=0.1: w mới bằng?","answers":["1"],"solution":"0−0.1(−10)=1.","source":"GD update"},
+    {"q":"b=0, gradient=-4, eta=0.1: b mới bằng?","answers":["0.4"],"solution":"0.4.","source":"GD update"},
+    {"q":"Learning rate quá lớn có thể làm loss diverge không?","answers":["có","co","yes"],"solution":"Có; tutorial minh họa trường hợp này.","source":"Learning-rate experiment"},
+    {"q":"Batch GD dùng toàn bộ training set cho mỗi update không?","answers":["có","co","yes"],"solution":"Có.","source":"GD comparison"},
+    {"q":"SGD dùng ít mẫu hơn mỗi update so với batch GD không?","answers":["có","co","yes"],"solution":"Có.","source":"SGDRegressor comparison"},
+    {"q":"Normal equation là iterative gradient method không?","answers":["không","khong","no"],"solution":"Không trong cách tutorial so sánh; nó là closed-form linear algebra route.","source":"LinearRegression comparison"},
+    {"q":"Normal equation cơ bản chứa X^T X hay XX^T?","answers":["X^T X","XTX"],"solution":"(XᵀX)⁻¹Xᵀy.","source":"Normal equation"},
+    {"q":"MAE dùng trị tuyệt đối hay bình phương residual?","answers":["trị tuyệt đối","tri tuyet doi","absolute"],"solution":"Trị tuyệt đối.","source":"Metrics"},
+    {"q":"MSE dùng trị tuyệt đối hay bình phương?","answers":["bình phương","binh phuong","squared"],"solution":"Bình phương.","source":"Metrics"},
+    {"q":"R²=1 biểu thị fit hoàn hảo trên các điểm được đánh giá theo công thức không?","answers":["có","co","yes"],"solution":"Có nếu residual sum of squares bằng 0 và denominator hợp lệ.","source":"R² formula"},
+    {"q":"R² so sánh residual sum of squares với biến thiên quanh đại lượng nào của y?","answers":["mean","trung bình","trung binh","y bar"],"solution":"Mean ȳ.","source":"R² formula"},
+    {"q":"PolynomialFeatures có thể tạo feature x² không?","answers":["có","co","yes"],"solution":"Có.","source":"Polynomial Regression"},
+    {"q":"Polynomial regression có còn tuyến tính theo coefficients w không?","answers":["có","co","yes"],"solution":"Có; phi(x) phi tuyến theo x nhưng prediction linear theo w.","source":"Polynomial Regression"},
+    {"q":"Degree polynomial tăng có luôn giảm test error không?","answers":["không","khong","no"],"solution":"Không; có thể overfit.","source":"Polynomial practice"},
+    {"q":"Multiple regression prediction dùng w^T x hay w+x?","answers":["w^T x","wTx","dot product"],"solution":"wᵀx.","source":"Linear model"},
+    {"q":"Gradient theo w của least squares có xuất hiện X^T không?","answers":["có","co","yes"],"solution":"Có: dạng Xᵀ(Xw−y).","source":"Gradient"},
+    {"q":"MSE và objective squared error phạt outlier lớn mạnh hơn MAE do thao tác gì?","answers":["bình phương","binh phuong","squaring"],"solution":"Bình phương residual.","source":"Metrics"},
+    {"q":"Nếu prediction đúng hoàn toàn mọi mẫu, MSE bằng?","answers":["0"],"solution":"0.","source":"MSE"},
+    {"q":"Nếu mọi residual bằng 1, MAE bằng?","answers":["1"],"solution":"Average absolute error bằng 1.","source":"MAE"},
+    {"q":"Nếu mọi residual bằng 1, MSE bằng?","answers":["1"],"solution":"Average squared error cũng bằng 1.","source":"MSE"},
+    {"q":"Dữ liệu tutorial cuối bài thuộc miền gì?","answers":["housing","nhà ở","nha o","Boston Housing"],"solution":"Bài thực hành Boston Housing.","source":"Practice slides"},
+    {"q":"Quy trình fit có cần prediction function riêng trong class from-scratch không?","answers":["có","co","yes"],"solution":"Có; tutorial minh họa class với fit/predict.","source":"From-scratch implementation"},
+    {"q":"Mục tiêu cuối của regression là chỉ giảm training error hay còn đánh giá dữ liệu chưa thấy?","answers":["dữ liệu chưa thấy","du lieu chua thay","unseen data","generalization"],"solution":"Cần đánh giá dự đoán trên dữ liệu chưa thấy/held-out data.","source":"Tutorial evaluation flow"}
+  ],
+  "glossary": [
+    ["Linear regression","hồi quy tuyến tính"],["Feature","đặc trưng"],["Target","giá trị đích"],["Slope / weight","hệ số/trọng số"],["Intercept / bias","hệ số chặn/bias"],["Residual","phần dư/sai số"],["Squared error","sai số bình phương"],["Gradient descent","hạ gradient"],["Learning rate","tốc độ học"],["Batch gradient descent","gradient descent toàn batch"],["Stochastic gradient descent","gradient descent ngẫu nhiên"],["Normal equation","phương trình chuẩn"],["MAE","sai số tuyệt đối trung bình"],["MSE","sai số bình phương trung bình"],["R²","hệ số xác định"],["Polynomial features","đặc trưng đa thức"]
+  ]
+}
