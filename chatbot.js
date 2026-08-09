@@ -149,6 +149,14 @@ function note(message,isBad=false){
   status.textContent=message||'';
   status.classList.toggle('bad',isBad);
 }
+async function readJsonResponse(response){
+  const raw=await response.text();
+  try{return JSON.parse(raw)}catch{
+    const preview=raw.replace(/\s+/g,' ').trim().slice(0,220)||'(phản hồi rỗng)';
+    throw new Error(`Backend trả về dữ liệu không phải JSON (HTTP ${response.status}): ${preview}`);
+  }
+}
+
 function safeUrl(raw){
   try{
     const u=new URL(raw,location.href);
@@ -436,7 +444,7 @@ $('.ai-models').onclick=async function(){
       headers:{'x-openai-api-key':key,'Content-Type':'application/json'},
       body:'{}'
     });
-    const data=await r.json();
+    const data=await readJsonResponse(r);
     if(!r.ok)throw Error(data.error||`HTTP ${r.status}`);
     set(KEYS.api,key);
     setModels(data.models?.length?data.models:fallback,data.preferredModel);
@@ -504,7 +512,7 @@ root.querySelector('form').onsubmit=async e=>{
         sessionId:sid
       })
     });
-    const data=await r.json();
+    const data=await readJsonResponse(r);
     if(!r.ok)throw Error(data.error||`HTTP ${r.status}`);
     wait.remove();
     const answer=String(data.reply||'').trim()||'Không nhận được nội dung trả lời.';
