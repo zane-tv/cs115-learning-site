@@ -1,0 +1,174 @@
+{
+  "slug": "de-cuong-mon-hoc",
+  "title": "Đề cương môn học CS115 – đọc để biết mình sẽ học gì và được đánh giá ra sao",
+  "subtitle": "Bản học chi tiết từ đề cương chính thức cập nhật tháng 01/2023: thông tin môn học, mục tiêu CG, chuẩn đầu ra CLO, kế hoạch 15 tuần, yêu cầu và khung đánh giá.",
+  "category": "COURSE",
+  "tags": ["4 tín chỉ", "CG1–CG4", "CLO1–CLO4", "15 tuần", "40/60"],
+  "objectives": [
+    "Giải thích vai trò của CS115 trong chương trình Khoa học máy tính/Trí tuệ nhân tạo.",
+    "Phân biệt mục tiêu môn học CG1–CG4 với chuẩn đầu ra CLO1–CLO4.",
+    "Đọc được kế hoạch học từ ôn tập nền tảng đến Regression, Optimization, Neural và seminar.",
+    "Tính đúng cấu trúc đánh giá quá trình 40% và cuối kỳ 60%.",
+    "Biết các yêu cầu học tập và tài liệu chính được đề cương chỉ định."
+  ],
+  "sources": [
+    {"file": "CS115.O11_Đề cương_Toan cho KHMT.pdf", "pages": "8 trang", "note": "Bản cập nhật 01/2023"}
+  ],
+  "coverage": "Toàn bộ 8 trang đề cương đã được rà soát; phần nội dung học tập dùng các mục 1–9, không suy diễn từ nguồn ngoài.",
+  "sections": [
+    {
+      "id": "identity",
+      "title": "Nhận diện môn học",
+      "lead": "Các dữ kiện hành chính cần biết trước khi học.",
+      "source": "Trang 1–2",
+      "blocks": [
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Tên & mã", "html": "<b>CS115</b> — Toán cho Khoa học máy tính (Mathematics for Computer Science). Thuộc khối kiến thức <b>cơ sở ngành</b>."},
+          {"title": "Khối lượng", "html": "<b>4 tín chỉ</b>, trong đề cương 2023 ghi 4 tín chỉ lý thuyết và 0 tín chỉ thực hành."},
+          {"title": "Môn học trước", "html": "<b>IT001 – Nhập môn lập trình</b>. Đề cương không ghi một môn tiên quyết riêng khác."}
+        ]},
+        {"type": "p", "html": "Đối tượng học tập được mô tả là những người muốn có kiến thức về cơ sở Toán cho ngành Khoa học máy tính. Khoa/Bộ môn phụ trách là Khoa Khoa học máy tính."},
+        {"type": "note", "style": "note", "title": "Điểm cần đọc đúng", "html": "Đề cương 2023 mô tả cấu trúc học kỳ 15 tuần; file Course Introduction dùng ở bài khác mô tả một phiên bản tổ chức 10 tuần. Hai tài liệu đều được giữ nguyên bối cảnh, không trộn thời lượng với nhau."}
+      ]
+    },
+    {
+      "id": "description",
+      "title": "Mô tả môn học: Toán được dùng để làm gì?",
+      "lead": "Đề cương đặt trọng tâm vào việc ôn nền tảng và chỉ ra ứng dụng cụ thể trong KHMT.",
+      "source": "Trang 2",
+      "blocks": [
+        {"type": "p", "html": "Môn học trang bị các công cụ Toán quan trọng để sinh viên vận dụng trong những môn khác của chương trình. Ba nền tảng được nêu trực tiếp là <b>Giải tích</b>, <b>Đại số tuyến tính</b> và <b>Xác suất thống kê</b>."},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Giải tích", "html": "Cung cấp công cụ đạo hàm/gradient cho tối ưu và quá trình học tham số."},
+          {"title": "Đại số tuyến tính", "html": "Cung cấp ngôn ngữ vector–ma trận, hệ tuyến tính và biểu diễn dữ liệu."},
+          {"title": "Xác suất thống kê", "html": "Cung cấp cách mô hình hóa biến ngẫu nhiên, phân phối và bất định."}
+        ]},
+        {"type": "deep", "style": "deep", "title": "Ngữ cảnh ứng dụng được đề cương nhấn mạnh", "html": "Các nền tảng trên được ôn tập và gắn với bài toán Khoa học máy tính, đặc biệt là <b>Machine Learning</b> và <b>Deep Learning</b>."}
+      ]
+    },
+    {
+      "id": "goals",
+      "title": "Mục tiêu môn học CG1–CG4",
+      "lead": "CG mô tả mục tiêu ở mức chương trình môn học.",
+      "source": "Trang 3",
+      "blocks": [
+        {"type": "table", "headers": ["Mục tiêu", "Nội dung trong đề cương"], "rows": [
+          ["CG1", "Hiểu và trình bày được các cơ sở Toán học trong một số thuật toán Máy học căn bản."],
+          ["CG2", "Vận dụng các công cụ Toán học để giải quyết một số bài toán Máy học căn bản."],
+          ["CG3", "So sánh phương pháp Toán và giải thuật Tin học; trình bày sự cần thiết của các giải thuật xấp xỉ."],
+          ["CG4", "Có khả năng tự học, tự tìm hiểu các vấn đề nâng cao."]
+        ]},
+        {"type": "note", "style": "success", "title": "Cách đọc CG", "html": "CG1 nghiêng về <b>hiểu</b>; CG2–CG3 nghiêng về <b>vận dụng/so sánh</b>; CG4 nghiêng về <b>tự học</b>. Đây là một lộ trình tăng dần từ kiến thức sang kỹ năng và thái độ."}
+      ]
+    },
+    {
+      "id": "clo",
+      "title": "Chuẩn đầu ra CLO1–CLO4 và quan hệ với CG",
+      "lead": "CLO là những khả năng người học cần thể hiện sau khi hoàn thành môn.",
+      "source": "Trang 3",
+      "blocks": [
+        {"type": "table", "headers": ["CLO", "Khả năng", "Liên hệ mục tiêu"], "rows": [
+          ["CLO1", "Hiểu và trình bày cơ sở Toán trong một số thuật toán ML căn bản.", "CG1"],
+          ["CLO2", "Vận dụng công cụ Toán để giải bài toán ML căn bản.", "CG2"],
+          ["CLO3", "So sánh phương pháp Toán/thuật toán và giải thích nhu cầu xấp xỉ.", "CG3"],
+          ["CLO4", "Làm việc nhóm hiệu quả để thực hiện đồ án chủ đề mở rộng và báo cáo kết quả.", "CG4"]
+        ]},
+        {"type": "p", "html": "Đề cương còn ánh xạ các CLO sang chuẩn đầu ra chương trình đào tạo. Ở mức học môn, điều quan trọng là hiểu rằng đánh giá không chỉ kiểm tra tính toán mà còn có vận dụng, so sánh và đồ án nhóm."}
+      ]
+    },
+    {
+      "id": "requirements",
+      "title": "Yêu cầu đối với người học",
+      "lead": "Không chỉ có bài thi: đề cương yêu cầu kỷ luật học tập và tính liêm chính.",
+      "source": "Trang 3",
+      "blocks": [
+        {"type": "bullets", "items": [
+          "Tuân thủ nghiêm túc nội quy và quy định của Khoa/Trường.",
+          "Tham gia hoạt động học tập, làm bài tập và chuẩn bị nội dung theo yêu cầu.",
+          "Gian lận trong bài tập hoặc bài thi có thể bị xử lý kỷ luật và nhận 0 điểm cho môn học theo nội dung đề cương."
+        ]},
+        {"type": "warning", "style": "warning", "title": "Học đúng tinh thần môn", "html": "Các chương sau cần nhiều thao tác Toán. Đề cương coi việc nghe giảng, suy nghĩ và thảo luận để thiết kế giải pháp là một phần của quá trình học, không chỉ học thuộc công thức."}
+      ]
+    },
+    {
+      "id": "plan",
+      "title": "Kế hoạch 15 tuần trong đề cương 2023",
+      "lead": "Năm khối nội dung nối nhau từ nền tảng đến seminar đồ án.",
+      "source": "Trang 4–5",
+      "blocks": [
+        {"type": "table", "headers": ["Tuần", "Chương", "Nội dung chính"], "rows": [
+          ["1–3", "Giới thiệu & Ôn tập", "Course intro; Calculus; Linear Algebra; Probability & Statistics."],
+          ["4–6", "Regression Analysis", "MLE; Linear Regression; Logistic Regression; squared-error loss; cross-entropy loss."],
+          ["7–9", "Optimization", "Convex optimization; Newton; Gradient Descent; L1/L2 regularization; SGD; Momentum/Nesterov/Adagrad/RMSprop/Adadelta/Adam."],
+          ["10–12", "Neural Network", "MLP; computational graph; chain rule & backpropagation; cross-validation; batch normalization; hyperparameters."],
+          ["13–15", "Seminar chủ đề mở rộng", "LDA; SVD/PCA; SVM & kernels; Expectation Maximization; hierarchical/spectral clustering; các chủ đề mở rộng khác."]
+        ]},
+        {"type": "note", "style": "deep", "title": "Mạch học", "html": "Review nền tảng → xây mô hình hồi quy → học cách tối ưu tham số → dùng chain rule/backprop cho neural network → seminar các phương pháp mở rộng."}
+      ]
+    },
+    {
+      "id": "assessment",
+      "title": "Khung kiểm tra và đánh giá",
+      "lead": "Đề cương 2023 quy định 40% quá trình và 60% cuối kỳ.",
+      "source": "Trang 6",
+      "blocks": [
+        {"type": "table", "headers": ["Thành phần", "Trọng số", "Hình thức/công cụ"], "rows": [
+          ["A1 – Quá trình", "40%", "Tham gia hoạt động học tập trên lớp và kết quả làm bài tập; tiêu chí nhấn mạnh tính đúng của bài tập."],
+          ["A2 – Giữa kỳ", "0%", "Đề cương ghi 0."],
+          ["A3 – Thực hành", "0%", "Đề cương ghi 0 ở mục riêng này."],
+          ["A4 – Cuối kỳ: bài thi viết", "30%", "Bài viết trên giấy; câu hỏi tự luận và trắc nghiệm."],
+          ["A4 – Cuối kỳ: thực hành/đồ án", "30%", "Bài thực hành/bài tập đồ án; báo cáo đồ án môn học."]
+        ]},
+        {"type": "formula", "latex": "0.40+0.30+0.30=1.00", "note": "Tổng trọng số đánh giá trong đề cương."},
+        {"type": "example", "title": "Ví dụ tự học: quy đổi điểm tổng kết", "intro": "Giả sử điểm quá trình 8.0, thi viết 7.0, đồ án 9.0.", "steps": [
+          "Điểm đóng góp A1: 0.40×8.0 = 3.2.",
+          "Điểm đóng góp thi viết: 0.30×7.0 = 2.1.",
+          "Điểm đóng góp đồ án: 0.30×9.0 = 2.7."
+        ], "result": "Tổng = 3.2 + 2.1 + 2.7 = <b>8.0/10</b>. Đây chỉ là ví dụ số học minh họa đúng trọng số của nguồn."}
+      ]
+    },
+    {
+      "id": "resources",
+      "title": "Phương pháp dạy học và tài liệu tham khảo",
+      "lead": "Đề cương chỉ rõ cách tổ chức lớp và 5 tài liệu chính.",
+      "source": "Trang 5–7",
+      "blocks": [
+        {"type": "p", "html": "Phương pháp giảng dạy chủ yếu: giảng viên đặt vấn đề, giải thích đề bài, trao đổi và kiểm tra giải pháp; sinh viên nghe giảng, suy nghĩ và thảo luận nhằm thiết kế thuật toán cho các vấn đề."},
+        {"type": "bullets", "items": [
+          "Gilbert Strang — Linear Algebra and Learning from Data (2019).",
+          "Mykel Kochenderfer & Tim Wheeler — Algorithms for Optimization (2019).",
+          "Zhang, Lipton, Li & Smola — Dive into Deep Learning.",
+          "Deisenroth, Faisal & Ong — Mathematics for Machine Learning (2020).",
+          "Kevin Patrick Murphy — Probabilistic Machine Learning: An Introduction (2021)."
+        ]},
+        {"type": "note", "style": "note", "title": "Phạm vi của website này", "html": "Website hiện biên soạn từ 12 PDF lớp học đã cung cấp. Danh sách sách trên được giữ như tài liệu tham khảo của đề cương; website không tự kéo nội dung từ các sách đó."}
+      ]
+    }
+  ],
+  "lab": {
+    "type": "course",
+    "title": "Checklist đọc đề cương",
+    "subtitle": "Đánh dấu khi bạn đã xác định được các thông tin nền tảng trước khi học.",
+    "items": ["Biết CS115 có 4 tín chỉ", "Nhớ 4 CLO", "Biết lộ trình 15 tuần", "Nhớ cấu trúc 40% quá trình + 60% cuối kỳ", "Biết các khối Regression → Optimization → Neural → Seminar"]
+  },
+  "exercises": [
+    {"q": "Mã môn học là gì?", "answers": ["CS115"], "solution": "Mã môn là CS115.", "source": "Trang 2"},
+    {"q": "CS115 có bao nhiêu tín chỉ?", "answers": ["4", "4 tín chỉ"], "solution": "Đề cương ghi 4 tín chỉ.", "source": "Trang 2"},
+    {"q": "Môn học trước được ghi trong đề cương là môn nào?", "answers": ["IT001", "nhập môn lập trình", "IT001 - nhập môn lập trình"], "solution": "IT001 – Nhập môn lập trình.", "source": "Trang 2"},
+    {"q": "Ba nền tảng Toán được đề cương nêu để ôn tập là Giải tích, Đại số tuyến tính và gì?", "answers": ["xác suất thống kê", "xác suất và thống kê", "probability and statistics"], "solution": "Xác suất thống kê.", "source": "Trang 2"},
+    {"q": "Mục tiêu nào nói về tự học và tìm hiểu vấn đề nâng cao?", "answers": ["CG4"], "solution": "CG4.", "source": "Trang 3"},
+    {"q": "CLO nào gắn với làm việc nhóm và đồ án chủ đề mở rộng?", "answers": ["CLO4"], "solution": "CLO4.", "source": "Trang 3"},
+    {"q": "Tuần 4–6 theo đề cương thuộc khối nội dung nào?", "answers": ["regression analysis", "phân tích hồi quy", "hồi quy"], "solution": "Phân tích hồi quy (Regression Analysis).", "source": "Trang 4"},
+    {"q": "Tuần 7–9 thuộc chương nào?", "answers": ["optimization", "tối ưu hóa", "tối ưu"], "solution": "Optimization.", "source": "Trang 4"},
+    {"q": "Tuần 10–12 giới thiệu chủ đề gì?", "answers": ["neural network", "mạng neural", "mạng nơ ron", "mạng nơron"], "solution": "Giới thiệu mạng neural.", "source": "Trang 4"},
+    {"q": "Tuần 13–15 dành chủ yếu cho hoạt động gì?", "answers": ["seminar", "seminar đồ án", "đồ án", "seminar chủ đề mở rộng"], "solution": "Seminar đồ án/chủ đề mở rộng.", "source": "Trang 4–5"},
+    {"q": "Trọng số A1 Quá trình là bao nhiêu phần trăm?", "answers": ["40", "40%"], "solution": "40%.", "source": "Trang 6"},
+    {"q": "Tổng trọng số cuối kỳ A4 là bao nhiêu phần trăm?", "answers": ["60", "60%"], "solution": "60%, gồm 30% thi viết và 30% đồ án/thực hành cuối kỳ.", "source": "Trang 6"},
+    {"q": "Thi viết cuối kỳ chiếm bao nhiêu phần trăm?", "answers": ["30", "30%"], "solution": "30%.", "source": "Trang 6"},
+    {"q": "Đồ án/thực hành cuối kỳ chiếm bao nhiêu phần trăm?", "answers": ["30", "30%"], "solution": "30%.", "source": "Trang 6"},
+    {"q": "Tên một tài liệu tham khảo về đại số tuyến tính trong đề cương?", "answers": ["linear algebra and learning from data", "gilbert strang", "strang"], "solution": "Gilbert Strang, Linear Algebra and Learning from Data.", "source": "Trang 6"}
+  ],
+  "glossary": [
+    ["Course objective", "mục tiêu môn học"], ["Course learning outcome (CLO)", "chuẩn đầu ra môn học"], ["Prerequisite / prior course", "môn tiên quyết / môn học trước"], ["Assessment", "đánh giá"], ["Regression Analysis", "phân tích hồi quy"], ["Optimization", "tối ưu hóa"], ["Neural Network", "mạng neural"], ["Seminar", "chuyên đề/thuyết trình học thuật"], ["Project report", "báo cáo đồ án"], ["Approximation algorithm", "giải thuật xấp xỉ"]
+  ]
+}
