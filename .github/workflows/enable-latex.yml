@@ -1,0 +1,67 @@
+name: Enable LaTeX formulas
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'latex-render.js'
+      - '.github/workflows/enable-latex.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inject KaTeX renderer into lesson pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          script_tag = '<script id="cs115-math-script" src="/latex-render.js"></script>'
+
+          # Packed lessons are materialized by index.html at runtime. Inject the
+          # renderer into the generated page just before document.write().
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+          if 'cs115-math-script' not in text:
+              needle = 'document.open();document.write(h);document.close()'
+              repl = "h=h.replace(/<\\/body>/i,'<script id=\\\"cs115-math-script\\\" src=\\\"/latex-render.js\\\"><\\\\/script></body>');" + needle
+              if needle not in text:
+                  raise SystemExit('Could not find loader write point in index.html')
+              text = text.replace(needle, repl, 1)
+              p.write_text(text, encoding='utf-8')
+
+          # Direct/static lesson files bypass the packed loader, so inject the
+          # same renderer in every physical HTML lesson file.
+          for p in Path('lessons').glob('*.html'):
+              text = p.read_text(encoding='utf-8')
+              if 'cs115-math-script' in text:
+                  continue
+              if '</body>' not in text.lower():
+                  continue
+              pos = text.lower().rfind('</body>')
+              text = text[:pos] + script_tag + '\n' + text[pos:]
+              p.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit LaTeX integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html lessons
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Render lesson formulas with KaTeX'
+          git push
