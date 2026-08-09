@@ -1,0 +1,216 @@
+{
+  "slug": "gioi-thieu-mon-hoc",
+  "title": "Giới thiệu môn học CS115 – phiên bản tổ chức lớp 10 tuần",
+  "subtitle": "Đọc kỹ 20 slide Course Introduction: tín chỉ, CLO, cấu trúc đánh giá, cách tổ chức buổi học, timeline 10 tuần, tài liệu và công cụ được giảng viên giới thiệu.",
+  "category": "COURSE",
+  "tags": ["10 tuần", "4 tiết/buổi", "Quiz", "Đồ án", "40/60"],
+  "objectives": [
+    "Nhớ cấu trúc 4 tín chỉ và thời gian học 10 tuần của slide Course Introduction.",
+    "Giải thích CLO1–CLO4 bằng ngôn ngữ học tập cụ thể.",
+    "Phân rã đúng 40% quá trình và 60% cuối kỳ trong slide.",
+    "Đọc được timeline tuần 1–10 và biết mỗi khối kiến thức dẫn sang khối tiếp theo thế nào.",
+    "Nhận diện các tài liệu/công cụ được slide giới thiệu mà không nhầm chúng với nội dung bắt buộc."
+  ],
+  "sources": [
+    {"file": "CS115_Course_Introduction.pdf", "pages": "20 slide", "note": "Phiên bản lớp học 10 tuần"}
+  ],
+  "coverage": "Toàn bộ 20 slide đã được rà soát; các con số về tín chỉ, tuần học và đánh giá giữ đúng theo file Course Introduction.",
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Thông tin chung của lớp",
+      "lead": "Slide 4 cho một ảnh chụp nhanh về tải học và thời lượng.",
+      "source": "Slide 1–4",
+      "blocks": [
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Tín chỉ", "html": "<b>04</b> tín chỉ. Slide ghi <b>60 LT + 00 TH + 120 TH</b>."},
+          {"title": "Thời gian", "html": "<b>10 tuần</b>; lý thuyết <b>4 tiết/buổi/tuần</b>."},
+          {"title": "Môn học trước", "html": "<b>Nhập môn lập trình</b>."}
+        ]},
+        {"type": "p", "html": "Slide cũng cung cấp website e-learning của lớp ở thời điểm biên soạn. Trong website học này, đường dẫn đó chỉ được xem là thông tin của nguồn, không dùng làm data source mới."},
+        {"type": "note", "style": "note", "title": "10 tuần và 15 tuần không mâu thuẫn dữ liệu", "html": "Đề cương 2023 trình bày kế hoạch 15 tuần; Course Introduction trình bày cách tổ chức một lớp 10 tuần. Website giữ cả hai bài riêng để bạn thấy đúng từng phiên bản tài liệu."}
+      ]
+    },
+    {
+      "id": "outcomes",
+      "title": "Chuẩn đầu ra CLO1–CLO4",
+      "lead": "CLO cho biết sau môn học bạn cần thể hiện được điều gì.",
+      "source": "Slide 5",
+      "blocks": [
+        {"type": "table", "headers": ["CLO", "Diễn giải từ slide", "Khi học nên tự hỏi"], "rows": [
+          ["CLO1", "Hiểu và trình bày cơ sở Toán trong một số thuật toán ML căn bản.", "Mình có giải thích được vì sao công thức xuất hiện?"],
+          ["CLO2", "Vận dụng công cụ Toán để giải một số bài toán ML căn bản.", "Mình có tự tính/triển khai được không?"],
+          ["CLO3", "So sánh phương pháp Toán và giải thuật Tin học; giải thích nhu cầu xấp xỉ.", "Mình có biết khi nào nghiệm đóng không thuận tiện?"],
+          ["CLO4", "Làm việc nhóm hiệu quả cho đồ án chủ đề mở rộng và báo cáo kết quả.", "Mình có thể trình bày kết quả một cách có cấu trúc?" ]
+        ]},
+        {"type": "success", "style": "success", "title": "Cách dùng CLO để học", "html": "Mỗi bài trên website mới đều có mục tiêu thao tác cụ thể: đọc định nghĩa → tính ví dụ → dùng lab → làm bài tự chấm. Cấu trúc này nhằm đi từ CLO1 sang CLO2 thay vì chỉ đọc slide."}
+      ]
+    },
+    {
+      "id": "grading",
+      "title": "Cấu trúc đánh giá 40/60",
+      "lead": "Slide 6 chia rõ A1 Quá trình và A2 Cuối kỳ.",
+      "source": "Slide 6",
+      "blocks": [
+        {"type": "table", "headers": ["Thành phần", "Hình thức", "Tỷ lệ"], "rows": [
+          ["A1. Quá trình", "Tổng", "40%"],
+          ["A1.1", "Quiz", "10%"],
+          ["A1.2", "Thuyết trình, làm bài tập về nhà", "30%"],
+          ["A2. Cuối kỳ", "Tổng", "60%"],
+          ["A2.1", "Thi lý thuyết: thi viết + trắc nghiệm", "30%"],
+          ["A2.2", "Đồ án cuối kỳ: báo cáo đồ án môn học", "30%"]
+        ]},
+        {"type": "formula", "latex": "10\%+30\%+30\%+30\%=100\%", "note": "Bốn phần con cộng lại thành 100%."},
+        {"type": "example", "title": "Ví dụ tự học: điểm tổng hợp", "steps": [
+          "Quiz = 9 → đóng góp 0.10×9 = 0.9.",
+          "Thuyết trình/BTVN = 8 → đóng góp 0.30×8 = 2.4.",
+          "Thi lý thuyết = 7 → đóng góp 2.1.",
+          "Đồ án = 9 → đóng góp 2.7."
+        ], "result": "Điểm minh họa = <b>8.1</b>. Phép tính chỉ minh họa trọng số trong slide."}
+      ]
+    },
+    {
+      "id": "requirements",
+      "title": "Yêu cầu học tập và tổ chức một buổi học",
+      "lead": "Slide 7–8 cho biết cách sinh viên tham gia lớp.",
+      "source": "Slide 7–8",
+      "blocks": [
+        {"type": "bullets", "items": [
+          "Tham gia đầy đủ các buổi học.",
+          "Làm bài tập theo yêu cầu giảng viên.",
+          "Nghiên cứu các vấn đề giảng viên đặt ra.",
+          "Trình bày và thảo luận."
+        ]},
+        {"type": "table", "headers": ["Hoạt động", "Mục đích"], "rows": [
+          ["Quiz/Test đầu hoặc cuối buổi", "Kiểm tra nhanh việc chuẩn bị và hiểu bài."],
+          ["GVLT", "Giảng nội dung chính và giải đáp thắc mắc."],
+          ["Bài tập trên lớp", "Thực hành ngay trên nội dung vừa học."],
+          ["Bài tập về nhà", "Sinh viên nộp qua LMS theo slide."]
+        ]}
+      ]
+    },
+    {
+      "id": "weeks1-3",
+      "title": "Tuần 1–3: Giới thiệu và ôn tập nền tảng",
+      "lead": "Đây là tầng kiến thức đầu vào cho phần mô hình và tối ưu.",
+      "source": "Slide 9",
+      "blocks": [
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Machine Learning", "html": "Tổng quan về học máy và cách mô hình học từ dữ liệu."},
+          {"title": "Calculus + Linear Algebra", "html": "Ôn giải tích và đại số tuyến tính để dùng trong regression/optimization."},
+          {"title": "Probability & Statistics", "html": "Ôn xác suất thống kê để mô hình hóa bất định và likelihood."}
+        ]},
+        {"type": "note", "style": "deep", "title": "Mạch phụ thuộc", "html": "Nếu vector–ma trận chưa chắc, các công thức regression và neural sẽ khó đọc; nếu gradient chưa chắc, optimization/backprop sẽ khó theo; nếu xác suất chưa chắc, MLE và phân loại xác suất sẽ khó hiểu."}
+      ]
+    },
+    {
+      "id": "weeks4-5",
+      "title": "Tuần 4–5: Regression Analysis",
+      "lead": "Từ xác suất/likelihood sang các mô hình dự đoán.",
+      "source": "Slide 10",
+      "blocks": [
+        {"type": "bullets", "items": [
+          "Maximum Likelihood Estimation (MLE).",
+          "Linear Regression.",
+          "Logistic Regression.",
+          "Các hàm mất mát như squared-error loss và cross-entropy loss."
+        ]},
+        {"type": "p", "html": "Trong thư viện này, phần Linear Regression có một bài thực hành riêng từ file LinearRegression_Tutorial; Course Introduction chỉ xác định vị trí của chủ đề trong timeline."}
+      ]
+    },
+    {
+      "id": "weeks6-7",
+      "title": "Tuần 6–7: Optimization",
+      "lead": "Các thuật toán cập nhật tham số được liệt kê khá đầy đủ trong slide.",
+      "source": "Slide 11",
+      "blocks": [
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Nền tảng", "html": "Convex optimization, Newton’s method, Gradient Descent."},
+          {"title": "Regularization", "html": "L1 và L2 Regularization."},
+          {"title": "Gradient variants", "html": "SGD, Momentum, Nesterov, Adagrad, RMSprop, Adadelta, Adam."}
+        ]},
+        {"type": "warning", "style": "warning", "title": "Đây là danh mục chương", "html": "Slide Course Introduction chỉ liệt kê các phương pháp; bài `toi-uu-hoa` mới dùng PDF Optimization 108 trang để giải thích sâu các điều kiện, Hessian, convexity và thuật toán."}
+      ]
+    },
+    {
+      "id": "week8",
+      "title": "Tuần 8: Neural Network",
+      "lead": "Các khái niệm chain rule và computational graph được đưa vào để chuẩn bị cho backpropagation.",
+      "source": "Slide 12",
+      "blocks": [
+        {"type": "bullets", "items": [
+          "Multi-layer perceptron (MLP).",
+          "Computational graph.",
+          "Chain rule và backpropagation.",
+          "Cross-validation.",
+          "Batch normalization.",
+          "Điều chỉnh hyperparameters."
+        ]},
+        {"type": "note", "style": "note", "title": "Kết nối với giải tích vector", "html": "Backpropagation không tách rời phần Calculus: nó dựa trên chain rule và gradient. Vì vậy thư viện giữ cả `giai-tich-vector-day-du` lẫn `mang-neural` để học cùng một công cụ ở hai ngữ cảnh."}
+      ]
+    },
+    {
+      "id": "weeks9-10",
+      "title": "Tuần 9–10: Seminar chủ đề mở rộng",
+      "lead": "Slide chuyển từ nội dung bắt buộc sang các hướng seminar/đồ án.",
+      "source": "Slide 13",
+      "blocks": [
+        {"type": "table", "headers": ["Nhóm", "Chủ đề trong slide"], "rows": [
+          ["Giảm chiều / phân rã", "LDA, SVD, PCA, NMF"],
+          ["Phân loại", "SVM và kernels"],
+          ["Mô hình xác suất", "Expectation Maximization"],
+          ["Clustering", "Clustering, Hierarchical Clustering, Spectral Clustering"],
+          ["Cây", "Decision Tree, Random Forest"]
+        ]},
+        {"type": "p", "html": "Course Introduction chỉ liệt kê các hướng này. Website không tự tạo bài chuyên sâu cho từng chủ đề nếu 12 PDF hiện tại không có nội dung tương ứng đủ chi tiết."}
+      ]
+    },
+    {
+      "id": "references",
+      "title": "Tài liệu tham khảo và phần mềm/công cụ",
+      "lead": "Slide 14–20 định vị hệ sinh thái học tập.",
+      "source": "Slide 14–20",
+      "blocks": [
+        {"type": "bullets", "items": [
+          "Linear Algebra and Learning from Data — Strang.",
+          "Algorithms for Optimization — Kochenderfer & Wheeler.",
+          "Dive into Deep Learning.",
+          "Mathematics for Machine Learning.",
+          "Probabilistic Machine Learning: An Introduction.",
+          "Matrix Computations; Iterative Methods for Sparse Linear Systems; Convex Optimization; Introduction to Mathematical Statistics."
+        ]},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Code", "html": "Python; TensorFlow; PyTorch."},
+          {"title": "Experiment", "html": "Kaggle và môi trường notebook/cloud được slide minh họa."},
+          {"title": "Viết công thức", "html": "LaTeX được slide đưa vào nhóm công cụ hỗ trợ."}
+        ]}
+      ]
+    }
+  ],
+  "lab": {
+    "type": "course",
+    "title": "Checklist lộ trình 10 tuần",
+    "subtitle": "Đánh dấu khi bạn đã biết mỗi khối nằm ở đâu trong course flow.",
+    "items": ["Tuần 1–3: review nền tảng", "Tuần 4–5: regression", "Tuần 6–7: optimization", "Tuần 8: neural network", "Tuần 9–10: seminar mở rộng"]
+  },
+  "exercises": [
+    {"q": "Course Introduction ghi thời gian học là bao nhiêu tuần?", "answers": ["10", "10 tuần"], "solution": "10 tuần.", "source": "Slide 4"},
+    {"q": "Mỗi tuần có bao nhiêu tiết lý thuyết theo slide?", "answers": ["4", "4 tiết"], "solution": "4 tiết/buổi/tuần.", "source": "Slide 4"},
+    {"q": "CLO nào nói về vận dụng công cụ Toán để giải bài toán ML?", "answers": ["CLO2"], "solution": "CLO2.", "source": "Slide 5"},
+    {"q": "CLO nào gắn với đồ án nhóm và báo cáo kết quả?", "answers": ["CLO4"], "solution": "CLO4.", "source": "Slide 5"},
+    {"q": "A1 Quá trình chiếm bao nhiêu phần trăm?", "answers": ["40", "40%"], "solution": "40%.", "source": "Slide 6"},
+    {"q": "Quiz chiếm bao nhiêu phần trăm?", "answers": ["10", "10%"], "solution": "10%.", "source": "Slide 6"},
+    {"q": "Thuyết trình + bài tập về nhà chiếm bao nhiêu phần trăm?", "answers": ["30", "30%"], "solution": "30%.", "source": "Slide 6"},
+    {"q": "A2 Cuối kỳ chiếm bao nhiêu phần trăm?", "answers": ["60", "60%"], "solution": "60%.", "source": "Slide 6"},
+    {"q": "Tuần 4–5 học khối nào?", "answers": ["regression analysis", "phân tích hồi quy", "hồi quy"], "solution": "Regression Analysis.", "source": "Slide 10"},
+    {"q": "Tuần 6–7 học khối nào?", "answers": ["optimization", "tối ưu hóa", "tối ưu"], "solution": "Optimization.", "source": "Slide 11"},
+    {"q": "Tuần 8 học chủ đề chính nào?", "answers": ["neural network", "mạng neural", "mạng nơ ron", "mạng nơron"], "solution": "Neural Network.", "source": "Slide 12"},
+    {"q": "Tên một phương pháp cập nhật gradient được slide tuần 6–7 liệt kê?", "answers": ["sgd", "momentum", "nesterov", "adagrad", "rmsprop", "adadelta", "adam"], "solution": "Slide liệt kê SGD, Momentum, Nesterov, Adagrad, RMSprop, Adadelta, Adam.", "source": "Slide 11"},
+    {"q": "Tên một chủ đề giảm chiều/phân rã ở seminar?", "answers": ["lda", "svd", "pca", "nmf"], "solution": "LDA, SVD, PCA hoặc NMF.", "source": "Slide 13"},
+    {"q": "Công cụ viết công thức được slide giới thiệu là gì?", "answers": ["latex", "LaTeX"], "solution": "LaTeX.", "source": "Slide 15–20"},
+    {"q": "Môn học trước được ghi là gì?", "answers": ["nhập môn lập trình", "IT001", "IT001 - nhập môn lập trình"], "solution": "Nhập môn lập trình.", "source": "Slide 4"}
+  ],
+  "glossary": [
+    ["Learning Outcome", "chuẩn đầu ra"], ["Quiz", "bài kiểm tra ngắn"], ["Homework", "bài tập về nhà"], ["Regression Analysis", "phân tích hồi quy"], ["Maximum Likelihood Estimation", "ước lượng hợp lý cực đại"], ["Regularization", "điều chuẩn"], ["Computational graph", "đồ thị tính toán"], ["Backpropagation", "lan truyền ngược"], ["Hyperparameter", "siêu tham số"], ["Seminar", "chuyên đề/thuyết trình"]
+  ]
+}
