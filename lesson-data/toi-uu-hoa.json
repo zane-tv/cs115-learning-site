@@ -1,0 +1,295 @@
+{
+  "slug": "toi-uu-hoa",
+  "title": "Optimization – objective, convexity, gradient methods, Newton và constrained optimization",
+  "subtitle": "Bản học chuyên sâu từ 108 slide: mô hình hóa bài toán tối ưu, local/global optima, Hessian và definiteness, gradient/mini-batch/SGD, momentum, Lagrange multipliers, convexity, descent directions, step size, Newton, conjugate gradient và derivative-free methods.",
+  "category": "OPTIMIZATION",
+  "tags": ["Objective", "Gradient", "Hessian", "Convexity", "SGD", "Momentum", "Lagrange", "Newton", "Conjugate Gradient"],
+  "objectives": [
+    "Viết bài toán tối ưu dưới dạng objective + variables + constraints.",
+    "Phân biệt local/global minimum và dùng derivative/Hessian ở điều kiện cực trị được nguồn nêu.",
+    "Giải thích batch, mini-batch, SGD và momentum bằng quy tắc cập nhật.",
+    "Đọc bài toán constrained optimization và Lagrangian.",
+    "Kiểm tra convexity cơ bản bằng definition/gradient/Hessian characterization trong slide.",
+    "Thực hiện gradient descent và Newton ở hàm bậc hai đơn giản.",
+    "Nhận diện steepest descent, conjugate gradient, quasi-Newton và Nelder–Mead theo vai trò của chúng trong nguồn."
+  ],
+  "sources": [
+    {"file": "OPTIMIZATION.pdf", "pages": "108 slide", "note": "Nguồn chính cho bài Optimization"}
+  ],
+  "coverage": "Toàn bộ 108 slide được rà soát. Bài giữ các nhóm phương pháp và điều kiện mà nguồn trình bày; không tự thêm convergence theorem hoặc optimizer ngoài slide.",
+  "sections": [
+    {
+      "id": "formulation",
+      "title": "Một bài toán tối ưu gồm objective, variables và constraints",
+      "lead": "Nguồn mở đầu bằng nhiều ví dụ để cho thấy tối ưu là chọn quyết định tốt nhất dưới các ràng buộc.",
+      "source": "Phần Introduction / Optimization Problems",
+      "blocks": [
+        {"type": "formula", "latex": "\min_{\mathbf x}\; f(\mathbf x)\quad\text{s.t.}\quad g_i(\mathbf x)\le0,\;h_j(\mathbf x)=0"},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Decision variables", "html": "Các biến x ta được phép điều chỉnh."},
+          {"title": "Objective", "html": "Đại lượng cần minimize/maximize: cost, error, energy, loss…"},
+          {"title": "Constraints", "html": "Các điều kiện giới hạn nghiệm khả thi."}
+        ]},
+        {"type": "p", "html": "Nguồn minh họa tối ưu qua transportation, circuit design, data fitting và bài toán ML. Điểm chung không phải lĩnh vực ứng dụng mà là cùng một cấu trúc mathematical optimization."}
+      ]
+    },
+    {
+      "id": "problem-types",
+      "title": "Linear, least-squares, convex và general optimization",
+      "lead": "Cấu trúc objective/constraints quyết định công cụ phù hợp.",
+      "source": "Phần Kinds of Optimization Problems",
+      "blocks": [
+        {"type": "table", "headers": ["Loại", "Cấu trúc chính"], "rows": [
+          ["Linear optimization", "Objective và constraints tuyến tính."],
+          ["Least squares", "Objective là tổng bình phương residual; xuất hiện mạnh trong data fitting."],
+          ["Convex optimization", "Objective/feasible set có cấu trúc convex, giúp local/global liên hệ thuận lợi."],
+          ["General nonlinear optimization", "Không giả định toàn bộ cấu trúc convex/linear."]
+        ]},
+        {"type": "note", "style": "note", "title": "Machine Learning", "html": "Trong ML, training thường được nhìn như minimize một loss theo parameters. Tùy model, objective có thể convex hoặc nonconvex."}
+      ]
+    },
+    {
+      "id": "one-variable",
+      "title": "Tối ưu một biến: stationary point và điều kiện cấp hai",
+      "lead": "Nguồn ôn local/global optima qua derivative một biến.",
+      "source": "Phần Single-variable Optimization",
+      "blocks": [
+        {"type": "formula", "latex": "f'(x^*)=0", "note": "Necessary condition tại interior differentiable local optimum."},
+        {"type": "cards", "cols": 2, "items": [
+          {"title": "Local minimum", "html": "Nếu f′(x*)=0 và f″(x*)>0 thì source dùng đây như sufficient second-order test."},
+          {"title": "Local maximum", "html": "Nếu f′(x*)=0 và f″(x*)<0 thì source nhận diện cực đại cục bộ."}
+        ]},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "f(x)=2x²−8x+3.", "steps": ["f′=4x−8=0 ⇒ x*=2.", "f″=4>0."], "result": "x*=2 là local minimum; vì đây là quadratic lồi, cũng là global minimum."}
+      ]
+    },
+    {
+      "id": "multivariate",
+      "title": "Nhiều biến: gradient, stationary point và Hessian",
+      "lead": "Hessian tổng quát hóa second derivative sang nhiều chiều.",
+      "source": "Phần Multivariate Optimization",
+      "blocks": [
+        {"type": "formula", "latex": "\nabla f(\mathbf x^*)=\mathbf0"},
+        {"type": "formula", "latex": "H(\mathbf x)=\nabla^2 f(\mathbf x)"},
+        {"type": "table", "headers": ["Hessian tại stationary point", "Kết luận theo nguồn"], "rows": [
+          ["Positive definite", "Local minimum."],
+          ["Negative definite", "Local maximum."],
+          ["Indefinite", "Saddle point."],
+          ["Semidefinite/singular", "Second-order test có thể chưa kết luận đủ."]
+        ]},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "f=x²+3y².", "steps": ["∇f=(2x,6y)=0 ⇒ (0,0).", "H=diag(2,6), positive definite."], "result": "(0,0) là minimum."}
+      ]
+    },
+    {
+      "id": "definiteness",
+      "title": "Positive definiteness: eigenvalues và principal minors",
+      "lead": "Nguồn ôn cách xét Hessian bằng linear algebra.",
+      "source": "Phần Hessian / Positive Definiteness",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf z^TH\mathbf z>0\quad\forall\mathbf z\ne0"},
+        {"type": "p", "html": "Với symmetric Hessian, nguồn nêu xét eigenvalues hoặc principal minors để phân loại definiteness. Đây là điểm nối trực tiếp từ bài Đại số tuyến tính mở rộng."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "H=[[2,0],[0,6]].", "steps": ["Eigenvalues là 2 và 6.", "Cả hai dương."], "result": "H positive definite."}
+      ]
+    },
+    {
+      "id": "gd",
+      "title": "Gradient Descent và descent direction",
+      "lead": "Đi theo hướng âm gradient là first-order update cơ bản.",
+      "source": "Phần Gradient Algorithms / Descent Direction",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf x_{k+1}=\mathbf x_k-\alpha_k\nabla f(\mathbf x_k)"},
+        {"type": "formula", "latex": "\nabla f(\mathbf x_k)^T\mathbf p_k<0", "note": "Một descent direction p tạo directional derivative âm."},
+        {"type": "p", "html": "Gradient Descent chọn p=−∇f dưới metric Euclid. Step size α quyết định đi bao xa trên hướng đó."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "f(x)=2x²−8x+3, x0=0, α=0.1.", "steps": ["f′(0)=−8.", "x1=0−0.1(−8)=0.8.", "f(0)=3; f(0.8)=−2.12."], "result": "Objective giảm sau một bước."}
+      ]
+    },
+    {
+      "id": "batch-sgd",
+      "title": "Batch, mini-batch và Stochastic Gradient Descent",
+      "lead": "Khi objective là tổng loss trên nhiều mẫu, có nhiều cách ước lượng gradient.",
+      "source": "Phần Gradient / Mini-batch / SGD",
+      "blocks": [
+        {"type": "table", "headers": ["Biến thể", "Dữ liệu cho một gradient update", "Đặc điểm"], "rows": [
+          ["Batch GD", "Toàn bộ dataset", "Gradient ít nhiễu nhưng mỗi update đắt hơn."],
+          ["Mini-batch", "Một nhóm mẫu", "Cân bằng chi phí và độ nhiễu; phù hợp vectorization."],
+          ["SGD", "Một mẫu hoặc batch rất nhỏ theo cách nguồn minh họa", "Update rẻ nhưng dao động nhiều hơn."]
+        ]},
+        {"type": "p", "html": "Nguồn đặt các biến thể này trong bối cảnh ML nơi objective thường là average/sum của per-example losses."}
+      ]
+    },
+    {
+      "id": "momentum",
+      "title": "Momentum: tích lũy hướng cập nhật",
+      "lead": "Nguồn giới thiệu momentum để giảm zig-zag và duy trì vận tốc theo hướng nhất quán.",
+      "source": "Phần Momentum",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf v_{k+1}=\beta\mathbf v_k-\alpha\nabla f(\mathbf x_k),\qquad \mathbf x_{k+1}=\mathbf x_k+\mathbf v_{k+1}"},
+        {"type": "p", "html": "β kiểm soát mức giữ lại của vận tốc trước. Khi gradients liên tục cùng hướng, momentum tích lũy; khi hướng dao động qua lại, một phần dao động có thể được làm mượt."},
+        {"type": "note", "style": "note", "title": "Liên hệ Neural Network", "html": "Momentum xuất hiện lại trong PDF Neural Network như một cải tiến của backprop-based training."}
+      ]
+    },
+    {
+      "id": "constraints",
+      "title": "Constrained optimization và feasible set",
+      "lead": "Không phải mọi x đều được phép; constraints xác định miền nghiệm khả thi.",
+      "source": "Phần Standard Constrained Problem",
+      "blocks": [
+        {"type": "formula", "latex": "\min f(\mathbf x)\quad \text{s.t.}\quad g_i(\mathbf x)\le0,\;h_j(\mathbf x)=0"},
+        {"type": "p", "html": "Một điểm feasible thỏa tất cả constraints. Optimum bị ràng buộc có thể nằm ở biên feasible set, nơi gradient objective không nhất thiết bằng 0 như unconstrained interior optimum."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "minimize x² subject to x≥1.", "steps": ["Unconstrained minimum x=0 không feasible.", "Trong feasible set [1,∞), giá trị nhỏ nhất ở biên x=1."], "result": "Constrained optimum x*=1."}
+      ]
+    },
+    {
+      "id": "lagrange",
+      "title": "Lagrange multipliers cho equality constraints",
+      "lead": "Nguồn dùng Lagrangian để ghép objective và ràng buộc bằng multiplier.",
+      "source": "Phần Lagrange Multipliers",
+      "blocks": [
+        {"type": "formula", "latex": "\mathcal L(\mathbf x,\lambda)=f(\mathbf x)+\lambda h(\mathbf x)"},
+        {"type": "formula", "latex": "\nabla_{\mathbf x}\mathcal L=0,\qquad h(\mathbf x)=0"},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "minimize x²+y² subject to x+y=2.", "steps": ["L=x²+y²+λ(x+y−2).", "2x+λ=0; 2y+λ=0 ⇒ x=y.", "x+y=2 ⇒ x=y=1."], "result": "Minimum tại (1,1)."}
+      ]
+    },
+    {
+      "id": "convex-set",
+      "title": "Convex sets",
+      "lead": "Đoạn thẳng nối hai điểm feasible vẫn nằm trong tập.",
+      "source": "Phần Convex Sets",
+      "blocks": [
+        {"type": "formula", "latex": "\theta\mathbf x+(1-\theta)\mathbf y\in C\quad\forall\mathbf x,\mathbf y\in C,\;\theta\in[0,1]"},
+        {"type": "p", "html": "Nguồn minh họa convex/non-convex bằng hình học. Convex feasible set là một phần quan trọng của convex optimization."}
+      ]
+    },
+    {
+      "id": "convex-function",
+      "title": "Convex functions và các characterization",
+      "lead": "Đường chord nằm trên graph; tangent tạo lower bound đối với hàm differentiable convex.",
+      "source": "Phần Convex Functions",
+      "blocks": [
+        {"type": "formula", "latex": "f(\theta\mathbf x+(1-\theta)\mathbf y)\le\theta f(\mathbf x)+(1-\theta)f(\mathbf y)"},
+        {"type": "formula", "latex": "f(\mathbf y)\ge f(\mathbf x)+\nabla f(\mathbf x)^T(\mathbf y-\mathbf x)"},
+        {"type": "formula", "latex": "\nabla^2 f(\mathbf x)\succeq0", "note": "Second-order characterization trong miền thích hợp cho twice-differentiable convex function."},
+        {"type": "note", "style": "deep", "title": "Tại sao convexity quý", "html": "Trong bài toán convex, cấu trúc local/global tốt hơn: một local minimum là global minimum theo nội dung nguồn."}
+      ]
+    },
+    {
+      "id": "quadratic",
+      "title": "Quadratic functions và quadratic forms",
+      "lead": "Quadratic là sân tập chính để nhìn gradient, Hessian và definiteness cùng lúc.",
+      "source": "Phần Quadratic Forms / Matrix Calculus",
+      "blocks": [
+        {"type": "formula", "latex": "f(\mathbf x)=\frac12\mathbf x^TA\mathbf x-\mathbf b^T\mathbf x+c"},
+        {"type": "formula", "latex": "\nabla f=A\mathbf x-\mathbf b,\qquad \nabla^2 f=A", "note": "Khi A symmetric."},
+        {"type": "p", "html": "Nếu A positive definite, quadratic có một minimum duy nhất tại nghiệm Ax=b. Đây là cầu nối giữa linear systems và optimization."}
+      ]
+    },
+    {
+      "id": "step-size",
+      "title": "Step size và line search",
+      "lead": "Có hướng descent tốt vẫn cần chọn độ dài bước hợp lý.",
+      "source": "Phần First-order Methods / Step Size",
+      "blocks": [
+        {"type": "p", "html": "Nguồn trình bày step-size selection/line-search như thành phần của iterative optimization. Một bước quá ngắn chậm; quá dài có thể làm objective tăng hoặc bỏ qua vùng tốt."},
+        {"type": "formula", "latex": "\mathbf x_{k+1}=\mathbf x_k+\alpha_k\mathbf p_k"},
+        {"type": "warning", "style": "warning", "title": "Direction và step là hai quyết định khác nhau", "html": "pₖ quyết định hướng; αₖ quyết định quãng đường. Khi debug optimizer, cần phân biệt hai nguồn lỗi này."}
+      ]
+    },
+    {
+      "id": "newton",
+      "title": "Newton's Method: dùng curvature để chọn bước",
+      "lead": "Newton thay scale gradient bằng inverse Hessian/second derivative.",
+      "source": "Phần Newton 1D / Multivariate Newton",
+      "blocks": [
+        {"type": "formula", "latex": "x_{k+1}=x_k-\frac{f'(x_k)}{f''(x_k)}"},
+        {"type": "formula", "latex": "\mathbf x_{k+1}=\mathbf x_k-H(\mathbf x_k)^{-1}\nabla f(\mathbf x_k)"},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "f(x)=2x²−8x+3, x0=0.", "steps": ["f′(0)=−8; f″=4.", "x1=0−(−8)/4=2."], "result": "Với quadratic này, một bước Newton đi thẳng đến minimum x=2."},
+        {"type": "warning", "style": "warning", "title": "Chi phí second-order", "html": "Nguồn nhấn mạnh Newton cần Hessian và giải hệ liên quan; với số chiều lớn, chi phí có thể cao hơn first-order methods."}
+      ]
+    },
+    {
+      "id": "steepest",
+      "title": "Steepest descent phụ thuộc metric/norm",
+      "lead": "Hướng 'dốc nhất' phụ thuộc cách đo độ dài của bước.",
+      "source": "Phần Steepest Descent",
+      "blocks": [
+        {"type": "p", "html": "Trong Euclidean norm, steepest-descent direction trùng với negative gradient. Nguồn dùng phần này để nhấn mạnh gradient là object gắn với hình học/metric đang dùng."},
+        {"type": "note", "style": "note", "title": "Kết nối Hình học giải tích", "html": "Inner product/norm quyết định khái niệm angle, distance và cả 'steepest'. Đây là lý do nền tảng hình học có vai trò trực tiếp trong optimization."}
+      ]
+    },
+    {
+      "id": "cg-quasi",
+      "title": "Conjugate Gradient và Quasi-Newton",
+      "lead": "Nguồn giới thiệu các hướng cải thiện so với steepest descent/Newton trực tiếp.",
+      "source": "Phần Conjugate Gradient / Quasi-Newton",
+      "blocks": [
+        {"type": "cards", "cols": 2, "items": [
+          {"title": "Conjugate Gradient", "html": "Đặc biệt quan trọng cho quadratic/linear systems lớn; xây các directions conjugate thay vì lặp lại steepest direction."},
+          {"title": "Quasi-Newton", "html": "Xấp xỉ thông tin Hessian/inverse Hessian từ lịch sử gradients/steps thay vì tính Hessian đầy đủ mỗi bước."}
+        ]},
+        {"type": "p", "html": "Nguồn nêu các phương pháp này ở mức thuật toán/ý tưởng. Website không thêm chứng minh hội tụ ngoài slide."}
+      ]
+    },
+    {
+      "id": "derivative-free",
+      "title": "Derivative-free optimization và Nelder–Mead",
+      "lead": "Khi derivative khó/không khả dụng, nguồn chuyển sang phương pháp dùng function evaluations.",
+      "source": "Phần Derivative-free / Nelder–Mead",
+      "blocks": [
+        {"type": "p", "html": "Nelder–Mead duy trì một simplex trong không gian parameter và thay đổi nó qua các thao tác hình học dựa trên function values. Nó không yêu cầu gradient theo cách các first-order methods ở trên yêu cầu."},
+        {"type": "cards", "cols": 2, "items": [
+          {"title": "Ưu điểm bối cảnh", "html": "Có thể dùng khi derivative không có hoặc không đáng tin cậy."},
+          {"title": "Giới hạn bối cảnh", "html": "Nguồn không xem derivative-free là thay thế mặc định cho gradient methods trong mọi ML problem."}
+        ]}
+      ]
+    },
+    {
+      "id": "one-d-search",
+      "title": "One-dimensional search, bracketing và root-finding",
+      "lead": "Các slide cuối quay lại bài toán một chiều như building block cho line search.",
+      "source": "Phần 1D Optimization / Bracketing / Root Finding",
+      "blocks": [
+        {"type": "p", "html": "Nguồn trình bày ý tưởng khoanh vùng (bracket) một optimum/root và thu hẹp khoảng theo từng bước. Những thủ tục 1D này có thể xuất hiện bên trong line search của thuật toán nhiều chiều."},
+        {"type": "note", "style": "note", "title": "Mạch tổng kết", "html": "Mô hình hóa → xác định geometry/derivatives → chọn direction → chọn step size → kiểm tra dừng. Các family methods khác nhau chủ yếu ở thông tin derivative và cách tạo bước."}
+      ]
+    }
+  ],
+  "lab": {
+    "type": "optimization",
+    "title": "Lab Quadratic Optimization",
+    "subtitle": "Thử f(x)=ax²+bx+c bằng Gradient Descent nhiều bước và một bước Newton."
+  },
+  "exercises": [
+    {"q":"Ba thành phần cốt lõi của bài toán tối ưu gồm variables, objective và gì?","answers":["constraints","ràng buộc","rang buoc"],"solution":"Constraints/ràng buộc.","source":"Formulation"},
+    {"q":"Bài toán không có constraints gọi là gì?","answers":["unconstrained","không ràng buộc","khong rang buoc"],"solution":"Unconstrained optimization.","source":"Problem types"},
+    {"q":"Điều kiện necessary bậc một một biến tại interior local optimum là f'(x*) bằng?","answers":["0"],"solution":"0.","source":"Single-variable optimum"},
+    {"q":"f''(x*)>0 tại stationary point gợi local minimum hay maximum?","answers":["minimum","local minimum","cực tiểu","cuc tieu"],"solution":"Local minimum.","source":"Second-order test"},
+    {"q":"f=2x²−8x+3 có stationary point x bằng?","answers":["2"],"solution":"4x−8=0 ⇒ x=2.","source":"Quadratic example"},
+    {"q":"Multivariate stationary point thỏa gradient bằng vector gì?","answers":["0","zero","vector 0"],"solution":"∇f=0.","source":"Multivariate optimization"},
+    {"q":"Hessian positive definite tại stationary point gợi loại điểm nào?","answers":["minimum","local minimum","cực tiểu","cuc tieu"],"solution":"Local minimum.","source":"Hessian test"},
+    {"q":"Hessian indefinite tại stationary point gợi điểm gì?","answers":["saddle","saddle point","điểm yên ngựa","diem yen ngua"],"solution":"Saddle point.","source":"Hessian test"},
+    {"q":"Gradient descent dùng hướng gradient hay negative gradient?","answers":["negative gradient","-gradient","âm gradient","am gradient"],"solution":"Negative gradient.","source":"Gradient Descent"},
+    {"q":"x_{k+1}=x_k+alpha p: p là direction hay step size?","answers":["direction","hướng","huong"],"solution":"p là direction; α là step size.","source":"Descent methods"},
+    {"q":"Điều kiện descent direction là grad^T p dấu gì?","answers":["âm","am","negative","<0"],"solution":"<0.","source":"Descent direction"},
+    {"q":"Batch GD dùng toàn bộ dataset mỗi update không?","answers":["có","co","yes"],"solution":"Có.","source":"Batch GD"},
+    {"q":"Mini-batch dùng toàn bộ dataset mỗi update không?","answers":["không","khong","no"],"solution":"Không, dùng một nhóm mẫu.","source":"Mini-batch"},
+    {"q":"SGD thường có gradient nhiễu hơn batch GD không?","answers":["có","co","yes"],"solution":"Có.","source":"SGD"},
+    {"q":"Momentum duy trì biến phụ thường gọi là gì?","answers":["velocity","vận tốc","van toc","v"],"solution":"Velocity v.","source":"Momentum"},
+    {"q":"Trong Lagrangian L=f+lambda h, lambda gọi là gì?","answers":["Lagrange multiplier","multiplier","nhân tử Lagrange","nhan tu lagrange"],"solution":"Lagrange multiplier.","source":"Lagrange"},
+    {"q":"min x² subject x≥1 có optimum x bằng?","answers":["1"],"solution":"Unconstrained x=0 không feasible; biên x=1 là tốt nhất.","source":"Constrained example"},
+    {"q":"min x²+y² subject x+y=2 cho nghiệm đối xứng x=y bằng?","answers":["1"],"solution":"x=y=1.","source":"Lagrange example"},
+    {"q":"Convex set có chứa đoạn thẳng nối hai điểm bất kỳ trong set không?","answers":["có","co","yes"],"solution":"Có.","source":"Convex Sets"},
+    {"q":"Với convex f, chord nằm trên hay dưới graph theo inequality nguồn?","answers":["trên","tren","above"],"solution":"Giá trị trên chord ≥ f tại convex combination, nên chord nằm trên graph.","source":"Convex Functions"},
+    {"q":"Twice-differentiable convex f có Hessian positive semidefinite không?","answers":["có","co","yes"],"solution":"Có theo characterization trong nguồn.","source":"Convex Functions"},
+    {"q":"Local minimum của convex function có là global minimum không?","answers":["có","co","yes"],"solution":"Có trong cấu trúc convex được nguồn nhấn mạnh.","source":"Convexity"},
+    {"q":"Quadratic f=1/2 x^T A x-b^T x với A symmetric có gradient bằng?","answers":["Ax-b","A x - b"],"solution":"Ax−b.","source":"Quadratic Forms"},
+    {"q":"Cùng quadratic, Hessian bằng?","answers":["A"],"solution":"A.","source":"Quadratic Forms"},
+    {"q":"Newton 1D update chia f' cho derivative cấp mấy?","answers":["2","hai","cấp hai","second"],"solution":"f″.","source":"Newton"},
+    {"q":"f=2x²−8x+3, x0=0: một bước Newton đến x bằng?","answers":["2"],"solution":"0−(−8)/4=2.","source":"Newton example"},
+    {"q":"Newton nhiều biến dùng inverse của matrix nào?","answers":["Hessian","H","ma trận Hessian","ma tran hessian"],"solution":"Hessian H.","source":"Multivariate Newton"},
+    {"q":"Trong Euclidean norm, steepest descent direction trùng với gì?","answers":["negative gradient","-gradient","âm gradient","am gradient"],"solution":"Negative gradient.","source":"Steepest Descent"},
+    {"q":"Quasi-Newton có cố gắng xấp xỉ thông tin Hessian không?","answers":["có","co","yes"],"solution":"Có.","source":"Quasi-Newton"},
+    {"q":"Nelder–Mead có yêu cầu gradient không?","answers":["không","khong","no"],"solution":"Không; đây là derivative-free method trong nguồn.","source":"Nelder–Mead"}
+  ],
+  "glossary": [
+    ["Decision variable","biến quyết định"],["Objective function","hàm mục tiêu"],["Constraint","ràng buộc"],["Feasible set","tập khả thi"],["Local optimum","cực trị cục bộ"],["Global optimum","cực trị toàn cục"],["Stationary point","điểm dừng"],["Hessian","ma trận Hessian"],["Descent direction","hướng giảm"],["Step size","độ dài bước"],["Gradient descent","hạ gradient"],["Stochastic gradient descent","hạ gradient ngẫu nhiên"],["Momentum","động lượng"],["Lagrangian","hàm Lagrange"],["Convex set","tập lồi"],["Convex function","hàm lồi"],["Newton's method","phương pháp Newton"],["Quasi-Newton","phương pháp quasi-Newton"],["Conjugate gradient","gradient liên hợp"],["Derivative-free","không dùng đạo hàm"],["Nelder–Mead","phương pháp Nelder–Mead"]
+  ]
+}
