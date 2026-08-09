@@ -1,0 +1,279 @@
+{
+  "slug": "mang-neural",
+  "title": "Neural Network – neuron, MLP, activation, softmax, backprop và generalization",
+  "subtitle": "Bản học chuyên sâu từ 84 slide: linear classifier, softmax, neuron/MLP, activation functions, forward/backpropagation, sequential vs batch learning, learning rate/stopping, generalization, early stopping, regularization, momentum và các thuật toán huấn luyện nâng cao.",
+  "category": "DEEP LEARNING · NEURAL NETWORK",
+  "tags": ["Linear Classifier", "Softmax", "Neuron", "MLP", "Activation", "Backprop", "Generalization", "Momentum"],
+  "objectives": [
+    "Đọc linear score f=Wx+b và xác suất softmax ở bài toán classification.",
+    "Giải thích một neuron tính weighted sum + bias + activation như thế nào.",
+    "Phân biệt single-layer và multi-layer feedforward networks trong nguồn.",
+    "Nhận biết sigmoid, tanh, ReLU và leaky ReLU theo đặc tính slide nêu.",
+    "Thực hiện forward pass và mô tả backprop bằng local gradients/deltas.",
+    "Phân biệt sequential/online và batch learning; giải thích learning rate và stopping criteria.",
+    "Giải thích train/validation/test, early stopping và regularization trong generalization.",
+    "Nhận diện momentum, adaptive/variable LR và các second-order families nguồn liệt kê."
+  ],
+  "sources": [
+    {"file": "CS115_Neuron_Network.pdf", "pages": "84 slide", "note": "Nguồn chính cho bài Neural Network"}
+  ],
+  "coverage": "Toàn bộ 84 slide đã được rà soát. Bài giữ đúng các kiến trúc, activation và training methods trong nguồn; không tự thêm Transformer/CNN architecture chi tiết khi PDF không phát triển chúng như nội dung chính.",
+  "sections": [
+    {
+      "id": "linear-classifier",
+      "title": "Điểm xuất phát: linear classifier f=Wx+b",
+      "lead": "Nguồn bắt đầu từ score tuyến tính trước khi chuyển sang neuron và MLP.",
+      "source": "Các slide đầu: Linear Classifier",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf s=W\mathbf x+\mathbf b"},
+        {"type": "p", "html": "Input feature vector x được nhân bởi matrix weights W rồi cộng bias b để tạo một score cho mỗi class. Đây chính là nhiều linear functions được tính song song."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "x=(1,2), W=[[1,−1],[0.5,1]], b=(0,−1).", "steps": ["s₁=1×1+(−1)×2=−1.", "s₂=0.5×1+1×2−1=1.5."], "result": "Score vector s=(−1,1.5)."}
+      ]
+    },
+    {
+      "id": "softmax",
+      "title": "Softmax classifier: biến scores thành probabilities",
+      "lead": "Nguồn dùng softmax để chuyển score bất kỳ thành phân phối xác suất trên classes.",
+      "source": "Phần Softmax Classifier",
+      "blocks": [
+        {"type": "formula", "latex": "p_k=\frac{e^{s_k}}{\sum_j e^{s_j}}"},
+        {"type": "formula", "latex": "L=-\log p_y", "note": "Loss của class đúng trong ví dụ softmax của nguồn."},
+        {"type": "p", "html": "Softmax outputs dương và tổng bằng 1. Nếu probability của class đúng thấp, −log(p_y) lớn; nếu p_y tiến gần 1, loss tiến gần 0."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "Hai scores bằng nhau s=(0,0).", "steps": ["e⁰=e⁰=1.", "Tổng=2."], "result": "Softmax=(0.5,0.5)."}
+      ]
+    },
+    {
+      "id": "neuron",
+      "title": "Neuron model: weighted sum, bias và activation",
+      "lead": "Một neuron là đơn vị tính toán scalar điển hình của mạng feedforward.",
+      "source": "Phần Neuron Model",
+      "blocks": [
+        {"type": "formula", "latex": "z=\mathbf w^T\mathbf x+b,\qquad a=\phi(z)"},
+        {"type": "p", "html": "Weights quyết định mức ảnh hưởng của từng input; bias dịch threshold; activation tạo output của neuron. Nhiều neuron song song tạo một layer."},
+        {"type": "example", "title": "Ví dụ tự học", "intro": "x=(1,2,−1), w=(0.5,−1,2), b=0.2.", "steps": ["wᵀx=0.5−2−2=−3.5.", "z=−3.5+0.2=−3.3."], "result": "Trước activation, pre-activation z=<b>−3.3</b>."}
+      ]
+    },
+    {
+      "id": "architecture",
+      "title": "Single-layer và multi-layer feedforward networks",
+      "lead": "Nguồn tổ chức neuron thành input, hidden và output layers.",
+      "source": "Phần Network Architectures / MLP",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf h=\phi(W_1\mathbf x+\mathbf b_1),\qquad \mathbf y=\psi(W_2\mathbf h+\mathbf b_2)"},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Input layer", "html": "Nhận feature vector; thường không được xem là một lớp tính activation theo cách sơ đồ nguồn trình bày."},
+          {"title": "Hidden layer(s)", "html": "Tạo intermediate representations bằng weighted sums + nonlinear activation."},
+          {"title": "Output layer", "html": "Tạo output phù hợp task, ví dụ scores/probabilities cho classification."}
+        ]},
+        {"type": "note", "style": "deep", "title": "Vì sao cần nonlinearity", "html": "Nếu chỉ chồng nhiều linear transformations mà không có nonlinear activation, phép hợp vẫn là một linear transformation. Activation cho mạng khả năng biểu diễn quan hệ phi tuyến."}
+      ]
+    },
+    {
+      "id": "activations",
+      "title": "Sigmoid, tanh, ReLU và leaky ReLU",
+      "lead": "Nguồn so sánh các activation phổ biến và hình dạng derivative của chúng.",
+      "source": "Phần Activation Functions",
+      "blocks": [
+        {"type": "formula", "latex": "\sigma(z)=\frac{1}{1+e^{-z}}"},
+        {"type": "formula", "latex": "\tanh z=\frac{e^z-e^{-z}}{e^z+e^{-z}}"},
+        {"type": "formula", "latex": "\operatorname{ReLU}(z)=\max(0,z)"},
+        {"type": "cards", "cols": 3, "items": [
+          {"title": "Sigmoid", "html": "Output trong (0,1); có vùng saturation nơi derivative nhỏ."},
+          {"title": "tanh", "html": "Output trong (−1,1), zero-centered hơn sigmoid."},
+          {"title": "ReLU / Leaky ReLU", "html": "ReLU giữ phần dương tuyến tính; leaky variant giữ một slope nhỏ ở phía âm theo slide."}
+        ]}
+      ]
+    },
+    {
+      "id": "forward",
+      "title": "Forward pass: tính output từ input qua từng layer",
+      "lead": "Mỗi layer nhận activations trước đó và tạo activations mới.",
+      "source": "Phần Forward Propagation",
+      "blocks": [
+        {"type": "formula", "latex": "\mathbf z^{(l)}=W^{(l)}\mathbf a^{(l-1)}+\mathbf b^{(l)},\qquad \mathbf a^{(l)}=\phi^{(l)}(\mathbf z^{(l)})"},
+        {"type": "p", "html": "Trong forward pass, cần lưu các giá trị trung gian z/a cần thiết cho backward. Output cuối được đưa vào loss cùng target."},
+        {"type": "example", "title": "Ví dụ tự học một neuron ReLU", "intro": "z=−3.3 từ ví dụ trước.", "steps": ["ReLU(z)=max(0,−3.3)."], "result": "Activation a=<b>0</b>."}
+      ]
+    },
+    {
+      "id": "backprop",
+      "title": "Backpropagation: hai pass và local gradients",
+      "lead": "Nguồn mô tả backprop là forward pass + backward pass dùng chain rule.",
+      "source": "Phần Backpropagation",
+      "blocks": [
+        {"type": "bullets", "items": [
+          "Forward pass: tính net input/activation/output và loss.",
+          "Backward pass: bắt đầu từ output error, tính local gradient/delta của output nodes.",
+          "Truyền error/delta về hidden nodes bằng weights và activation derivatives.",
+          "Dùng deltas × activations trước đó để tạo weight gradients.",
+          "Cập nhật weights/biases bằng learning rule."
+        ]},
+        {"type": "formula", "latex": "\frac{\partial L}{\partial w_{ij}^{(l)}}=\delta_i^{(l)}a_j^{(l-1)}"},
+        {"type": "p", "html": "Nguồn triển khai backprop bằng ký hiệu local gradients/deltas. Vector Calculus đầy đủ đã giải thích chain rule computational graph; ở đây trọng tâm là các delta gắn với neural layers."}
+      ]
+    },
+    {
+      "id": "output-delta",
+      "title": "Output node vs hidden node deltas",
+      "lead": "Output delta nhìn trực tiếp loss; hidden delta nhận error gián tiếp từ layer sau.",
+      "source": "Các slide Backprop local gradients",
+      "blocks": [
+        {"type": "p", "html": "Với output node, local gradient kết hợp derivative của loss với derivative activation. Với hidden node, không có target trực tiếp; error signal là weighted combination của deltas phía sau rồi nhân activation derivative tại hidden node."},
+        {"type": "formula", "latex": "\boldsymbol\delta^{(l)}=\left((W^{(l+1)})^T\boldsymbol\delta^{(l+1)}\right)\odot \phi'(\mathbf z^{(l)})"},
+        {"type": "warning", "style": "warning", "title": "Đừng cập nhật trước khi xong backward nếu đang suy luận công thức", "html": "Weights được dùng để truyền error về layer trước; thay đổi chúng giữa chừng có thể làm lẫn giá trị của cùng một backward pass. Source trình bày update sau khi gradients đã được tính theo quy trình."}
+      ]
+    },
+    {
+      "id": "adaline",
+      "title": "ADALINE và learning rule tuyến tính",
+      "lead": "Nguồn dùng ADALINE như một bước lịch sử/khái niệm trước MLP training.",
+      "source": "Phần ADALINE",
+      "blocks": [
+        {"type": "p", "html": "ADALINE (Adaptive Linear Neuron) dùng linear activation trong learning signal và cập nhật weights theo error. Phần này giúp nhìn neural training như một mở rộng của linear adaptive models."},
+        {"type": "formula", "latex": "\Delta\mathbf w\propto (t-y)\mathbf x"},
+        {"type": "note", "style": "note", "title": "Mạch kiến thức", "html": "Linear regression/least squares → adaptive linear neuron → nonlinear MLP + backprop là một cách đọc tiến trình nguồn."}
+      ]
+    },
+    {
+      "id": "sequential-batch",
+      "title": "Sequential/online learning và batch learning",
+      "lead": "Nguồn phân biệt thời điểm tổng hợp gradient và cập nhật parameter.",
+      "source": "Phần Sequential vs Batch Learning",
+      "blocks": [
+        {"type": "table", "headers": ["Kiểu", "Cách update"], "rows": [
+          ["Sequential / online", "Cập nhật sau từng pattern/sample theo cách slide mô tả."],
+          ["Batch", "Tích lũy error/gradient qua một batch/epoch rồi cập nhật." ]
+        ]},
+        {"type": "p", "html": "Sequential có update thường xuyên và có thể nhiễu; batch có hướng ổn định hơn nhưng cần xử lý nhiều mẫu trước một update. Đây là cùng trade-off đã gặp ở Optimization."}
+      ]
+    },
+    {
+      "id": "lr-stop",
+      "title": "Learning rate và stopping criteria",
+      "lead": "Huấn luyện cần biết bước bao xa và khi nào dừng.",
+      "source": "Phần Learning Rate / Stopping Criteria",
+      "blocks": [
+        {"type": "p", "html": "Learning rate quá nhỏ làm learning chậm; quá lớn có thể gây dao động/không hội tụ. Source trình bày stopping dựa trên số epoch, error/loss, thay đổi weights hoặc validation behavior tùy ngữ cảnh."},
+        {"type": "bullets", "items": [
+          "Dừng sau maximum epochs.",
+          "Dừng khi training error đạt ngưỡng/không cải thiện đáng kể.",
+          "Theo dõi validation để tránh tiếp tục fit noise."
+        ]}
+      ]
+    },
+    {
+      "id": "generalization",
+      "title": "Generalization: Train, Validation và Test",
+      "lead": "Nguồn nhấn mạnh khả năng dự đoán ngoài training samples.",
+      "source": "Phần Generalization",
+      "blocks": [
+        {"type": "table", "headers": ["Split", "Vai trò trong training network"], "rows": [
+          ["Training", "Dùng để cập nhật weights."],
+          ["Validation", "Theo dõi model selection/stopping/generalization trong quá trình phát triển."],
+          ["Test", "Đánh giá cuối cùng sau khi model đã được chốt."]
+        ]},
+        {"type": "p", "html": "Mạng có capacity lớn có thể giảm training error rất thấp nhưng không đảm bảo test error tốt. Source dùng điều này để giới thiệu early stopping và regularization."}
+      ]
+    },
+    {
+      "id": "early-stop",
+      "title": "Early stopping và regularization",
+      "lead": "Hai cách nguồn nêu để kiểm soát overfitting/generalization.",
+      "source": "Phần Early Stopping / Regularization",
+      "blocks": [
+        {"type": "p", "html": "Early stopping theo dõi validation performance và dừng khi training tiếp không còn cải thiện validation. Regularization thêm preference/penalty để hạn chế nghiệm quá phức tạp hoặc weights quá lớn theo cách nguồn thảo luận."},
+        {"type": "formula", "latex": "L_{reg}=L_{data}+\lambda R(\mathbf w)"},
+        {"type": "warning", "style": "warning", "title": "Validation không phải test", "html": "Nếu dùng test set để quyết định epoch dừng hoặc λ, test đã tham gia model selection và mất vai trò đánh giá cuối."}
+      ]
+    },
+    {
+      "id": "momentum",
+      "title": "Momentum trong neural training",
+      "lead": "Nguồn đưa momentum vào nhóm cải tiến tốc độ/ổn định học.",
+      "source": "Phần Advanced Learning Algorithms",
+      "blocks": [
+        {"type": "formula", "latex": "\Delta w(t)= -\eta g(t)+\alpha\Delta w(t-1)"},
+        {"type": "p", "html": "Update hiện tại kết hợp gradient mới và một phần update trước. Trực giác là tích lũy quán tính theo hướng ổn định và giảm zig-zag."},
+        {"type": "note", "style": "note", "title": "Ký hiệu", "html": "Source có thể dùng ký hiệu α/η theo quy ước riêng cho momentum và learning rate; điều cốt lõi là có một hệ số cho gradient mới và một hệ số cho update trước."}
+      ]
+    },
+    {
+      "id": "adaptive",
+      "title": "Adaptive/variable learning rate và resilient backpropagation",
+      "lead": "Nguồn liệt kê các cách điều chỉnh step dựa trên lịch sử/hành vi gradient.",
+      "source": "Phần Variable/Adaptive LR / Resilient Backprop",
+      "blocks": [
+        {"type": "p", "html": "Thay vì giữ learning rate cố định, các phương pháp adaptive thay đổi step theo tiến trình huấn luyện. Resilient backprop trong nguồn tập trung nhiều vào dấu của gradient và step riêng thay vì magnitude thô của derivative."},
+        {"type": "warning", "style": "warning", "title": "Phạm vi source", "html": "PDF nêu family/algorithm behavior; bài này không tự thay thế bằng công thức Adam/RMSprop chi tiết nếu phần đó không được phát triển trong file Neural Network."}
+      ]
+    },
+    {
+      "id": "second-order",
+      "title": "Second-order và advanced optimizers được nguồn liệt kê",
+      "lead": "Các slide cuối mở rộng beyond basic backprop/gradient descent.",
+      "source": "Phần Newton / Quasi-Newton / CG / Levenberg–Marquardt",
+      "blocks": [
+        {"type": "table", "headers": ["Family", "Ý tưởng ở mức nguồn"], "rows": [
+          ["Newton", "Dùng second-order/Hessian information."],
+          ["Quasi-Newton / BFGS", "Xấp xỉ curvature thay vì tính Hessian đầy đủ."],
+          ["Conjugate Gradient", "Tạo các search directions có cấu trúc conjugate."],
+          ["Levenberg–Marquardt", "Một phương pháp second-order-like được nguồn liệt kê cho neural training."]
+        ]},
+        {"type": "p", "html": "Nguồn đặt các phương pháp này trong trade-off giữa tốc độ hội tụ, memory/computation và quy mô mạng/data."}
+      ]
+    },
+    {
+      "id": "capacity",
+      "title": "Số samples, hidden units và performance",
+      "lead": "Nguồn dùng đồ thị để minh họa capacity và dữ liệu ảnh hưởng generalization.",
+      "source": "Các slide cuối: performance vs samples/hidden units",
+      "blocks": [
+        {"type": "p", "html": "Quá ít hidden units có thể giới hạn khả năng fit; quá nhiều capacity với dữ liệu hạn chế có thể làm generalization xấu nếu không kiểm soát. Tăng số training samples thường cung cấp thêm thông tin để ước lượng parameters tốt hơn."},
+        {"type": "cards", "cols": 2, "items": [
+          {"title": "Capacity", "html": "Hidden units/layers ảnh hưởng khả năng biểu diễn."},
+          {"title": "Data", "html": "Số và độ đại diện của samples ảnh hưởng khả năng generalize."}
+        ]}
+      ]
+    }
+  ],
+  "lab": {
+    "type": "neural",
+    "title": "Lab Forward một neuron",
+    "subtitle": "Nhập x, w, bias và chọn ReLU/Sigmoid/tanh để xem z=wᵀx+b và activation."
+  },
+  "exercises": [
+    {"q":"Linear classifier score có dạng Wx cộng gì?","answers":["b","bias"],"solution":"s=Wx+b.","source":"Linear Classifier"},
+    {"q":"Softmax probabilities có tổng bằng?","answers":["1"],"solution":"1.","source":"Softmax"},
+    {"q":"Hai scores (0,0) cho softmax probability mỗi class bằng?","answers":["0.5","1/2","50%"],"solution":"0.5 và 0.5.","source":"Softmax"},
+    {"q":"Softmax loss của class đúng trong nguồn có dạng -log của gì?","answers":["p_y","probability class đúng","probability of correct class"],"solution":"−log p_y.","source":"Softmax"},
+    {"q":"Một neuron trước activation tính z bằng?","answers":["w^T x+b","wTx+b","dot product + bias"],"solution":"z=wᵀx+b.","source":"Neuron"},
+    {"q":"x=(1,2,-1), w=(0.5,-1,2), b=0.2: z bằng?","answers":["-3.3","−3.3"],"solution":"0.5−2−2+0.2=−3.3.","source":"Neuron example"},
+    {"q":"ReLU(-3.3) bằng?","answers":["0"],"solution":"max(0,−3.3)=0.","source":"ReLU"},
+    {"q":"Sigmoid output nằm giữa hai giá trị nào?","answers":["0 và 1","0,1","(0,1)"],"solution":"Trong (0,1).","source":"Activation Functions"},
+    {"q":"tanh output nằm khoảng nào?","answers":["-1,1","(-1,1)","−1 đến 1"],"solution":"Trong (−1,1).","source":"Activation Functions"},
+    {"q":"ReLU(z) với z>0 bằng?","answers":["z"],"solution":"z.","source":"Activation Functions"},
+    {"q":"Chồng nhiều linear layers không activation có còn là linear transformation không?","answers":["có","co","yes"],"solution":"Có.","source":"MLP motivation"},
+    {"q":"Forward pass đi từ input tới output hay ngược lại?","answers":["input tới output","input to output","xuôi"],"solution":"Input → output.","source":"Forward Propagation"},
+    {"q":"Backward pass dựa chủ yếu trên rule calculus nào?","answers":["chain rule","quy tắc dây chuyền","quy tac day chuyen"],"solution":"Chain rule.","source":"Backpropagation"},
+    {"q":"Gradient weight w_ij trong layer có dạng delta_i nhân activation nào?","answers":["a_j layer trước","a_j previous layer","a_j^(l-1)","input activation"],"solution":"δ_i^(l) a_j^(l−1).","source":"Backprop"},
+    {"q":"Hidden node có target trực tiếp không?","answers":["không","khong","no"],"solution":"Không; delta được truyền từ layer sau.","source":"Hidden deltas"},
+    {"q":"Hidden delta cần nhân activation derivative không?","answers":["có","co","yes"],"solution":"Có.","source":"Hidden deltas"},
+    {"q":"ADALINE là viết tắt của Adaptive Linear gì?","answers":["Neuron","neuron"],"solution":"Adaptive Linear Neuron.","source":"ADALINE"},
+    {"q":"Sequential learning cập nhật sau từng sample/pattern không?","answers":["có","co","yes"],"solution":"Có theo nguồn.","source":"Sequential Learning"},
+    {"q":"Batch learning đợi tích lũy qua batch trước khi update không?","answers":["có","co","yes"],"solution":"Có.","source":"Batch Learning"},
+    {"q":"Learning rate quá lớn có thể gây dao động/không hội tụ không?","answers":["có","co","yes"],"solution":"Có.","source":"Learning Rate"},
+    {"q":"Tập nào dùng để cập nhật weights?","answers":["training","training set","tập train","tap train"],"solution":"Training set.","source":"Generalization"},
+    {"q":"Tập nào dùng theo dõi early stopping/model selection?","answers":["validation","validation set","tập validation","tập xác thực"],"solution":"Validation set.","source":"Generalization/Early stopping"},
+    {"q":"Tập nào dành cho đánh giá cuối cùng?","answers":["test","test set","tập test","tập kiểm tra"],"solution":"Test set.","source":"Generalization"},
+    {"q":"Early stopping nhằm hạn chế vấn đề gì?","answers":["overfitting","quá khớp","qua khop"],"solution":"Overfitting/generalization degradation.","source":"Early Stopping"},
+    {"q":"Regularization có thêm penalty/preference vào data loss không?","answers":["có","co","yes"],"solution":"Có theo dạng Lreg=Ldata+λR(w).","source":"Regularization"},
+    {"q":"Momentum dùng một phần update/velocity của bước trước không?","answers":["có","co","yes"],"solution":"Có.","source":"Momentum"},
+    {"q":"Quasi-Newton có xấp xỉ curvature/Hessian information không?","answers":["có","co","yes"],"solution":"Có.","source":"Advanced algorithms"},
+    {"q":"Conjugate Gradient có được nguồn liệt kê trong advanced training methods không?","answers":["có","co","yes"],"solution":"Có.","source":"Advanced algorithms"},
+    {"q":"Levenberg–Marquardt có xuất hiện trong nguồn Neural Network không?","answers":["có","co","yes"],"solution":"Có trong nhóm phương pháp nâng cao.","source":"Advanced algorithms"},
+    {"q":"Tăng capacity mà dữ liệu ít có thể làm generalization xấu không?","answers":["có","co","yes"],"solution":"Có; các slide cuối minh họa trade-off hidden units/samples/performance.","source":"Performance vs capacity/data"}
+  ],
+  "glossary": [
+    ["Linear classifier","bộ phân lớp tuyến tính"],["Score","điểm số trước xác suất"],["Softmax","hàm softmax"],["Cross-entropy / negative log likelihood","loss log của class đúng theo ngữ cảnh"],["Neuron","nơ-ron/đơn vị tính toán"],["Weight","trọng số"],["Bias","độ lệch/bias"],["Activation function","hàm kích hoạt"],["Hidden layer","lớp ẩn"],["MLP","perceptron nhiều lớp"],["Forward propagation","lan truyền xuôi"],["Backpropagation","lan truyền ngược"],["Delta / local gradient","tín hiệu gradient cục bộ"],["Sequential learning","học tuần tự/online"],["Batch learning","học theo batch"],["Early stopping","dừng sớm"],["Regularization","điều chuẩn"],["Momentum","động lượng"],["Quasi-Newton","phương pháp quasi-Newton"],["Generalization","khả năng tổng quát hóa"]
+  ]
+}
